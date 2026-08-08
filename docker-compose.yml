@@ -8,6 +8,6 @@ services:
     container_name: oziksustain-backend
     restart: always
     ports:
-      - "10000:10000"
+      - "80:10000"
     env_file:
       - ./backend/.env
