@@ -11,6 +11,9 @@ RUN go mod download
 # Copy the source code
 COPY . .
 
+# Generate Prisma Client
+RUN go run github.com/steebchen/prisma-client-go generate
+
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/api
 
