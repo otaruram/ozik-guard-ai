@@ -1,0 +1,111 @@
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgvector(map: "vector")]
+}
+
+generator client {
+  provider        = "prisma-client-go"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+enum AuditSeverity {
+  HIGH_RISK
+  MEDIUM_RISK
+  COMPLIANT
+}
+
+enum BadgeStatus {
+  ACTIVE
+  INVALID
+  REVOKED
+}
+
+model User {
+  // Gunakan ID dari Supabase auth.users secara langsung, jangan auto-generate
+  id             String         @id 
+  email          String         @unique
+  name           String
+  avatarUrl      String?
+  company        String?
+  provider       String         @default("google")
+  creditsBalance Int            @default(3)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  audits         ProjectAudit[]
+
+  @@map("users")
+}
+
+model ProjectAudit {
+  id                String            @id @default(uuid())
+  userId            String
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectName       String
+  pddFileType       String
+  
+  // METADATA DRILLBIT REPORT
+  totalPages        Int               @default(0)
+  totalWords        Int               @default(0)
+  totalSentences    Int               @default(0)
+  
+  // TEKS DOKUMEN UTUH UNTUK PANEL KIRI (Format JSON Array paragraf)
+  parsedDocumentJson Json?
+
+  feasibilityScore  Float
+  scoreLegal        Float             @default(0)
+  scoreTechnical    Float             @default(0)
+  scoreSocial       Float             @default(0)
+  scoreTransparency Float             @default(0)
+  sha256Hash        String            @unique
+  status            BadgeStatus       @default(ACTIVE)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  issues            AuditIssue[]
+  badgeVerification BadgeVerification?
+
+  @@map("project_audits")
+}
+
+model AuditIssue {
+  id                String        @id @default(uuid())
+  auditId           String
+  audit             ProjectAudit  @relation(fields: [auditId], references: [id], onDelete: Cascade)
+  severity          AuditSeverity
+  
+  // KOORDINAT PARAGRAF (Wajib untuk UI Highlight DrillBit)
+  pageNumber        Int           @default(1)
+  chunkIndex        Int           @default(0)
+
+  clauseText        String        @db.Text
+  matchedLaw        String
+  originalLawText   String        @db.Text
+  suggestedRevision String        @db.Text
+  createdAt         DateTime      @default(now())
+
+  @@map("audit_issues")
+}
+
+model BadgeVerification {
+  id              String       @id @default(uuid())
+  auditId         String       @unique
+  audit           ProjectAudit @relation(fields: [auditId], references: [id], onDelete: Cascade)
+  signedPayload   String       @db.Text
+  sha256Signature String       @unique
+  status          BadgeStatus  @default(ACTIVE)
+  verifiedAt      DateTime     @default(now())
+
+  @@map("badge_verifications")
+}
+
+model RegulasiKnowledgeBase {
+  id           String                 @id @default(uuid())
+  regName      String
+  article      String
+  content      String                 @db.Text
+  embedding    Unsupported("vector")?
+  riskCategory AuditSeverity
+  createdAt    DateTime               @default(now())
+
+  @@map("regulasi_knowledge_base")
+}
