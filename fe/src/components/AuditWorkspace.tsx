@@ -1,0 +1,649 @@
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import {
+  Upload, Lock, Loader2, AlertTriangle, Globe, ShieldCheck, Zap,
+  CheckCircle2, BookOpen, Copy, ChevronLeft, ChevronRight, FileText,
+  ZoomIn, ZoomOut, Download, Fingerprint, Calendar, Hash, FileStack,
+  Scale, Building2, Wand2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { api } from "@/lib/api";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from "recharts";
+import { PDFReportTemplate } from "./PDFReportTemplate";
+
+interface AuditWorkspaceProps {
+  isFreemium?: boolean;
+  onAuditComplete?: () => void;
+  userName?: string;
+  userCompany?: string;
+  userEmail?: string;
+  initialResult?: any;
+  initialStatus?: "idle" | "configure" | "parsing" | "masking" | "spatial" | "law" | "result";
+}
+
+export function AuditWorkspace({ 
+  isFreemium = true, 
+  onAuditComplete, 
+  userName, 
+  userCompany,
+  userEmail = "user@example.com",
+  initialResult = null, 
+  initialStatus = "idle" 
+}: AuditWorkspaceProps) {
+  const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const rightPanelRef = useRef<HTMLDivElement>(null);
+  const reportRef = useRef<HTMLDivElement>(null);
+  const pdfTemplateRef = useRef<HTMLDivElement>(null);
+  const [status, setStatus] = useState<"idle" | "configure" | "parsing" | "masking" | "spatial" | "law" | "result">(initialStatus);
+  const [result, setResult] = useState<any>(initialResult);
+  const [activeClauseId, setActiveClauseId] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState("");
+  const [fileSize, setFileSize] = useState(0);
+  const [pageScope, setPageScope] = useState("teaser");
+  const [customRange, setCustomRange] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [zoom, setZoom] = useState(100);
+  const [view, setView] = useState<"cover" | "workspace">("cover");
+  const CLAUSES_PER_PAGE = 4;
+
+  const getFlatClauses = () => {
+    if (result?.clauses && Array.isArray(result.clauses)) return result.clauses;
+    if (result?.parsedDocumentJson) {
+      try {
+        const parsed = JSON.parse(result.parsedDocumentJson);
+        if (parsed.pages) {
+          return parsed.pages.flatMap((p: any) => p.chunks || []);
+        }
+      } catch (e) {}
+    }
+    return [];
+  };
+
+  const flatClauses = getFlatClauses();
+
+  const totalPages = result?.totalPages || (flatClauses.length > 0 ? Math.max(1, Math.ceil(flatClauses.length / CLAUSES_PER_PAGE)) : 1);
+  const visibleClauses = flatClauses.slice((currentPage - 1) * CLAUSES_PER_PAGE, currentPage * CLAUSES_PER_PAGE);
+
+  // Stats
+  const totalClauses = flatClauses.length || 0;
+  const highCount = flatClauses.filter((c: any) => c.status === "high" || c.status === "HIGH_RISK").length || 0;
+  const mediumCount = flatClauses.filter((c: any) => c.status === "medium" || c.status === "MEDIUM_RISK").length || 0;
+  const compliantCount = flatClauses.filter((c: any) => c.status === "compliant" || c.status === "COMPLIANT").length || 0;
+  const totalWords = result?.totalWords || (flatClauses.reduce((acc: number, c: any) => acc + (c.text?.split(/\s+/).length || 0), 0) || 0);
+  const totalSentences = result?.totalSentences || (flatClauses.reduce((acc: number, c: any) => acc + (c.text?.split(/[.!?]+/).filter(Boolean).length || 0), 0) || 0);
+
+  const radarData = [
+    { subject: 'Legal', A: result?.scoreLegal || 0, fullMark: 40 },
+    { subject: 'Technical', A: result?.scoreTechnical || 0, fullMark: 30 },
+    { subject: 'Social', A: result?.scoreSocial || 0, fullMark: 15 },
+    { subject: 'Transparency', A: result?.scoreTransparency || 0, fullMark: 15 },
+  ];
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  useEffect(() => {
+    if (activeClauseId !== null && rightPanelRef.current) {
+      const card = rightPanelRef.current.querySelector(`[data-clause-id="${activeClauseId}"]`);
+      if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [activeClauseId]);
+
+  useEffect(() => {
+    if (status === "result" && result?.clauses?.length > 0) {
+      const firstIssue = result.clauses.find((c: any) => c.status !== "compliant");
+      setActiveClauseId(firstIssue ? firstIssue.id : result.clauses[0].id);
+    }
+  }, [status, result]);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+
+    if (selectedFile.size > 10 * 1024 * 1024) {
+      alert("Ukuran file melebihi batas 10 MB.");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    if (selectedFile.type.startsWith("image/")) {
+      alert("Format gambar tidak didukung. Harap unggah PDF, DOCX, atau TXT.");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+    
+    setFile(selectedFile);
+    setFileName(selectedFile.name);
+    setFileSize(selectedFile.size);
+    setStatus("configure");
+  };
+
+  const startAudit = async () => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("document", file);
+    if (!isFreemium) formData.append("projectName", file.name);
+    
+    // Append page slicing configuration
+    formData.append("page_mode", pageScope);
+    if (pageScope === "custom") {
+      formData.append("custom_range", customRange);
+    }
+    setStatus("parsing");
+    await new Promise(r => setTimeout(r, 800));
+    setStatus("masking");
+    await new Promise(r => setTimeout(r, 800));
+    setStatus("spatial");
+    await new Promise(r => setTimeout(r, 800));
+    setStatus("law");
+    try {
+      const res = isFreemium ? await api.guestTeaser(formData) : await api.processFullAudit(formData);
+      
+      onAuditComplete?.();
+
+      if (res.auditId && !isFreemium) {
+        navigate({ to: `/workspace/${res.auditId}` });
+        return;
+      }
+
+      setResult(res);
+      setStatus("result");
+      setCurrentPage(1);
+      setView("cover");
+    } catch (err) {
+      console.error(err);
+      setStatus("idle");
+      alert("Gagal memproses audit.");
+    }
+  };
+
+  const handleRegister = () => navigate({ to: "/auth" });
+
+  const handleDownloadPDF = async () => {
+    if (!reportRef.current) return;
+    try {
+      const { pdf } = await import("@react-pdf/renderer");
+      const blob = await pdf(<PDFReportTemplate data={result} userName={userName || "OzikSustain User"} userEmail={userEmail} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `OzikSustain-Audit-${result?.auditId?.substring(0, 8) || "report"}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (e) { console.error("PDF export failed:", e); alert("Gagal mengekspor PDF."); }
+  };
+
+  const getBg = (s: string) => s === "high" ? "#FEE2E2" : s === "medium" ? "#FEF3C7" : "#D1FAE5";
+  const getBorder = (s: string) => s === "high" ? "#EF4444" : s === "medium" ? "#F59E0B" : "#10B981";
+
+  // ─── IDLE ───
+  if (status === "idle") {
+    return (
+      <div className="w-full border-4 border-[#0F382C] bg-white shadow-[12px_12px_0_rgba(15,56,44,1)] flex flex-col font-sans">
+        <div className="border-b-4 border-[#0F382C] bg-[#0F382C] px-6 py-4">
+          <h3 className="font-black uppercase tracking-widest text-white text-sm flex items-center gap-2">
+            <Zap className="h-5 w-5 text-[#FACC15] fill-[#FACC15]" /> {isFreemium ? "Freemium Teaser Workspace" : "OzikSustain Full Workspace"}
+          </h3>
+        </div>
+        <div className="flex-1 p-8 md:p-12 flex flex-col items-center justify-center bg-white min-h-[400px]">
+          <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".pdf,.doc,.docx,.txt" />
+          <div className="w-full max-w-2xl border-4 border-dashed border-[#0F382C] p-12 hover:bg-[#0F382C] hover:text-white transition-all cursor-pointer flex flex-col items-center justify-center group text-[#0F382C]" onClick={() => fileInputRef.current?.click()}>
+            <Upload className="h-16 w-16 mb-6 group-hover:-translate-y-2 transition-transform" />
+            <h4 className="text-2xl font-black uppercase tracking-widest mb-2 text-center">Unggah Dokumen PDD</h4>
+            <p className="font-bold opacity-70 text-center text-sm mb-4">Maksimal 10 MB (PDF, DOCX)</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── CONFIGURE ───
+  if (status === "configure") {
+    return (
+      <div className="w-full border-4 border-[#0F382C] bg-white shadow-[12px_12px_0_rgba(15,56,44,1)] flex flex-col font-sans min-h-[400px]">
+        <div className="border-b-4 border-[#0F382C] bg-[#0F382C] px-6 py-4">
+          <h3 className="font-black uppercase tracking-widest text-white text-sm flex items-center gap-2">
+            <FileStack className="h-5 w-5 text-[#FACC15]" /> Konfigurasi Dokumen
+          </h3>
+        </div>
+        <div className="p-8 max-w-3xl mx-auto w-full">
+          <div className="bg-gray-50 border-2 border-[#0F382C] p-4 mb-6 flex justify-between items-center">
+            <div>
+              <p className="text-xs font-black uppercase text-gray-500 mb-1">File Terpilih</p>
+              <p className="font-bold text-[#0F382C] truncate max-w-sm">{fileName}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs font-black uppercase text-gray-500 mb-1">Ukuran</p>
+              <p className="font-bold text-[#0F382C]">{(fileSize / 1024 / 1024).toFixed(2)} MB</p>
+            </div>
+          </div>
+
+          <h4 className="font-black uppercase text-sm text-[#0F382C] mb-4">Pilih Cakupan Analisis (Page Scope)</h4>
+          <div className="space-y-3 mb-8">
+            <label className={`block border-2 p-4 cursor-pointer transition-all ${pageScope === "teaser" ? "border-[#0F382C] bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}>
+              <div className="flex items-center gap-3">
+                <input type="radio" name="scope" value="teaser" checked={pageScope === "teaser"} onChange={() => setPageScope("teaser")} className="w-4 h-4 accent-[#0F382C]" />
+                <div>
+                  <div className="font-bold text-[#0F382C]">Free Teaser / Quick Audit</div>
+                  <div className="text-xs text-gray-500">Analisis cepat terbatas pada Halaman 1 - 3.</div>
+                </div>
+              </div>
+            </label>
+            <label className={`block border-2 p-4 cursor-pointer transition-all ${pageScope === "custom" ? "border-[#0F382C] bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}>
+              <div className="flex items-center gap-3">
+                <input type="radio" name="scope" value="custom" checked={pageScope === "custom"} onChange={() => setPageScope("custom")} className="w-4 h-4 accent-[#0F382C]" disabled={isFreemium} />
+                <div className="w-full">
+                  <div className="font-bold text-[#0F382C] flex items-center justify-between">
+                    Custom Range
+                    {isFreemium && <Badge variant="outline" className="text-[9px] uppercase">Pro</Badge>}
+                  </div>
+                  <div className="text-xs text-gray-500 mb-2">Pilih halaman spesifik.</div>
+                  {pageScope === "custom" && (
+                    <input type="text" placeholder="Contoh: 1-5, 8, 11-13" value={customRange} onChange={(e) => setCustomRange(e.target.value)} className="w-full border border-gray-300 p-2 text-sm focus:outline-none focus:border-[#0F382C]" />
+                  )}
+                </div>
+              </div>
+            </label>
+            <label className={`block border-2 p-4 cursor-pointer transition-all ${pageScope === "full" ? "border-[#0F382C] bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}>
+              <div className="flex items-center gap-3">
+                <input type="radio" name="scope" value="full" checked={pageScope === "full"} onChange={() => setPageScope("full")} className="w-4 h-4 accent-[#0F382C]" disabled={isFreemium} />
+                <div>
+                  <div className="font-bold text-[#0F382C] flex items-center justify-between gap-2">
+                    Full Document Audit (Semua Halaman)
+                    {isFreemium && <Badge variant="outline" className="text-[9px] uppercase">Pro</Badge>}
+                  </div>
+                  <div className="text-xs text-gray-500">Analisis menyeluruh untuk seluruh dokumen PDD.</div>
+                </div>
+              </div>
+            </label>
+          </div>
+
+          <Button onClick={startAudit} className="w-full bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] font-black text-sm uppercase tracking-widest h-14 border-4 border-[#0F382C] flex items-center justify-center gap-2">
+            🚀 Mulai Analisis Sekarang
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── LOADING ───
+  if (status !== "result") {
+    return (
+      <div className="w-full border-4 border-[#0F382C] bg-[#0F382C] shadow-[12px_12px_0_rgba(15,56,44,1)] flex flex-col min-h-[400px]">
+        <div className="flex-1 p-12 flex flex-col items-center justify-center text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:32px_32px]" />
+          <div className="relative z-10 flex flex-col items-center">
+            <Loader2 className="h-20 w-20 animate-spin mb-8 text-[#FACC15]" />
+            <h3 className="text-3xl font-black uppercase tracking-widest text-center mb-6">Analisis AI Berjalan...</h3>
+            <div className="flex flex-col items-center gap-3">
+              {[
+                { key: "parsing", label: "1. Membaca Dokumen (In-Memory)" },
+                { key: "masking", label: "2. PII Auto-Masking (UU PDP)" },
+                { key: "spatial", label: "3. Verifikasi Data Spasial" },
+                { key: "law", label: "4. RAG Audit Regulasi (Pasal.id)" },
+              ].map((step) => {
+                const order = ["parsing", "masking", "spatial", "law"];
+                const curIdx = order.indexOf(status);
+                const sIdx = order.indexOf(step.key);
+                const isActive = sIdx <= curIdx;
+                const isCurrent = sIdx === curIdx;
+                return (
+                  <Badge key={step.key} variant={isActive ? "default" : "outline"} className={`border-2 border-white rounded-none font-black text-xs uppercase px-4 py-2 w-72 justify-center transition-all ${isCurrent ? "bg-[#FACC15] text-[#0F382C] border-[#FACC15] scale-105" : ""}`}>
+                    {isActive && sIdx < curIdx && <CheckCircle2 className="h-3 w-3 mr-1" />}{step.label}
+                  </Badge>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── RESULT ───
+  return (
+    <div ref={reportRef} className="w-full border-4 border-[#0F382C] bg-white shadow-[12px_12px_0_rgba(15,56,44,1)] flex flex-col font-sans" style={{ minHeight: "600px" }}>
+      {/* ══ TOP BAR ══ */}
+      <div className="border-b-4 border-[#0F382C] bg-[#0F382C] px-4 py-2 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2">
+          <button onClick={() => setView("cover")} className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all ${view === "cover" ? "bg-[#FACC15] text-[#0F382C]" : "text-white/60 hover:text-white"}`}>
+            📋 Cover Report
+          </button>
+          <button onClick={() => setView("workspace")} className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all ${view === "workspace" ? "bg-[#FACC15] text-[#0F382C]" : "text-white/60 hover:text-white"}`}>
+            🔍 DrillBit Workspace
+          </button>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button size="sm" onClick={handleDownloadPDF} className="rounded-none bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] font-black text-[9px] uppercase h-7 border-2 border-[#0F382C] flex items-center gap-1">
+            <Download className="h-3 w-3" /> Download PDF
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => { 
+            setStatus("idle"); 
+            setResult(null); 
+            setActiveClauseId(null); 
+            setFile(null); 
+            setFileName(""); 
+            setFileSize(0); 
+          }} className="rounded-none border-2 border-white/30 text-white font-black text-[9px] uppercase h-7 hover:bg-white/10">
+            Audit Baru
+          </Button>
+        </div>
+      </div>
+
+      {/* ═══════════════════ COVER REPORT PAGE ═══════════════════ */}
+      {view === "cover" && (
+        <div className="flex-1 overflow-y-auto">
+          {/* Header Banner */}
+          <div className="bg-[#0F382C] text-white px-8 py-6 border-b-4 border-[#FACC15]">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="bg-[#FACC15] p-2"><ShieldCheck className="h-6 w-6 text-[#0F382C]" /></div>
+                  <div>
+                    <h1 className="text-xl font-black uppercase tracking-wider">OzikSustain Verification Report</h1>
+                    <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider mt-0.5">SHA-256 Audit ID: {result?.auditId?.substring(0, 16) || result?.sha256Hash?.substring(0, 16) || "N/A"}...</p>
+                  </div>
+                </div>
+              </div>
+              {result?.sha256Hash && (
+                <div className="flex items-center gap-4">
+                  <Badge className="bg-emerald-600 text-white border-2 border-emerald-400 rounded-none font-black text-[9px] uppercase px-3 py-1">
+                    <Fingerprint className="h-3 w-3 mr-1" /> SHA-256 Verified
+                  </Badge>
+                  <div className="bg-white p-1 rounded-sm">
+                    <img 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(`https://oziksustain.my.id/verify/${result.sha256Hash || result.auditId}`)}`} 
+                      alt="Verification QR" 
+                      className="w-12 h-12"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+            <p className="text-white/50 text-[9px] font-bold mt-3 italic">
+              The Report is Generated by OzikSustain AI Compliance & Legal Audit Engine (Pasal.id Integrated)
+            </p>
+          </div>
+
+          {/* Two Columns: Metadata + Pie Chart */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border-b-2 border-[#0F382C]/10">
+            {/* Left: Submission Information */}
+            <div className="p-6 border-r-2 border-[#0F382C]/10">
+              <h3 className="font-black text-[11px] uppercase tracking-widest text-[#0F382C] mb-4 flex items-center gap-2">
+                <FileStack className="h-4 w-4" /> Submission Information
+              </h3>
+              <table className="w-full text-sm">
+                <tbody>
+                  {[
+                    { icon: <Building2 className="h-3 w-3" />, label: "Author / Company", value: userName || userCompany || "User" },
+                    { icon: <FileText className="h-3 w-3" />, label: "Project Title", value: fileName || result?.projectName || "PDD Document" },
+                    { icon: <Hash className="h-3 w-3" />, label: "Submission ID", value: result?.auditId?.substring(0, 12) || "—" },
+                    { icon: <Calendar className="h-3 w-3" />, label: "Audit Date", value: new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }) },
+                    { icon: <FileStack className="h-3 w-3" />, label: "Metadata", value: `${totalPages} Halaman, ${totalSentences} Kalimat, ${totalWords} Kata` },
+                    { icon: <Scale className="h-3 w-3" />, label: "Legal Standard", value: "Permen ESDM & UU Lingkungan Hidup (Pasal.id)" },
+                    { icon: <Globe className="h-3 w-3" />, label: "Feasibility Score", value: `${result?.feasibilityScore ?? 0}/100` },
+                  ].map((row, i) => (
+                    <tr key={i} className="border-b border-[#0F382C]/10">
+                      <td className="py-2.5 pr-3 text-[#0F382C]/50 font-bold text-[10px] uppercase tracking-wider whitespace-nowrap">
+                        <span className="flex items-center gap-1.5">{row.icon} {row.label}</span>
+                      </td>
+                      <td className="py-2.5 font-bold text-[#0F382C] text-xs">{row.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Right: Radar Chart */}
+            <div className="p-6 flex flex-col items-center justify-center relative w-full md:w-1/2">
+              {isFreemium && (
+                <div className="absolute inset-0 z-10 backdrop-blur-sm bg-white/50 flex flex-col items-center justify-center p-4">
+                  <Lock className="h-8 w-8 mb-2 text-[#FACC15]" />
+                  <p className="text-[10px] font-black uppercase text-center text-[#0F382C]">Skor Disembunyikan</p>
+                  <Button onClick={handleRegister} size="sm" className="mt-2 bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] text-[9px] font-black h-6 uppercase border-2 border-[#0F382C]">
+                    Upgrade (3 Kredit)
+                  </Button>
+                </div>
+              )}
+              <h3 className="font-black text-[11px] uppercase tracking-widest text-[#0F382C] mb-4 text-center">4-Pillar Scoring</h3>
+              {radarData.length > 0 ? (
+                <ResponsiveContainer width="100%" height={220}>
+                  <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                    <PolarGrid stroke="#0F382C" opacity={0.2} />
+                    <PolarAngleAxis dataKey="subject" tick={{ fill: "#0F382C", fontSize: 10, fontWeight: "bold" }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 'dataMax']} tick={false} axisLine={false} />
+                    <Radar name="Score" dataKey="A" stroke="#10B981" strokeWidth={2} fill="#10B981" fillOpacity={0.6} />
+                    <Tooltip contentStyle={{ backgroundColor: "#0F382C", color: "white", borderRadius: "0px", border: "2px solid #10B981" }} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              ) : (
+                <p className="text-gray-400 text-sm">No data</p>
+              )}
+              {/* Score Summary Badges */}
+              <div className="flex gap-3 mt-4 flex-wrap justify-center">
+                <div className="bg-[#D1FAE5] border-2 border-[#10B981] px-3 py-1.5 text-center">
+                  <div className="text-lg font-black text-[#0F382C]">{isFreemium ? "**" : compliantCount}</div>
+                  <div className="text-[8px] font-black uppercase text-[#0F382C]/60">Compliant</div>
+                </div>
+                <div className="bg-[#FEF3C7] border-2 border-[#F59E0B] px-3 py-1.5 text-center">
+                  <div className="text-lg font-black text-[#0F382C]">{isFreemium ? "**" : mediumCount}</div>
+                  <div className="text-[8px] font-black uppercase text-[#0F382C]/60">Medium</div>
+                </div>
+                <div className="bg-[#FEE2E2] border-2 border-[#EF4444] px-3 py-1.5 text-center">
+                  <div className="text-lg font-black text-[#0F382C]">{isFreemium ? "**" : highCount}</div>
+                  <div className="text-[8px] font-black uppercase text-[#0F382C]/60">High Risk</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Disclaimer */}
+          <div className="px-8 py-4 bg-[#FFFBEB] border-t-2 border-[#F59E0B]/30">
+            <p className="text-[10px] text-[#0F382C]/70 leading-relaxed font-bold">
+              📌 <strong>Disclaimer:</strong> This compliance report is generated using OzikSustain AI in integration with live Pasal.id legal databases and spatial environmental APIs.
+              It serves as an official proof of compliance for PLN SustainAction 2026. The SHA-256 hash ensures tamper-proof verification of audit integrity.
+            </p>
+          </div>
+
+          {/* CTA to workspace */}
+          <div className="px-8 py-6 flex items-center justify-center border-t-2 border-[#0F382C]/10">
+            <Button onClick={() => setView("workspace")} className="rounded-none bg-[#0F382C] hover:bg-[#0F382C]/90 text-white font-black text-xs uppercase tracking-wider px-8 h-11 border-2 border-[#0F382C] flex items-center gap-2">
+              🔍 Buka DrillBit Workspace (Inspeksi Detail)
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════ DRILLBIT WORKSPACE ═══════════════════ */}
+      {view === "workspace" && (
+        <div className="flex-1 flex flex-col md:flex-row overflow-hidden" style={{ height: "calc(100vh - 240px)", minHeight: "500px" }}>
+
+          {/* ─── LEFT PANEL ─── */}
+          <div className="w-full md:w-1/2 flex flex-col bg-[#F8F9FA] border-r-4 border-[#0F382C]">
+            {/* Toolbar */}
+            <div className="px-3 py-2 border-b-2 border-[#0F382C]/20 bg-white flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <FileText className="h-4 w-4 text-[#0F382C] shrink-0" />
+                <span className="text-[9px] font-black text-[#0F382C] uppercase tracking-wider truncate max-w-[140px]">{fileName || "Dokumen"}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Button size="icon" variant="ghost" disabled={currentPage <= 1} onClick={() => setCurrentPage(p => Math.max(1, p - 1))} className="h-6 w-6 rounded-none text-[#0F382C]"><ChevronLeft className="h-3 w-3" /></Button>
+                <span className="text-[9px] font-black text-[#0F382C] whitespace-nowrap">Hal {currentPage}/{totalPages}</span>
+                <Button size="icon" variant="ghost" disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} className="h-6 w-6 rounded-none text-[#0F382C]"><ChevronRight className="h-3 w-3" /></Button>
+                <div className="w-px h-4 bg-[#0F382C]/20 mx-1" />
+                <Button size="icon" variant="ghost" onClick={() => setZoom(z => Math.max(80, z - 10))} className="h-6 w-6 rounded-none"><ZoomOut className="h-3 w-3" /></Button>
+                <span className="text-[8px] font-bold text-[#0F382C]/50 w-7 text-center">{zoom}%</span>
+                <Button size="icon" variant="ghost" onClick={() => setZoom(z => Math.min(150, z + 10))} className="h-6 w-6 rounded-none"><ZoomIn className="h-3 w-3" /></Button>
+              </div>
+            </div>
+
+            {/* Document Content */}
+            <div className="flex-1 overflow-y-auto p-5 relative bg-white" style={{ fontSize: `${zoom}%` }}>
+              <div className="max-w-none space-y-6 font-serif text-[14px] leading-[1.85] text-gray-800 selection:bg-yellow-200">
+                {visibleClauses.map((p: any) => {
+                  const isActive = activeClauseId === p.id;
+                  const isLocked = isFreemium && currentPage > 1;
+                  const isHeading = p.text.match(/^(\d+\.\d+|\b[IVX]+\b|\bBab\b)\s/i) || p.text.length < 50;
+
+                  return (
+                    <div
+                      key={p.id}
+                      onClick={() => !isLocked && setActiveClauseId(p.id)}
+                      className={`relative px-4 py-3 rounded-sm transition-all cursor-pointer ${isLocked ? "opacity-25 blur-[3px] pointer-events-none select-none" : ""}`}
+                      style={{ 
+                        backgroundColor: isHeading ? "#FFFFFF" : getBg(p.status), 
+                        borderLeft: isHeading ? "none" : `4px solid ${getBorder(p.status)}`, 
+                        boxShadow: isActive ? `0 0 0 2px ${getBorder(p.status)}, 0 4px 16px rgba(0,0,0,0.12)` : "none", 
+                        transform: isActive ? "scale(1.01)" : "none",
+                        zIndex: isActive ? 10 : 1
+                      }}
+                    >
+                      {!isHeading && (
+                        <div className="absolute -top-3 right-2 z-10 opacity-90 hover:opacity-100">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[8px] font-black uppercase tracking-wider rounded-sm shadow-sm cursor-pointer" style={{ backgroundColor: p.status === "high" ? "#EF4444" : p.status === "medium" ? "#F59E0B" : "#10B981", color: p.status === "medium" ? "#78350F" : "#FFF" }}>
+                            {p.status === "high" ? "🔴 HIGH RISK - KLIK UTK SOLUSI" : p.status === "medium" ? "🟡 MEDIUM RISK - KLIK UTK SOLUSI" : "🟢 COMPLIANT"}
+                          </span>
+                        </div>
+                      )}
+                      
+                      {isHeading ? (
+                        <h4 className="font-black text-lg text-[#0F382C] mt-4 mb-2">{p.text}</h4>
+                      ) : (
+                        <p className="leading-[1.9] text-gray-900">{p.text}</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Saran Halaman Ini */}
+              {visibleClauses.some((p: any) => p.issue && p.status !== 'compliant' && p.issue.suggestedRevision) && (
+                <div className="mt-8 border-4 border-emerald-950 bg-emerald-50 p-6 shadow-[6px_6px_0_rgba(2,44,34,1)]">
+                  <h4 className="font-black text-emerald-950 uppercase tracking-widest text-sm mb-4 border-b-2 border-emerald-950/20 pb-2 flex items-center gap-2">
+                    <Wand2 className="h-5 w-5" /> Rekomendasi & Saran Halaman Ini
+                  </h4>
+                  <ul className="space-y-4">
+                    {visibleClauses
+                      .filter((p: any) => p.issue && p.status !== 'compliant' && p.issue.suggestedRevision)
+                      .map((p: any, idx: number) => (
+                        <li key={idx} className="text-sm font-bold text-emerald-950/80 leading-relaxed flex items-start gap-3">
+                           <div className="w-1.5 h-1.5 rounded-none bg-emerald-950 mt-1.5 shrink-0" />
+                           <div>
+                             <span className="bg-emerald-950 text-white px-1.5 py-0.5 text-[10px] uppercase font-black mr-2">
+                               {p.status === "high" ? "High Risk" : "Medium Risk"}
+                             </span>
+                             {p.issue.suggestedRevision}
+                           </div>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              )}
+
+              {isFreemium && currentPage > 1 && (
+                <div className="absolute inset-0 bg-white/60 backdrop-blur-md flex flex-col items-center justify-center z-20">
+                  <div className="bg-[#0F382C] text-white p-6 border-4 border-[#0F382C] shadow-[8px_8px_0_rgba(15,56,44,0.3)] text-center max-w-xs">
+                    <Lock className="h-8 w-8 mx-auto mb-3 text-[#FACC15]" />
+                    <h4 className="font-black uppercase text-sm mb-2">🔒 Terkunci</h4>
+                    <p className="text-white/70 text-xs font-bold mb-4">Daftar Akun Gratis (3 Kredit) untuk Buka Seluruh Draf Revisi AI & SHA-256 QR Badge</p>
+                    <Button onClick={handleRegister} className="bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] rounded-none border-2 border-[#0F382C] font-black text-xs uppercase w-full">Daftar Gratis</Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ─── RIGHT PANEL ─── */}
+          <div className="w-full md:w-1/2 flex flex-col bg-white">
+            <div className="px-3 py-2 border-b-2 border-[#0F382C]/20 bg-[#0F382C] flex items-center justify-between shrink-0">
+              <span className="font-black text-[9px] uppercase tracking-widest text-white flex items-center gap-2"><Zap className="h-3 w-3 text-[#FACC15] fill-[#FACC15]" /> Detail Analisis & Resolusi</span>
+              <span className="text-[8px] font-black uppercase text-[#FACC15]">{isFreemium ? "Preview" : "Full Access"}</span>
+            </div>
+
+            {/* Score Widgets */}
+            <div className="grid grid-cols-3 gap-0 border-b border-[#0F382C]/10 shrink-0">
+              <div className="p-2.5 border-r border-[#0F382C]/10 text-center">
+                <div className="text-[7px] font-black uppercase text-gray-400 tracking-wider">Feasibility</div>
+                <div className="text-xl font-black text-[#0F382C]">{result?.feasibilityScore ?? 0}<span className="text-[10px] text-gray-400">/100</span></div>
+              </div>
+              <div className="p-2.5 border-r border-[#0F382C]/10 text-center">
+                <div className="text-[7px] font-black uppercase text-gray-400 tracking-wider">Technical</div>
+                <div className="text-xl font-black text-[#0F382C] flex items-center justify-center gap-1"><Globe className="h-3 w-3 text-emerald-500" />{result?.scoreTechnical ?? 0}</div>
+              </div>
+              <div className="p-2.5 text-center">
+                <div className="text-[7px] font-black uppercase text-gray-400 tracking-wider">SHA-256</div>
+                <div className="text-xl font-black text-[#0F382C] flex items-center justify-center gap-1"><ShieldCheck className="h-3 w-3 text-emerald-500" />{result?.sha256Hash ? "✓" : "—"}</div>
+              </div>
+            </div>
+
+            {/* Cards */}
+            <div ref={rightPanelRef} className="flex-1 overflow-y-auto p-3 space-y-3">
+              {flatClauses.map((clause: any, idx: number) => {
+                const isActive = activeClauseId === clause.id;
+                const isLockedCard = isFreemium && idx > 0 && (clause.status !== "compliant" && clause.status !== "COMPLIANT");
+                return (
+                  <div key={clause.id} data-clause-id={clause.id} onClick={() => setActiveClauseId(clause.id)} className="border-2 transition-all cursor-pointer" style={{ borderColor: isActive ? getBorder(clause.status) : "#E5E7EB", boxShadow: isActive ? "0 4px 12px rgba(0,0,0,0.08)" : "none" }}>
+                    <div className="px-3 py-1.5 flex items-center justify-between" style={{ backgroundColor: (clause.status === "high" || clause.status === "HIGH_RISK") ? "#EF4444" : (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "#F59E0B" : "#10B981" }}>
+                      <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "#78350F" : "#FFF" }}>
+                        {(clause.status === "high" || clause.status === "HIGH_RISK") ? "🔴 HIGH RISK" : (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "🟡 MEDIUM RISK" : "🟢 COMPLIANT"}
+                      </span>
+                      <span className="text-[8px] font-bold uppercase tracking-wider" style={{ color: clause.status === "medium" ? "#78350F" : "rgba(255,255,255,0.8)" }}>{clause.clause}</span>
+                    </div>
+                    {isLockedCard ? (
+                      <div className="p-5 text-center bg-gray-50">
+                        <Lock className="h-5 w-5 mx-auto mb-2 text-gray-400" />
+                        <p className="text-[9px] font-bold uppercase text-gray-400 mb-2">🔒 Upgrade untuk Buka</p>
+                        <Button onClick={handleRegister} size="sm" className="bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] rounded-none border-2 border-[#0F382C] font-black text-[8px] uppercase h-6">Upgrade (3 Kredit)</Button>
+                      </div>
+                    ) : clause.status === "compliant" ? (
+                      <div className="p-3 bg-emerald-50/50">
+                        <div className="flex items-center gap-1.5 mb-1"><CheckCircle2 className="h-3 w-3 text-emerald-600" /><span className="text-[10px] font-black text-emerald-800 uppercase">Klausul Aman</span></div>
+                        <p className="text-[11px] text-gray-600 leading-relaxed">Tidak ada pelanggaran terdeteksi. Memenuhi standar kepatuhan regulasi.</p>
+                      </div>
+                    ) : (
+                      <div className="divide-y divide-gray-100">
+                        <div className="p-4">
+                          <div className="flex items-center gap-2 mb-2"><AlertTriangle className={`h-4 w-4 ${clause.status === "high" ? "text-red-600" : "text-yellow-600"}`} /><span className="text-[10px] font-black uppercase tracking-wider text-[#0F382C]">Problem Analysis</span></div>
+                          <p className="text-sm text-gray-700 leading-relaxed font-medium">{clause.issue?.severity === "HIGH_RISK" ? "Klausul ini melanggar regulasi tata ruang dan lingkungan. PDD tidak mencantumkan persyaratan perizinan yang diwajibkan oleh undang-undang." : "Terdapat ambiguitas dalam komitmen lingkungan. Klaim tidak didukung oleh rujukan pasal atau dokumen pendukung yang memadai."}</p>
+                        </div>
+                        <div className="p-4 bg-[#F0FFF4]">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] font-black uppercase tracking-wider text-[#0F382C] flex items-center gap-1"><BookOpen className="h-4 w-4" /> Official Law Citation (Pasal.id)</span>
+                            <Badge variant="outline" className="border border-[#0F382C]/20 rounded-none text-[8px] uppercase font-bold px-2 py-0.5">Live FRBR URI</Badge>
+                          </div>
+                          <a href="#" className="bg-[#0F382C] text-white px-2 py-1 text-[10px] font-black uppercase tracking-wider inline-block mb-2 hover:underline">
+                            {clause.issue?.matchedLaw || "Referensi Hukum"}
+                          </a>
+                          <p className="text-xs text-[#0F382C]/90 leading-relaxed font-serif italic border-l-2 border-[#0F382C]/30 pl-3">"{clause.issue?.originalLawText || "—"}"</p>
+                        </div>
+                        <div className="p-4 relative">
+                          <div className="absolute top-0 right-0 bg-[#10B981] text-white text-[8px] font-black uppercase px-2 py-1 border-l-2 border-b-2 border-[#10B981]">AI Revision</div>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-[#10B981] block mb-2">AI Suggested Solution & Draft Revision</span>
+                          <div className="p-4 bg-[#ECFDF5] border-2 border-[#10B981] font-serif text-sm text-[#064E3B] leading-relaxed shadow-inner">"{clause.issue?.suggestedRevision || "Gunakan kalimat revisi yang mencakup lampiran dokumen perizinan dari otoritas berwenang."}"</div>
+                          <Button onClick={() => handleCopy(clause.issue?.suggestedRevision || "Revisi otomatis")} className="mt-4 w-full rounded-none bg-[#10B981] hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 h-10 shadow-[4px_4px_0_rgba(15,56,44,1)] border-2 border-[#0F382C] transition-all active:translate-x-1 active:translate-y-1 active:shadow-none">
+                            {copied ? <CheckCircle2 className="h-4 w-4 text-white" /> : <Copy className="h-4 w-4" />}
+                            {copied ? "Berhasil Disalin!" : "Salin Draf Perbaikan"}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
