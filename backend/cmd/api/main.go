@@ -55,7 +55,7 @@ func main() {
 	// 6. Global Middleware
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:8081, http://localhost:3000, https://oziksustain.id, https://oziksustain.my.id",
+		AllowOrigins: "http://localhost:8081, http://localhost:3000, https://oziksustain.id, https://oziksustain.my.id, https://oziksustain.vercel.app",
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
 	}))
