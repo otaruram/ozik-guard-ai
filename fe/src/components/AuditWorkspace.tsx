@@ -362,7 +362,7 @@ export function AuditWorkspace({
                   </Badge>
                   <div className="bg-white p-1 rounded-sm">
                     <img 
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(`https://oziksustain.my.id/verify/${result.sha256Hash || result.auditId}`)}`} 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(`https://oziksustain.vercel.app/verify/${result.sha256Hash || result.auditId}`)}`} 
                       alt="Verification QR" 
                       className="w-12 h-12"
                     />
