@@ -177,7 +177,7 @@ export const PDFReportTemplate = ({ data, userName, userEmail }: PDFReportTempla
           </View>
           <View>
             <Image 
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`https://oziksustain.my.id/verify/${data.sha256Hash || data.auditId}`)}`} 
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`https://oziksustain.vercel.app/verify/${data.sha256Hash || data.auditId}`)}`} 
               style={styles.qrCode} 
             />
           </View>
