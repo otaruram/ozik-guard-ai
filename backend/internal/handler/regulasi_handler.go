@@ -29,3 +29,19 @@ func (h *RegulasiHandler) SearchRegulasi(c *fiber.Ctx) error {
 
 	return c.JSON(results)
 }
+
+func (h *RegulasiHandler) GetRecommendations(c *fiber.Ctx) error {
+	userID := c.Locals("userID")
+	if userID == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+
+	userIDStr := userID.(string)
+
+	results, err := h.regulasiService.GetRecommendations(c.Context(), userIDStr)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to get recommendations: " + err.Error()})
+	}
+
+	return c.JSON(results)
+}

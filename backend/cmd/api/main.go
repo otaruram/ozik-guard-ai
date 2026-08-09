@@ -39,7 +39,7 @@ func main() {
 	llmFactory := service.NewLLMFactoryService(cfg.SumopodURL, cfg.SumopodKey)
 	scoringEngine := service.NewScoringEngineService()
 	documentParser := service.NewDocumentParserService()
-	regulasiService := service.NewRegulasiService(client, cfg.SumopodURL, cfg.SumopodKey)
+	regulasiService := service.NewRegulasiService(client, auditRepo, cfg.SumopodURL, cfg.SumopodKey)
 	auditService := service.NewAuditService(auditRepo, userRepo, piiMasker, pasalID, llmFactory, scoringEngine)
 
 	// 4. Handlers (DI)
@@ -73,6 +73,9 @@ func main() {
 
 	// === Protected Routes (Supabase JWT) ===
 	protected := v1.Group("", middleware.SupabaseAuthMiddleware(cfg, userRepo))
+
+	// Regulasi Personalization
+	protected.Get("/regulasi/recommendations", regulasiHandler.GetRecommendations)
 
 	// User Profile
 	protected.Get("/user/me", userHandler.GetMe)
