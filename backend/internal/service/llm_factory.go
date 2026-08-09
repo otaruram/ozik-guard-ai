@@ -95,7 +95,7 @@ You MUST output ONLY a valid JSON object (no markdown, no explanation) containin
       "severity": "HIGH_RISK" | "MEDIUM_RISK",
       "clauseText": "<the problematic text from the document>",
       "matchedLaw": "<specific law reference e.g. UU No. 41/1999 Pasal 38>",
-      "originalLawText": "<relevant excerpt from the matched law>",
+      "originalLawText": "<relevant excerpt from the matched law, or 'Teks spesifik tidak ditemukan.' if unavailable. DO NOT use '__'>",
       "suggestedRevision": "<specific actionable revision in Bahasa Indonesia>"
     }
   ]
