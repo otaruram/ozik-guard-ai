@@ -10,8 +10,8 @@ export const Route = createFileRoute("/playground")({
 function Playground() {
   const [copiedUrl, setCopiedUrl] = useState(false);
 
-  const endpoint = "POST https://oziksustain.my.id/api/v1/audit/full-process";
-  
+  const endpoint = "POST https://ozikgrid.web.id/api/v1/audit/full-process";
+
   const handleCopy = () => {
     navigator.clipboard.writeText(endpoint);
     setCopiedUrl(true);
@@ -21,7 +21,7 @@ function Playground() {
   return (
     <div className="min-h-screen bg-emerald-50/30 text-emerald-950 font-sans selection:bg-emerald-900 selection:text-white pt-24 pb-32">
       <div className="max-w-4xl mx-auto px-4 md:px-6">
-        
+
         <div className="mb-12">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 border-4 border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,1)] mb-6">
             <BookOpen className="w-8 h-8 text-emerald-950" />
@@ -44,7 +44,7 @@ function Playground() {
               POST Endpoint
             </span>
           </div>
-          
+
           <div className="p-6 md:p-8">
             <h3 className="font-black uppercase text-emerald-950 mb-3 text-sm tracking-widest border-b-2 border-emerald-950/10 pb-2">
               Endpoint URL
@@ -63,7 +63,7 @@ function Playground() {
             </h3>
             <div className="bg-slate-900 rounded-none border-4 border-emerald-950 p-4 mb-8 overflow-x-auto">
               <pre className="text-emerald-400 font-mono text-sm leading-relaxed">
-{`Authorization: Bearer <YOUR_API_KEY>
+                {`Authorization: Bearer <YOUR_API_KEY>
 Content-Type: multipart/form-data`}
               </pre>
             </div>
@@ -103,7 +103,7 @@ Content-Type: multipart/form-data`}
             </h3>
             <div className="bg-slate-900 rounded-none border-4 border-emerald-950 p-4 overflow-x-auto">
               <pre className="text-emerald-400 font-mono text-sm leading-relaxed">
-{`{
+                {`{
   "feasibilityScore": 85,
   "status": "Tinggi",
   "issues": [
@@ -117,7 +117,7 @@ Content-Type: multipart/form-data`}
 }`}
               </pre>
             </div>
-            
+
           </div>
         </div>
 
