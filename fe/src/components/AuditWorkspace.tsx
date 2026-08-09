@@ -326,17 +326,6 @@ export function AuditWorkspace({
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <Button size="sm" onClick={handleDownloadPDF} className="flex-1 sm:flex-none rounded-none bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] font-black text-[10px] uppercase h-9 px-3 sm:px-4 border-2 border-[#0F382C] flex items-center justify-center gap-2 shadow-[2px_2px_0_rgba(15,56,44,1)] hover:translate-y-0.5 hover:shadow-none transition-all whitespace-nowrap">
             <Download className="h-4 w-4" /> <span className="hidden sm:inline">Unduh</span> PDF
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => { 
-            setStatus("idle"); 
-            setResult(null); 
-            setActiveClauseId(null); 
-            setFile(null); 
-            setFileName(""); 
-            setFileSize(0); 
-          }} className="flex-1 sm:flex-none rounded-none border-2 border-white/30 text-white font-black text-[9px] uppercase h-9 hover:bg-white/10 whitespace-nowrap">
-            Audit Baru
-          </Button>
         </div>
       </div>
 
@@ -590,9 +579,9 @@ export function AuditWorkspace({
             <div ref={rightPanelRef} className="flex-1 overflow-y-auto p-3 space-y-3">
               {flatClauses.map((clause: any, idx: number) => {
                 const isActive = activeClauseId === clause.id;
-                const isLockedCard = isFreemium && idx > 0 && (clause.status !== "compliant" && clause.status !== "COMPLIANT");
+                const isLockedCard = isFreemium && idx > 0;
                 return (
-                  <div key={clause.id} data-clause-id={clause.id} onClick={() => setActiveClauseId(clause.id)} className="border-2 transition-all cursor-pointer" style={{ borderColor: isActive ? getBorder(clause.status) : "#E5E7EB", boxShadow: isActive ? "0 4px 12px rgba(0,0,0,0.08)" : "none" }}>
+                  <div key={clause.id} data-clause-id={clause.id} onClick={() => !isLockedCard && setActiveClauseId(clause.id)} className={`border-2 transition-all ${isLockedCard ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'}`} style={{ borderColor: isActive ? getBorder(clause.status) : "#E5E7EB", boxShadow: isActive ? "0 4px 12px rgba(0,0,0,0.08)" : "none" }}>
                     <div className="px-3 py-1.5 flex items-center justify-between" style={{ backgroundColor: (clause.status === "high" || clause.status === "HIGH_RISK") ? "#EF4444" : (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "#F59E0B" : "#10B981" }}>
                       <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "#78350F" : "#FFF" }}>
                         {(clause.status === "high" || clause.status === "HIGH_RISK") ? "🔴 HIGH RISK" : (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "🟡 MEDIUM RISK" : "🟢 COMPLIANT"}
