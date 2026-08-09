@@ -33,7 +33,9 @@ import {
   Code2,
   Terminal,
   BookOpen,
-  Trash2
+  Trash2,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -170,6 +172,7 @@ function Dashboard() {
               items: [
                 { key: "overview", label: "Dashboard Utama", icon: LayoutDashboard },
                 { key: "history", label: "Histori Audit", icon: History },
+                { key: "regulasi", label: "Direktori Regulasi", icon: BookOpen, path: "/regulasi" },
               ]
             },
             {
@@ -198,7 +201,11 @@ function Dashboard() {
                     <button
                       key={item.key}
                       onClick={() => {
-                        setActive(item.key);
+                        if ((item as any).path) {
+                          navigate({ to: (item as any).path });
+                        } else {
+                          setActive(item.key);
+                        }
                         setMobileOpen(false);
                       }}
                       className={cn(
@@ -358,6 +365,8 @@ function HistoriAudit({ history, loading, refreshHistory }: { history: any[], lo
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const qrRef = useRef<SVGSVGElement>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const handleDelete = async () => {
     if (!selectedProject) return;
@@ -418,6 +427,9 @@ function HistoriAudit({ history, loading, refreshHistory }: { history: any[], lo
     code: `OZK-${item.id.substring(0, 8).toUpperCase()}`,
   }));
 
+  const totalPages = Math.ceil(mappedHistory.length / itemsPerPage);
+  const paginatedHistory = mappedHistory.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   const embedCode = `<script src="https://oziksustain.id/badge.js" data-id="${selectedProject?.code}"></script>`;
 
   return (
@@ -461,7 +473,7 @@ function HistoriAudit({ history, loading, refreshHistory }: { history: any[], lo
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-emerald-950/60 font-bold">Belum ada histori audit proyek.</td>
                 </tr>
-              ) : mappedHistory.map((row) => (
+              ) : paginatedHistory.map((row) => (
                 <tr key={row.id} className="border-b-2 border-emerald-950/20 hover:bg-emerald-50">
                   <td className="p-4 font-bold text-emerald-950 text-sm">{row.name}</td>
                   <td className="p-4 font-bold text-emerald-950/70 text-sm">{row.date}</td>
@@ -495,6 +507,31 @@ function HistoriAudit({ history, loading, refreshHistory }: { history: any[], lo
             </tbody>
           </table>
         </div>
+        {totalPages > 1 && (
+          <div className="p-4 border-t-4 border-emerald-950 flex items-center justify-between bg-emerald-50">
+            <span className="text-sm font-bold text-emerald-950/70">
+              Halaman {currentPage} dari {totalPages}
+            </span>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                className="rounded-none border-2 border-emerald-950 font-black uppercase text-xs"
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" /> Prev
+              </Button>
+              <Button 
+                variant="outline" 
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                className="rounded-none border-2 border-emerald-950 font-black uppercase text-xs"
+              >
+                Next <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          </div>
+        )}
         </div>
       </div>
 
