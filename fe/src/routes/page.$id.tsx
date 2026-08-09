@@ -11,13 +11,13 @@ const PAGES_DATA: Record<string, { title: string; content: React.ReactNode }> = 
     title: "PLN SustainAction 2026",
     content: (
       <>
-        <p>Halaman ini berisikan informasi mengenai integrasi dan komitmen OzikCarbon dalam mendukung program PLN SustainAction 2026.</p>
-        <p>OzikCarbon bertindak sebagai agregator pintar untuk mempercepat transisi energi hijau di tingkat UMKM dan enterprise menengah.</p>
+        <p>Halaman ini berisikan informasi mengenai integrasi dan komitmen OzikSustain dalam mendukung program PLN SustainAction 2026.</p>
+        <p>OzikSustain bertindak sebagai agregator pintar untuk mempercepat transisi energi hijau di tingkat UMKM dan enterprise menengah.</p>
       </>
     ),
   },
   "kontak": {
-    title: "Hubungi Tim OzikCarbon",
+    title: "Hubungi Tim OzikSustain",
     content: (
       <>
         <p>Email: <strong>hello@ozikcarbon.id</strong></p>
@@ -30,7 +30,7 @@ const PAGES_DATA: Record<string, { title: string; content: React.ReactNode }> = 
     title: "Kebijakan Privasi Data",
     content: (
       <>
-        <p>Kami sangat menjaga kerahasiaan PDD dan dokumen proposal Anda. OzikCarbon mengadopsi prinsip <em>Zero Data Retention Guarantee</em> di mana seluruh dokumen yang diunggah akan otomatis dihapus dari server (RAM) kami segera setelah laporan audit selesai dibuat.</p>
+        <p>Kami sangat menjaga kerahasiaan PDD dan dokumen proposal Anda. OzikSustain mengadopsi prinsip <em>Zero Data Retention Guarantee</em> di mana seluruh dokumen yang diunggah akan otomatis dihapus dari server (RAM) kami segera setelah laporan audit selesai dibuat.</p>
         <p>Sistem AI kami beroperasi sesuai standar kepatuhan UU Pelindungan Data Pribadi (UU PDP No. 27 Tahun 2022).</p>
       </>
     ),
@@ -39,7 +39,7 @@ const PAGES_DATA: Record<string, { title: string; content: React.ReactNode }> = 
     title: "Disclaimer Hak Cipta",
     content: (
       <>
-        <p>Hak cipta seluruh desain, algoritma dual-track, dan aset visual OzikCarbon dilindungi oleh hukum. Dilarang melakukan <em>reverse engineering</em> atau menyalin materi tanpa izin tertulis dari OzikCarbon Inc.</p>
+        <p>Hak cipta seluruh desain, algoritma dual-track, dan aset visual OzikSustain dilindungi oleh hukum. Dilarang melakukan <em>reverse engineering</em> atau menyalin materi tanpa izin tertulis dari OzikSustain Inc.</p>
       </>
     ),
   },
@@ -59,7 +59,7 @@ function PageComponent() {
           <div className="bg-emerald-950 text-white p-2 rounded group-hover:bg-emerald-800 transition-colors">
             <Leaf className="h-5 w-5" />
           </div>
-          <span className="text-xl font-black tracking-widest uppercase text-emerald-950 hidden sm:block">OzikCarbon</span>
+          <span className="text-xl font-black tracking-widest uppercase text-emerald-950 hidden sm:block">OzikSustain</span>
         </Link>
         <Link to="/">
           <Button variant="ghost" size="icon" className="text-emerald-950 hover:bg-emerald-50 rounded-none transition-all">

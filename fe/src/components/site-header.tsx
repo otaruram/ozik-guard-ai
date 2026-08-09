@@ -23,12 +23,12 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 md:px-6">
         <Link to="/" className="flex items-center gap-2.5 shrink-0">
-          <span className="grid h-9 w-9 place-items-center rounded-sm bg-emerald-950 text-white">
-            <Leaf className="h-5 w-5" />
+          <span className="grid h-9 w-9 place-items-center rounded-sm bg-emerald-950 text-white overflow-hidden">
+            <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-cover" />
           </span>
           <div className="flex flex-col leading-none">
             <span className="text-[15px] font-black tracking-widest text-emerald-950 uppercase">
-              OzikCarbon
+              OzikSustain
             </span>
             <span className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-950/70">
               Greentech & Legaltech
