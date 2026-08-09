@@ -813,72 +813,100 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
             </div>
 
             {apiTab === 'playground' ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Request Panel */}
-                <div className="bg-white border-4 border-emerald-950 shadow-[6px_6px_0_rgba(2,44,34,1)] p-6">
-                  <h2 className="text-sm font-black uppercase tracking-widest text-emerald-950 border-b-4 border-emerald-950 pb-2 mb-6 flex items-center gap-2">
-                    <Code2 className="h-5 w-5 text-emerald-600" /> Request Configuration
-                  </h2>
-
-                  <div className="space-y-6">
-                    <div>
-                      <Label className="text-xs font-black uppercase text-emerald-950 mb-2 block">1. Project Name</Label>
-                      <Input 
-                        value={projectName} 
-                        onChange={e => setProjectName(e.target.value)}
-                        className="border-4 border-emerald-950 rounded-none h-12 font-bold focus-visible:ring-0"
-                      />
-                    </div>
-
-                    <div>
-                      <Label className="text-xs font-black uppercase text-emerald-950 mb-2 block">2. PDD Document (PDF)</Label>
-                      <Input 
-                        type="file"
-                        accept=".pdf"
-                        onChange={e => setPddFile(e.target.files?.[0] || null)}
-                        className="border-4 border-emerald-950 rounded-none h-12 font-bold focus-visible:ring-0 file:bg-emerald-950 file:text-white file:border-0 file:mr-4 file:h-full file:px-4 cursor-pointer"
-                      />
-                    </div>
-
-                    <Button 
-                      onClick={handleTestAPI}
-                      disabled={loadingPlayground}
-                      className="w-14 rounded-none bg-yellow-400 hover:bg-yellow-500 text-emerald-950 border-4 border-emerald-950 font-black uppercase tracking-widest h-14 shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all mx-auto block"
-                      title="Jalankan Audit"
-                    >
-                      {loadingPlayground ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : <Play className="h-6 w-6 fill-emerald-950 mx-auto" />}
-                    </Button>
-
-                    <div className="bg-yellow-50 border-4 border-yellow-400 p-4 flex gap-3 items-start">
-                      <AlertTriangle className="h-5 w-5 text-yellow-600 shrink-0" />
-                      <p className="text-[10px] font-bold text-yellow-800 leading-relaxed uppercase">Setiap hit ke endpoint ini akan memotong 1 kredit dari akun Anda. Pastikan API key Anda dijaga kerahasiaannya.</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Response Panel */}
-                <div className="bg-emerald-950 border-4 border-emerald-950 shadow-[6px_6px_0_rgba(2,44,34,1)] p-6 text-white flex flex-col">
-                  <div className="flex items-center justify-between border-b-4 border-white/20 pb-2 mb-6">
-                    <h2 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-                      <Terminal className="h-5 w-5 text-yellow-400" /> API Response
+              <div className="flex flex-col gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Request Panel */}
+                  <div className="bg-white border-4 border-emerald-950 shadow-[6px_6px_0_rgba(2,44,34,1)] p-6">
+                    <h2 className="text-sm font-black uppercase tracking-widest text-emerald-950 border-b-4 border-emerald-950 pb-2 mb-6 flex items-center gap-2">
+                      <Code2 className="h-5 w-5 text-emerald-600" /> Request Configuration
                     </h2>
-                    {apiResponse && (
-                      <div className={cn("px-3 py-1 font-black text-xs rounded-none border-2", apiResponse.status === 200 ? 'bg-emerald-500 border-emerald-300' : 'bg-red-500 border-red-300')}>
-                        HTTP {apiResponse.status || 'ERROR'}
+  
+                    <div className="space-y-6">
+                      <div>
+                        <Label className="text-xs font-black uppercase text-emerald-950 mb-2 block">1. Project Name</Label>
+                        <Input 
+                          value={projectName} 
+                          onChange={e => setProjectName(e.target.value)}
+                          className="border-4 border-emerald-950 rounded-none h-12 font-bold focus-visible:ring-0"
+                        />
                       </div>
-                    )}
+  
+                      <div>
+                        <Label className="text-xs font-black uppercase text-emerald-950 mb-2 block">2. PDD Document (PDF)</Label>
+                        <Input 
+                          type="file"
+                          accept=".pdf"
+                          onChange={e => setPddFile(e.target.files?.[0] || null)}
+                          className="border-4 border-emerald-950 rounded-none h-12 font-bold focus-visible:ring-0 file:bg-emerald-950 file:text-white file:border-0 file:mr-4 file:h-full file:px-4 cursor-pointer"
+                        />
+                      </div>
+  
+                      <Button 
+                        onClick={handleTestAPI}
+                        disabled={loadingPlayground}
+                        className="w-14 rounded-none bg-yellow-400 hover:bg-yellow-500 text-emerald-950 border-4 border-emerald-950 font-black uppercase tracking-widest h-14 shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all mx-auto block"
+                        title="Jalankan Audit"
+                      >
+                        {loadingPlayground ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : <Play className="h-6 w-6 fill-emerald-950 mx-auto" />}
+                      </Button>
+  
+                      <div className="bg-yellow-50 border-4 border-yellow-400 p-4 flex gap-3 items-start">
+                        <AlertTriangle className="h-5 w-5 text-yellow-600 shrink-0" />
+                        <p className="text-[10px] font-bold text-yellow-800 leading-relaxed uppercase">Setiap hit ke endpoint ini akan memotong 1 kredit dari akun Anda. Pastikan API key Anda dijaga kerahasiaannya.</p>
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="flex-1 bg-black/50 border-2 border-white/10 p-4 overflow-auto font-mono text-[11px] leading-relaxed relative min-h-[300px]">
-                    {apiResponse ? (
-                      <pre className="whitespace-pre-wrap text-emerald-400">{JSON.stringify(apiResponse.data || apiResponse.error, null, 2)}</pre>
-                    ) : (
-                      <div className="h-full flex items-center justify-center text-white/30 italic">
-                        Tunggu respons API... Tekan Jalankan Audit.
-                      </div>
-                    )}
+  
+                  {/* Response Panel */}
+                  <div className="bg-emerald-950 border-4 border-emerald-950 shadow-[6px_6px_0_rgba(2,44,34,1)] p-6 text-white flex flex-col">
+                    <div className="flex items-center justify-between border-b-4 border-white/20 pb-2 mb-6">
+                      <h2 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+                        <Terminal className="h-5 w-5 text-yellow-400" /> API Response
+                      </h2>
+                      {apiResponse && (
+                        <div className={cn("px-3 py-1 font-black text-xs rounded-none border-2", apiResponse.status === 200 ? 'bg-emerald-500 border-emerald-300' : 'bg-red-500 border-red-300')}>
+                          HTTP {apiResponse.status || 'ERROR'}
+                        </div>
+                      )}
+                    </div>
+  
+                    <div className="flex-1 bg-black/50 border-2 border-white/10 p-4 overflow-auto font-mono text-[11px] leading-relaxed relative min-h-[300px] max-h-[300px]">
+                      {apiResponse ? (
+                        <pre className="whitespace-pre-wrap text-emerald-400">{JSON.stringify(apiResponse.data || apiResponse.error, null, 2)}</pre>
+                      ) : (
+                        <div className="h-full flex items-center justify-center text-white/30 italic">
+                          Tunggu respons API... Tekan Jalankan Audit.
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
+
+                {apiResponse && apiResponse.status === 200 && apiResponse.data && (
+                  <div className="bg-white border-4 border-emerald-950 shadow-[6px_6px_0_rgba(2,44,34,1)] h-[800px] overflow-hidden">
+                    <AuditWorkspace 
+                      isFreemium={false} 
+                      userName={user?.user_metadata?.full_name || "Author"} 
+                      userEmail={userEmail} 
+                      initialResult={{
+                        id: apiResponse.data.auditId,
+                        projectName: projectName,
+                        feasibilityScore: apiResponse.data.feasibilityScore,
+                        scoreLegal: apiResponse.data.scoreLegal,
+                        scoreTechnical: apiResponse.data.scoreTechnical,
+                        scoreSocial: apiResponse.data.scoreSocial,
+                        scoreTransparency: apiResponse.data.scoreTransparency,
+                        parsedDocumentJson: apiResponse.data.parsedDocumentJson,
+                        issues: apiResponse.data.issues || [],
+                        totalPages: apiResponse.data.totalPages,
+                        totalWords: apiResponse.data.totalWords,
+                        totalSentences: apiResponse.data.totalSentences,
+                        hash: apiResponse.data.sha256Hash
+                      }} 
+                      initialStatus="result" 
+                    />
+                  </div>
+                )}
               </div>
             ) : (
               <div className="bg-emerald-50 border-4 border-emerald-950 shadow-[6px_6px_0_rgba(2,44,34,1)] p-8">
