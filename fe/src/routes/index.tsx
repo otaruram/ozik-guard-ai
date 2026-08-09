@@ -149,7 +149,7 @@ function VerificationChecker() {
   };
 
   return (
-    <section className="py-24 relative bg-white border-y-4 border-emerald-950 overflow-hidden">
+    <section id="verify" className="py-24 relative bg-white border-y-4 border-emerald-950 overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.05)_0,transparent_100%)]" />
       <div className="max-w-4xl mx-auto px-4 md:px-6 relative z-10 text-center">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 border-4 border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,1)] mb-8">
