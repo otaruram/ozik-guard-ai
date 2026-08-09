@@ -13,9 +13,13 @@ import {
   Zap,
   Code2,
   QrCode,
-  CheckCircle2
+  CheckCircle2,
+  Search,
+  Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -25,17 +29,20 @@ function Index() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loading && user) {
-      navigate({ to: "/dashboard", replace: true });
-    }
-  }, [user, loading, navigate]);
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-emerald-50/30 flex items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-emerald-950" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-emerald-50/30 min-h-screen text-emerald-950 font-sans selection:bg-emerald-900 selection:text-white overflow-hidden">
       <div className="relative z-10">
         <Hero />
         <Features />
+        <VerificationChecker />
         <HowItWorks />
         <Pricing />
         <FinalCTA />
@@ -64,14 +71,14 @@ function Hero() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
-          <Link to="/auth">
+          <Link to={user ? "/dashboard" : "/auth"}>
             <Button size="lg" className="h-16 px-10 rounded-none bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest text-base transition-all hover:translate-y-1 hover:translate-x-1 shadow-[6px_6px_0_rgba(2,44,34,1)] border-4 border-emerald-950 hover:shadow-none">
-              Mulai Audit Gratis <ArrowRight className="ml-2 h-5 w-5" />
+              {user ? "Buka Dashboard" : "Mulai Audit Gratis"} <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
           <Link to="/playground">
             <Button size="lg" variant="outline" className="h-16 px-10 rounded-none border-4 border-emerald-950 bg-white hover:bg-emerald-50 text-emerald-950 font-black uppercase tracking-widest text-base transition-all hover:translate-y-1 hover:translate-x-1 shadow-[6px_6px_0_rgba(2,44,34,1)] hover:shadow-none">
-              <Code2 className="mr-2 h-5 w-5" /> Developer API
+              <Code2 className="mr-2 h-5 w-5" /> Dokumentasi API
             </Button>
           </Link>
         </div>
@@ -125,6 +132,47 @@ function Features() {
             </div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+function VerificationChecker() {
+  const [auditId, setAuditId] = useState("");
+  const navigate = useNavigate();
+
+  const handleVerify = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!auditId.trim()) return;
+    navigate({ to: "/verify/$id", params: { id: auditId.trim() } });
+  };
+
+  return (
+    <section className="py-24 relative bg-white border-y-4 border-emerald-950 overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.05)_0,transparent_100%)]" />
+      <div className="max-w-4xl mx-auto px-4 md:px-6 relative z-10 text-center">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 border-4 border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,1)] mb-8">
+          <ShieldCheck className="w-8 h-8 text-emerald-950" />
+        </div>
+        <h2 className="text-3xl md:text-5xl font-black uppercase text-emerald-950 mb-4">Verifikasi Sertifikat</h2>
+        <p className="text-emerald-950/70 font-bold mb-10 text-lg max-w-2xl mx-auto">
+          Masukkan ID Audit atau SHA-256 Hash dari dokumen untuk memverifikasi keaslian Green Badge OzikSustain.
+        </p>
+        
+        <form onSubmit={handleVerify} className="max-w-2xl mx-auto flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-emerald-950/50" />
+            <Input 
+              value={auditId}
+              onChange={(e) => setAuditId(e.target.value)}
+              placeholder="Contoh: 123e4567-e89b-12d3-a456-426614174000" 
+              className="pl-12 h-16 border-4 border-emerald-950 rounded-none font-bold text-emerald-950 focus-visible:ring-0 shadow-[6px_6px_0_rgba(2,44,34,1)] bg-white text-lg" 
+            />
+          </div>
+          <Button type="submit" className="h-16 px-10 rounded-none bg-emerald-950 hover:bg-emerald-900 text-white font-black uppercase tracking-widest text-lg border-4 border-emerald-950 shadow-[6px_6px_0_rgba(16,185,129,1)] transition-transform hover:translate-y-1 hover:translate-x-1 hover:shadow-none">
+            Cari Dokumen
+          </Button>
+        </form>
       </div>
     </section>
   );
@@ -228,9 +276,9 @@ function FinalCTA() {
         <p className="text-lg font-bold text-emerald-950/70 mb-10">
           OzikSustain telah digunakan oleh puluhan UMKM dan korporat untuk mempercepat audit berkelanjutan dan mencegah greenwashing.
         </p>
-        <Link to="/auth">
+        <Link to={user ? "/dashboard" : "/auth"}>
           <Button size="lg" className="h-16 px-10 rounded-none bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest text-lg transition-transform hover:-translate-y-1 hover:-translate-x-1 shadow-[8px_8px_0_rgba(2,44,34,1)] border-4 border-emerald-950">
-            Mulai Gratis Sekarang
+            {user ? "Buka Dashboard" : "Mulai Gratis Sekarang"}
           </Button>
         </Link>
       </div>

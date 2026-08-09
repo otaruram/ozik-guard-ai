@@ -32,7 +32,8 @@ import {
   Play,
   Code2,
   Terminal,
-  BookOpen
+  BookOpen,
+  Trash2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuditWorkspace } from "@/components/AuditWorkspace";
@@ -241,17 +242,12 @@ function Dashboard() {
                 Top Up
               </Button>
             </div>
-            
-            <Button variant="outline" size="icon" className="relative rounded-none border-4 border-emerald-950 shadow-[2px_2px_0_rgba(2,44,34,1)] hover:translate-y-0.5 hover:shadow-none h-11 w-11 transition-all">
-              <Bell className="h-5 w-5 text-emerald-950" />
-              <span className="absolute -top-2 -right-2 h-3.5 w-3.5 rounded-none border-2 border-emerald-950 bg-red-500" />
-            </Button>
           </div>
         </header>
 
         <main className="flex-1 p-4 md:p-8 overflow-y-auto">
           {active === "overview" && <DashboardUtama history={historyData} onAuditComplete={refreshHistory} userName={userName} userEmail={userEmail} />}
-          {active === "history" && <HistoriAudit history={historyData} loading={loadingHistory} />}
+          {active === "history" && <HistoriAudit history={historyData} loading={loadingHistory} refreshHistory={refreshHistory} />}
           {active === "profile" && <ProfilPengguna dbUser={dbUser} onProfileUpdate={refreshHistory} />}
           {active === "admin" && <AdminPanel />}
           {active === "settings" && <Pengaturan dbUser={dbUser} refreshUser={refreshHistory} />}
@@ -302,7 +298,7 @@ function DashboardUtama({ history, onAuditComplete, userName, userEmail }: { his
   const avgCompliance = total > 0 
     ? Math.round(history.reduce((acc, curr) => acc + (curr.feasibilityScore || 0), 0) / total) 
     : 0;
-  const greenBadges = history.filter(h => h.status === 'VERIFIED').length;
+  const greenBadges = history.filter(h => h.status === "ACTIVE" || (h.feasibilityScore || 0) >= 50).length;
 
   return (
     <div suppressHydrationWarning className="max-w-7xl mx-auto space-y-8">
@@ -333,10 +329,23 @@ function DashboardUtama({ history, onAuditComplete, userName, userEmail }: { his
 // ----------------------------------------------------------------------
 // 2. HISTORI AUDIT
 // ----------------------------------------------------------------------
-function HistoriAudit({ history, loading }: { history: any[], loading: boolean }) {
+function HistoriAudit({ history, loading, refreshHistory }: { history: any[], loading: boolean, refreshHistory: () => void }) {
   const [badgeOpen, setBadgeOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const qrRef = useRef<SVGSVGElement>(null);
+
+  const handleDelete = async () => {
+    if (!selectedProject) return;
+    try {
+      await api.deleteAudit(selectedProject.id);
+      setDeleteOpen(false);
+      refreshHistory();
+    } catch (err) {
+      console.error(err);
+      alert("Gagal menghapus audit");
+    }
+  };
 
   const downloadSVG = () => {
     if (!qrRef.current) return;
@@ -453,6 +462,9 @@ function HistoriAudit({ history, loading }: { history: any[], loading: boolean }
                     {row.color !== 'emerald' && (
                       <Button size="sm" variant="outline" className="rounded-none font-black text-[10px] uppercase border-2 border-emerald-950 hover:bg-emerald-50">Re-Audit</Button>
                     )}
+                    <Button size="icon" variant="destructive" onClick={() => { setSelectedProject(row); setDeleteOpen(true); }} className="h-8 w-8 rounded-none bg-red-50 text-red-600 border-2 border-red-600 hover:bg-red-600 hover:text-white transition-all shadow-[2px_2px_0_rgba(220,38,38,0.2)] hover:shadow-none">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -527,9 +539,14 @@ function HistoriAudit({ history, loading }: { history: any[], loading: boolean }
                     {embedCode}
                   </code>
                 </div>
-                <Button variant="outline" className="w-full rounded-none border-4 border-emerald-950 font-black text-emerald-950 uppercase text-[10px] h-10 hover:bg-emerald-950 hover:text-white transition-all shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none">
-                  <Copy className="h-3 w-3 mr-2" /> Salin Kode Embed
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex-1 rounded-none border-4 border-emerald-950 font-black text-emerald-950 uppercase text-[10px] h-10 hover:bg-emerald-950 hover:text-white transition-all shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none" onClick={() => navigator.clipboard.writeText(embedCode)}>
+                    <Copy className="h-3 w-3 mr-2" /> Kode Embed
+                  </Button>
+                  <Button variant="outline" className="flex-1 rounded-none border-4 border-emerald-950 font-black text-emerald-950 uppercase text-[10px] h-10 hover:bg-emerald-950 hover:text-white transition-all shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none" onClick={() => navigator.clipboard.writeText(`https://oziksustain.my.id/verify/${selectedProject?.id}`)}>
+                    <Copy className="h-3 w-3 mr-2" /> URL Verifikasi
+                  </Button>
+                </div>
               </div>
 
               <div className="bg-emerald-50 p-3 border-2 border-emerald-950 border-dashed">
@@ -538,6 +555,38 @@ function HistoriAudit({ history, loading }: { history: any[], loading: boolean }
                 </p>
               </div>
             </div>
+          </div>
+      </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent className="border-4 border-emerald-950 rounded-none shadow-[16px_16px_0_rgba(2,44,34,1)] p-0 gap-0 sm:max-w-md bg-white">
+          <div className="p-8">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black uppercase tracking-wide text-emerald-950 flex items-center gap-3">
+                <AlertTriangle className="h-6 w-6 text-red-600" />
+                Hapus Permanen
+              </DialogTitle>
+              <DialogDescription className="text-emerald-950/70 font-bold mt-2">
+                Apakah Anda yakin ingin menghapus laporan audit <span className="text-emerald-950 font-black">{selectedProject?.name}</span>? Tindakan ini tidak dapat dibatalkan dan semua data terkait akan dihapus secara permanen.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="mt-8 gap-3 sm:gap-0">
+              <Button
+                variant="outline"
+                onClick={() => setDeleteOpen(false)}
+                className="rounded-none border-4 border-emerald-950 font-black uppercase tracking-widest text-emerald-950 hover:bg-emerald-50 h-12"
+              >
+                Batal
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                className="rounded-none border-4 border-red-600 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest shadow-[4px_4px_0_rgba(220,38,38,0.3)] h-12"
+              >
+                Ya, Hapus
+              </Button>
+            </DialogFooter>
           </div>
         </DialogContent>
       </Dialog>
@@ -558,6 +607,7 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
   const [loadingPlayground, setLoadingPlayground] = useState(false);
   const [copied, setCopied] = useState(false);
   const [apiTab, setApiTab] = useState<'playground' | 'docs'>('playground');
+  const [confirmKeyOpen, setConfirmKeyOpen] = useState(false);
 
   const userEmail = user?.email || "";
   const userAvatar = user?.user_metadata?.avatar_url;
@@ -679,25 +729,55 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
               </Button>
             </div>
             <div className="mt-5 flex gap-4">
-              <Button size="sm" disabled={loadingKey} onClick={async () => {
-                if(confirm("Apakah Anda yakin ingin mengganti kunci API lama? Kunci yang lama akan langsung hangus.")) {
-                  setLoadingKey(true);
-                  try {
-                    await api.regenerateApiKey();
-                    const newMe = await api.getMe();
-                    setDbUser(newMe);
-                    alert("Kunci API baru berhasil dibuat!");
-                  } catch(e) {
-                    alert("Gagal membuat kunci API");
-                  }
-                  setLoadingKey(false);
-                }
-              }} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold h-10 px-4">
+              <Button size="sm" disabled={loadingKey} onClick={() => setConfirmKeyOpen(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold h-10 px-4 shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all border-2 border-emerald-950">
                 {loadingKey ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Zap className="h-4 w-4 mr-2" />} 
                 {loadingKey ? "Memproses..." : "Generate Key Baru"}
               </Button>
             </div>
           </div>
+
+          <Dialog open={confirmKeyOpen} onOpenChange={setConfirmKeyOpen}>
+            <DialogContent className="border-4 border-emerald-950 rounded-none shadow-[12px_12px_0_rgba(2,44,34,1)] p-0 gap-0 sm:max-w-md bg-white">
+              <div className="p-8">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-black uppercase tracking-wide text-emerald-950 flex items-center gap-3">
+                    <AlertTriangle className="h-6 w-6 text-yellow-500" />
+                    Konfirmasi Regenerate API
+                  </DialogTitle>
+                  <DialogDescription className="text-emerald-950/70 font-bold mt-2 text-sm leading-relaxed">
+                    Apakah Anda yakin ingin mengganti kunci API lama? 
+                    <span className="block mt-2 font-black text-emerald-950">Kunci yang lama akan langsung hangus dan tidak dapat digunakan lagi.</span>
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="mt-8 gap-3 sm:gap-0">
+                  <Button
+                    variant="outline"
+                    onClick={() => setConfirmKeyOpen(false)}
+                    className="rounded-none border-4 border-emerald-950 font-black uppercase tracking-widest text-emerald-950 hover:bg-emerald-50 h-12"
+                  >
+                    Batal
+                  </Button>
+                  <Button
+                    onClick={async () => {
+                      setLoadingKey(true);
+                      setConfirmKeyOpen(false);
+                      try {
+                        await api.regenerateApiKey();
+                        refreshUser();
+                        alert("Kunci API baru berhasil dibuat!");
+                      } catch(e) {
+                        alert("Gagal membuat kunci API");
+                      }
+                      setLoadingKey(false);
+                    }}
+                    className="rounded-none border-4 border-emerald-950 bg-emerald-950 hover:bg-emerald-900 text-white font-black uppercase tracking-widest shadow-[4px_4px_0_rgba(16,185,129,0.3)] h-12"
+                  >
+                    Ya, Ganti Key
+                  </Button>
+                </DialogFooter>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           <div className="space-y-3 mb-10">
             <div className="flex justify-between items-center text-xs font-black uppercase text-emerald-950">

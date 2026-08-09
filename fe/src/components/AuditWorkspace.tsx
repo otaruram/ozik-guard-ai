@@ -314,18 +314,18 @@ export function AuditWorkspace({
   return (
     <div ref={reportRef} className="w-full border-4 border-[#0F382C] bg-white shadow-[12px_12px_0_rgba(15,56,44,1)] flex flex-col font-sans" style={{ minHeight: "600px" }}>
       {/* ══ TOP BAR ══ */}
-      <div className="border-b-4 border-[#0F382C] bg-[#0F382C] px-4 py-2 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <button onClick={() => setView("cover")} className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all ${view === "cover" ? "bg-[#FACC15] text-[#0F382C]" : "text-white/60 hover:text-white"}`}>
+      <div className="border-b-4 border-[#0F382C] bg-[#0F382C] px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0">
+        <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+          <button onClick={() => setView("cover")} className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${view === "cover" ? "bg-[#FACC15] text-[#0F382C]" : "text-white/60 hover:text-white"}`}>
             📋 Cover Report
           </button>
-          <button onClick={() => setView("workspace")} className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all ${view === "workspace" ? "bg-[#FACC15] text-[#0F382C]" : "text-white/60 hover:text-white"}`}>
+          <button onClick={() => setView("workspace")} className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${view === "workspace" ? "bg-[#FACC15] text-[#0F382C]" : "text-white/60 hover:text-white"}`}>
             🔍 DrillBit Workspace
           </button>
         </div>
-        <div className="flex items-center gap-2">
-          <Button size="sm" onClick={handleDownloadPDF} className="rounded-none bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] font-black text-[10px] uppercase h-9 px-4 border-2 border-[#0F382C] flex items-center gap-2 shadow-[2px_2px_0_rgba(15,56,44,1)] hover:translate-y-0.5 hover:shadow-none transition-all">
-            <Download className="h-4 w-4" /> Unduh Laporan PDF
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <Button size="sm" onClick={handleDownloadPDF} className="flex-1 sm:flex-none rounded-none bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] font-black text-[10px] uppercase h-9 px-3 sm:px-4 border-2 border-[#0F382C] flex items-center justify-center gap-2 shadow-[2px_2px_0_rgba(15,56,44,1)] hover:translate-y-0.5 hover:shadow-none transition-all whitespace-nowrap">
+            <Download className="h-4 w-4" /> <span className="hidden sm:inline">Unduh</span> PDF
           </Button>
           <Button size="sm" variant="outline" onClick={() => { 
             setStatus("idle"); 
@@ -334,7 +334,7 @@ export function AuditWorkspace({
             setFile(null); 
             setFileName(""); 
             setFileSize(0); 
-          }} className="rounded-none border-2 border-white/30 text-white font-black text-[9px] uppercase h-7 hover:bg-white/10">
+          }} className="flex-1 sm:flex-none rounded-none border-2 border-white/30 text-white font-black text-[9px] uppercase h-9 hover:bg-white/10 whitespace-nowrap">
             Audit Baru
           </Button>
         </div>

@@ -11,6 +11,7 @@ type AuditRepository interface {
 	GetAuditByID(ctx context.Context, id string) (*domain.ProjectAudit, error)
 	GetAuditsByUserID(ctx context.Context, userID string) ([]domain.ProjectAudit, error)
 	GetAuditBySHA256Hash(ctx context.Context, hash string) (*domain.ProjectAudit, error)
+	DeleteAudit(ctx context.Context, id string, userID string) error
 }
 
 type auditRepository struct {
@@ -93,11 +94,31 @@ func (r *auditRepository) CreateAudit(ctx context.Context, audit *domain.Project
 	return audit, nil
 }
 
+func (r *auditRepository) DeleteAudit(ctx context.Context, id string, userID string) error {
+	// First check if it exists and belongs to the user
+	record, err := r.client.ProjectAudit.FindUnique(
+		db.ProjectAudit.ID.Equals(id),
+	).Exec(ctx)
+	if err != nil {
+		return err
+	}
+	if record.UserID != userID {
+		return context.Canceled // Or any error to denote unauthorized
+	}
+
+	_, err = r.client.ProjectAudit.FindUnique(
+		db.ProjectAudit.ID.Equals(id),
+	).Delete().Exec(ctx)
+	
+	return err
+}
+
 func (r *auditRepository) GetAuditByID(ctx context.Context, id string) (*domain.ProjectAudit, error) {
 	record, err := r.client.ProjectAudit.FindUnique(
 		db.ProjectAudit.ID.Equals(id),
 	).With(
 		db.ProjectAudit.Issues.Fetch(),
+		db.ProjectAudit.User.Fetch(),
 	).Exec(ctx)
 	if err != nil {
 		return nil, err
@@ -131,6 +152,8 @@ func (r *auditRepository) GetAuditByID(ctx context.Context, id string) (*domain.
 		ScoreTransparency: record.ScoreTransparency,
 		SHA256Hash:        record.Sha256Hash,
 		Status:            domain.BadgeStatus(record.Status),
+		AuthorName:        record.User().Name,
+		AuthorEmail:       record.User().Email,
 		CreatedAt:         record.CreatedAt,
 		Issues:            issues,
 	}
@@ -177,6 +200,8 @@ func (r *auditRepository) GetAuditsByUserID(ctx context.Context, userID string) 
 func (r *auditRepository) GetAuditBySHA256Hash(ctx context.Context, hash string) (*domain.ProjectAudit, error) {
 	record, err := r.client.ProjectAudit.FindUnique(
 		db.ProjectAudit.Sha256Hash.Equals(hash),
+	).With(
+		db.ProjectAudit.User.Fetch(),
 	).Exec(ctx)
 	if err != nil {
 		return nil, err
@@ -193,6 +218,8 @@ func (r *auditRepository) GetAuditBySHA256Hash(ctx context.Context, hash string)
 		ScoreTransparency: record.ScoreTransparency,
 		SHA256Hash:        record.Sha256Hash,
 		Status:            domain.BadgeStatus(record.Status),
+		AuthorName:        record.User().Name,
+		AuthorEmail:       record.User().Email,
 		CreatedAt:         record.CreatedAt,
 	}, nil
 }

@@ -10,8 +10,7 @@ const NAV = [
   { to: "/#how", label: "How It Works", hash: true },
   { to: "/pricing", label: "Pricing", hash: false },
   { to: "/verify", label: "Verification Badge", hash: false },
-  { to: "/playground", label: "API Playground", hash: false },
-  { to: "/#faq", label: "FAQ", hash: true },
+  { to: "/playground", label: "Dokumentasi API", hash: false },
 ] as const;
 
 export function SiteHeader() {
