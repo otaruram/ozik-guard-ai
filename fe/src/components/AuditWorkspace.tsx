@@ -320,6 +320,7 @@ export function AuditWorkspace({
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <Button size="sm" onClick={handleDownloadPDF} className="flex-1 sm:flex-none rounded-none bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] font-black text-[10px] uppercase h-9 px-3 sm:px-4 border-2 border-[#0F382C] flex items-center justify-center gap-2 shadow-[2px_2px_0_rgba(15,56,44,1)] hover:translate-y-0.5 hover:shadow-none transition-all whitespace-nowrap">
             <Download className="h-4 w-4" /> <span className="hidden sm:inline">Unduh</span> PDF
+          </Button>
         </div>
       </div>
 
