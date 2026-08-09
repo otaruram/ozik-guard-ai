@@ -117,7 +117,10 @@ function ResultCard({ item }: { item: any }) {
         </div>
         
         <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-end">
-          <button className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-lg shadow-sm transition-colors flex items-center gap-2">
+          <button 
+            onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(item.regName + " PDF JDIH BPK")}`, "_blank")}
+            className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-lg shadow-sm transition-colors flex items-center gap-2"
+          >
             <ExternalLink className="h-4 w-4" /> Buka Dokumen Asli
           </button>
         </div>
