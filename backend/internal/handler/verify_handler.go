@@ -41,6 +41,8 @@ func (h *VerifyHandler) GetVerification(c *fiber.Ctx) error {
 		ScoreSocial:       audit.ScoreSocial,
 		ScoreTransparency: audit.ScoreTransparency,
 		Status:            audit.Status,
+		AuthorName:        audit.AuthorName,
+		AuthorEmail:       audit.AuthorEmail,
 		AuditDate:         audit.CreatedAt,
 		SHA256Hash:        audit.SHA256Hash,
 		IntegrityHash:     "SHA256:" + audit.SHA256Hash,

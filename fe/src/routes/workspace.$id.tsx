@@ -92,8 +92,8 @@ function WorkspacePage() {
             isFreemium={false} 
             initialResult={data} 
             initialStatus="result" 
-            userName={user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User"}
-            userEmail={user?.email || "user@example.com"}
+            userName={data.authorName || user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User"}
+            userEmail={data.authorEmail || user?.email || "user@example.com"}
           />
         </div>
       </main>

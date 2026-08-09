@@ -46,6 +46,8 @@ type ProjectAudit struct {
 	ScoreTransparency  float64      `json:"scoreTransparency"`
 	SHA256Hash         string       `json:"sha256Hash"`
 	Status             BadgeStatus  `json:"status"`
+	AuthorName         string       `json:"authorName,omitempty"`
+	AuthorEmail        string       `json:"authorEmail,omitempty"`
 	CreatedAt          time.Time    `json:"createdAt"`
 	UpdatedAt          time.Time    `json:"updatedAt"`
 	Issues             []AuditIssue `json:"issues,omitempty"`
@@ -139,6 +141,8 @@ type PublicVerifyResponse struct {
 	ScoreSocial       float64     `json:"scoreSocial"`
 	ScoreTransparency float64     `json:"scoreTransparency"`
 	Status            BadgeStatus `json:"status"`
+	AuthorName        string      `json:"authorName,omitempty"`
+	AuthorEmail       string      `json:"authorEmail,omitempty"`
 	AuditDate         time.Time   `json:"auditDate"`
 	SHA256Hash        string      `json:"sha256Hash"`
 	IntegrityHash     string      `json:"integrityHash"`

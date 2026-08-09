@@ -81,6 +81,7 @@ func main() {
 	// Audit History & Detail (Protected, no credit needed)
 	protected.Get("/audit/history", auditHandler.GetHistory)
 	protected.Get("/audit/:id", auditHandler.GetAuditDetail)
+	protected.Delete("/audit/:id", auditHandler.DeleteAudit)
 
 	// 8. Health Check
 	app.Get("/health", func(c *fiber.Ctx) error {

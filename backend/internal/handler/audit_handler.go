@@ -68,7 +68,7 @@ func (h *AuditHandler) ProcessAudit(c *fiber.Ctx) error {
 			targetPages = parsedPages
 		} else {
 			// Fallback
-			text = "DOKUMEN_FULL_LENGTH_SIMULASI\n\nIni adalah teks fallback jika dokumen gagal diekstrak."
+			text = "DOKUMEN_TIDAK_TERBACA\n\nSistem gagal mengekstrak teks dari dokumen Anda. Hal ini biasanya terjadi jika PDF merupakan hasil scan (gambar) atau dokumen terkunci. Pastikan dokumen PDD Anda berisi teks yang dapat disalin (selectable text) agar AI OzikSustain dapat melakukan analisis spasial dan regulasi secara optimal."
 		}
 	} else {
 		buf := make([]byte, fileHeader.Size)
@@ -77,7 +77,7 @@ func (h *AuditHandler) ProcessAudit(c *fiber.Ctx) error {
 	}
 
 	if len(text) < 10 {
-		text = "DOKUMEN_FULL_LENGTH_SIMULASI\n\nIni adalah teks fallback jika dokumen gagal diekstrak atau terlalu pendek. \n\nParagraf kedua mengandung indikator kawasan hutan produksi tanpa izin yang memadai."
+		text = "DOKUMEN_TIDAK_TERBACA\n\nSistem gagal mengekstrak teks dari dokumen Anda. Hal ini biasanya terjadi jika PDF merupakan hasil scan (gambar) atau dokumen terkunci. Pastikan dokumen PDD Anda berisi teks yang dapat disalin (selectable text) agar AI OzikSustain dapat melakukan analisis spasial dan regulasi secara optimal."
 	}
 
 	req := domain.ProcessAuditRequest{
@@ -151,4 +151,31 @@ func (h *AuditHandler) GetAuditDetail(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(audit)
+}
+
+// DeleteAudit handles DELETE /api/v1/audit/:id (Protected)
+func (h *AuditHandler) DeleteAudit(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(domain.ErrorResponse{
+			Error: "Missing audit ID",
+		})
+	}
+
+	userID := c.Locals("userId")
+	if userID == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(domain.ErrorResponse{
+			Error: "UNAUTHORIZED",
+		})
+	}
+	uid := userID.(string)
+
+	err := h.auditRepo.DeleteAudit(c.Context(), id, uid)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(domain.ErrorResponse{
+			Error: "DELETE_FAILED",
+		})
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }

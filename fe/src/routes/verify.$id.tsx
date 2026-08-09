@@ -140,7 +140,7 @@ function VerifyPage() {
               </div>
               <div className="md:col-span-2">
                 <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Audit Ledger Date</p>
-                <p className="font-semibold text-gray-900 text-sm">{new Date(data.auditDate).toLocaleString('id-ID')}</p>
+                <p className="font-semibold text-gray-900 text-sm">{new Date(data.auditDate || data.createdAt).toLocaleString('id-ID')}</p>
               </div>
             </div>
             <p className="text-[10px] text-gray-400 italic mt-3 text-right">

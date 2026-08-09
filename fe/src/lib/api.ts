@@ -46,6 +46,7 @@ export const api = {
   // Audit
   getHistory: () => apiFetch<{ audits: any[]; totalCount: number }>("/audit/history"),
   getAuditDetail: (id: string) => apiFetch<any>(`/audit/${id}`),
+  deleteAudit: (id: string) => apiFetch<void>(`/audit/${id}`, { method: "DELETE" }),
   processFullAudit: (data: FormData) =>
     apiFetch<any>("/audit/full-process", { method: "POST", body: data }),
 

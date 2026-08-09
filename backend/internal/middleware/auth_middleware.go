@@ -73,12 +73,17 @@ func SupabaseAuthMiddleware(cfg *config.Config, userRepo repository.UserReposito
 							}
 						}
 						
-						_, _ = userRepo.UpsertFromGoogle(c.Context(), &domain.User{
+						userRec, _ := userRepo.UpsertFromGoogle(c.Context(), &domain.User{
 							ID:       sub,
 							Email:    email,
 							Name:     name,
 							Provider: "supabase",
 						})
+						if userRec != nil {
+							c.Locals("userId", userRec.ID)
+						} else {
+							c.Locals("userId", sub)
+						}
 					}
 					if email, ok := claims["email"].(string); ok {
 						c.Locals("userEmail", email)
