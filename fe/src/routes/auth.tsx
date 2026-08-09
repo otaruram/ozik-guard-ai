@@ -111,15 +111,15 @@ function AuthPage() {
             </Link>
           </div>
 
-          <div className="border-4 border-emerald-950 bg-white shadow-[12px_12px_0_rgba(2,44,34,1)] p-8 sm:p-10">
-            <div className="mb-8 text-center">
-              <div className="mx-auto mb-6 grid h-20 w-20 place-items-center bg-emerald-950 text-white border-4 border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,0.3)]">
-                <ShieldCheck className="h-10 w-10" />
+          <div className="border-4 border-emerald-950 bg-white shadow-[8px_8px_0_rgba(2,44,34,1)] sm:shadow-[12px_12px_0_rgba(2,44,34,1)] p-6 sm:p-10">
+            <div className="mb-6 sm:mb-8 text-center">
+              <div className="mx-auto mb-4 sm:mb-6 grid h-16 w-16 sm:h-20 sm:w-20 place-items-center bg-emerald-950 text-white border-4 border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,0.3)]">
+                <ShieldCheck className="h-8 w-8 sm:h-10 sm:w-10" />
               </div>
-              <h2 className="text-2xl font-black tracking-wide text-emerald-950 uppercase">
+              <h2 className="text-xl sm:text-2xl font-black tracking-wide text-emerald-950 uppercase">
                 Selamat Datang
               </h2>
-              <p className="mt-2 text-sm font-bold text-emerald-950/70">
+              <p className="mt-2 text-xs sm:text-sm font-bold text-emerald-950/70">
                 Masuk atau daftar dengan akun Google Anda untuk melanjutkan ke workspace B2B.
               </p>
             </div>
@@ -127,20 +127,20 @@ function AuthPage() {
             {/* Google Auth Button (Single CTA) */}
             <Button
               size="lg"
-              className="w-full h-16 gap-4 bg-white text-emerald-950 border-4 border-emerald-950 hover:bg-emerald-50 rounded-none shadow-[6px_6px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all font-black uppercase tracking-widest text-sm"
+              className="w-full h-14 sm:h-16 gap-3 sm:gap-4 bg-white text-emerald-950 border-4 border-emerald-950 hover:bg-emerald-50 rounded-none shadow-[4px_4px_0_rgba(2,44,34,1)] sm:shadow-[6px_6px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all font-black uppercase tracking-widest text-xs sm:text-sm whitespace-normal text-center"
               onClick={signInWithGoogle}
             >
-              <GoogleIcon className="h-6 w-6" />
+              <GoogleIcon className="h-5 w-5 sm:h-6 sm:w-6 shrink-0" />
               Lanjutkan dengan Google
             </Button>
 
-            <div className="mt-8 space-y-4">
-              <div className="bg-emerald-50 border-4 border-emerald-950 p-4">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+            <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4">
+              <div className="bg-emerald-50 border-4 border-emerald-950 p-3 sm:p-4">
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-black text-emerald-950 text-xs uppercase">3 Kredit Audit Gratis</div>
-                    <div className="text-xs font-bold text-emerald-950/60 mt-1">Pengguna baru langsung mendapatkan 3 kredit audit penuh tanpa biaya.</div>
+                    <div className="font-black text-emerald-950 text-[10px] sm:text-xs uppercase">3 Kredit Audit Gratis</div>
+                    <div className="text-[10px] sm:text-xs font-bold text-emerald-950/60 mt-1">Pengguna baru langsung mendapatkan 3 kredit audit penuh tanpa biaya.</div>
                   </div>
                 </div>
               </div>
