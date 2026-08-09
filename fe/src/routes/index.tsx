@@ -53,6 +53,7 @@ function Index() {
 }
 
 function Hero() {
+  const { user } = useAuth();
   return (
     <section className="relative pt-24 pb-32 md:pt-36 md:pb-40 px-4 bg-white border-b-4 border-emerald-950">
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(2,44,34,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(2,44,34,0.05)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_80%)]" />
@@ -269,6 +270,7 @@ function Pricing() {
 }
 
 function FinalCTA() {
+  const { user } = useAuth();
   return (
     <section className="py-24 relative overflow-hidden bg-emerald-100 border-y-4 border-emerald-950">
       <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
