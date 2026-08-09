@@ -38,6 +38,11 @@ func (r *userRepository) GetByID(ctx context.Context, id string) (*domain.User, 
 		compPtr = &v
 	}
 
+	var apiKeyPtr *string
+	if v, ok := record.ApiKey(); ok {
+		apiKeyPtr = &v
+	}
+
 	return &domain.User{
 		ID:             record.ID,
 		Email:          record.Email,
@@ -45,6 +50,7 @@ func (r *userRepository) GetByID(ctx context.Context, id string) (*domain.User, 
 		Company:        compPtr,
 		Provider:       record.Provider,
 		CreditsBalance: record.CreditsBalance,
+		APIKey:         apiKeyPtr,
 	}, nil
 }
 
@@ -61,6 +67,11 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*domain.
 		compPtr = &v
 	}
 
+	var apiKeyPtr *string
+	if v, ok := record.ApiKey(); ok {
+		apiKeyPtr = &v
+	}
+
 	return &domain.User{
 		ID:             record.ID,
 		Email:          record.Email,
@@ -68,6 +79,7 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*domain.
 		Company:        compPtr,
 		Provider:       record.Provider,
 		CreditsBalance: record.CreditsBalance,
+		APIKey:         apiKeyPtr,
 	}, nil
 }
 

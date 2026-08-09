@@ -15,7 +15,8 @@ import {
   QrCode,
   CheckCircle2,
   Search,
-  Loader2
+  Loader2,
+  Lock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +30,12 @@ function Index() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!loading && user) {
+      navigate({ to: "/dashboard" });
+    }
+  }, [user, loading, navigate]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-emerald-50/30 flex items-center justify-center">
@@ -36,6 +43,9 @@ function Index() {
       </div>
     );
   }
+
+  // Prevent flashing landing page briefly before redirecting
+  if (user) return null;
 
   return (
     <div className="bg-emerald-50/30 min-h-screen text-emerald-950 font-sans selection:bg-emerald-900 selection:text-white overflow-hidden">
@@ -74,7 +84,7 @@ function Hero() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
           <Link to={user ? "/dashboard" : "/auth"}>
             <Button size="lg" className="h-16 px-10 rounded-none bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest text-base transition-all hover:translate-y-1 hover:translate-x-1 shadow-[6px_6px_0_rgba(2,44,34,1)] border-4 border-emerald-950 hover:shadow-none">
-              {user ? "Buka Dashboard" : "Mulai Audit Gratis"} <ArrowRight className="ml-2 h-5 w-5" />
+              {user ? "Buka Dashboard" : <><Lock className="mr-2 h-5 w-5 inline" /> Login untuk Audit</>} <ArrowRight className="ml-2 h-5 w-5 inline" />
             </Button>
           </Link>
           <Link to="/playground">
