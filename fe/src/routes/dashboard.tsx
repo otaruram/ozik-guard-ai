@@ -35,6 +35,7 @@ import {
   BookOpen,
   Trash2
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { AuditWorkspace } from "@/components/AuditWorkspace";
 import { Badge } from "@/components/ui/badge";
@@ -602,7 +603,7 @@ function HistoriAudit({ history, loading, refreshHistory }: { history: any[], lo
 function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => void }) {
   const { user } = useAuth();
   const [loadingKey, setLoadingKey] = useState(false);
-  const [pddText, setPddText] = useState('Paragraf ini memuat klaim pengurangan emisi karbon dari proyek PLTS, namun tidak terdapat bukti studi kelayakan yang memadai.');
+  const [pddFile, setPddFile] = useState<File | null>(null);
   const [projectName, setProjectName] = useState('Sample PDD Audit');
   const [apiResponse, setApiResponse] = useState<any>(null);
   const [loadingPlayground, setLoadingPlayground] = useState(false);
@@ -615,7 +616,11 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
 
   const handleTestAPI = async () => {
     if (!dbUser?.apiKey) {
-      alert("Buat API Key terlebih dahulu di atas.");
+      toast.error("Buat API Key terlebih dahulu di atas.");
+      return;
+    }
+    if (!pddFile) {
+      toast.error("Silakan unggah dokumen PDD terlebih dahulu.");
       return;
     }
     setLoadingPlayground(true);
@@ -630,8 +635,7 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
         body: (() => {
           const fd = new FormData();
           fd.append('projectName', projectName);
-          const blob = new Blob([pddText], { type: 'text/plain' });
-          fd.append('document', blob, 'sample.txt');
+          fd.append('document', pddFile);
           return fd;
         })()
       });
@@ -723,7 +727,7 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
               <Button size="icon" variant="outline" onClick={() => {
                 if (dbUser?.apiKey) {
                   navigator.clipboard.writeText(dbUser.apiKey);
-                  alert("API Key disalin ke clipboard!");
+                  toast.success("API Key disalin ke clipboard!");
                 }
               }} className="h-12 w-12 shrink-0 border-emerald-200 rounded-lg hover:bg-emerald-100 hover:text-emerald-900">
                 <Copy className="h-5 w-5" />
@@ -765,9 +769,9 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
                       try {
                         await api.regenerateApiKey();
                         refreshUser();
-                        alert("Kunci API baru berhasil dibuat!");
+                        toast.success("Kunci API baru berhasil dibuat!");
                       } catch(e) {
-                        alert("Gagal membuat kunci API");
+                        toast.error("Gagal membuat kunci API");
                       }
                       setLoadingKey(false);
                     }}
@@ -782,11 +786,11 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
 
           <div className="space-y-3 mb-10">
             <div className="flex justify-between items-center text-xs font-black uppercase text-emerald-950">
-              <span>Penggunaan API Bulan Ini</span>
-              <span>450 / 1,000 Calls</span>
+              <span>Sisa Saldo Kredit API</span>
+              <span>{dbUser?.creditsBalance ?? 0} KREDIT</span>
             </div>
             <div className="h-4 w-full bg-emerald-100 border-2 border-emerald-950 overflow-hidden">
-              <div className="h-full bg-emerald-950" style={{ width: '45%' }}></div>
+              <div className="h-full bg-emerald-950 transition-all duration-500" style={{ width: `${Math.min(((dbUser?.creditsBalance ?? 0) / 1000) * 100, 100)}%` }}></div>
             </div>
           </div>
 
@@ -827,20 +831,22 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
                     </div>
 
                     <div>
-                      <Label className="text-xs font-black uppercase text-emerald-950 mb-2 block">2. PDD Document Text (Simulasi)</Label>
-                      <Textarea 
-                        value={pddText}
-                        onChange={e => setPddText(e.target.value)}
-                        className="border-4 border-emerald-950 rounded-none min-h-[150px] font-mono text-sm focus-visible:ring-0"
+                      <Label className="text-xs font-black uppercase text-emerald-950 mb-2 block">2. PDD Document (PDF)</Label>
+                      <Input 
+                        type="file"
+                        accept=".pdf"
+                        onChange={e => setPddFile(e.target.files?.[0] || null)}
+                        className="border-4 border-emerald-950 rounded-none h-12 font-bold focus-visible:ring-0 file:bg-emerald-950 file:text-white file:border-0 file:mr-4 file:h-full file:px-4 cursor-pointer"
                       />
                     </div>
 
                     <Button 
                       onClick={handleTestAPI}
                       disabled={loadingPlayground}
-                      className="w-full rounded-none bg-yellow-400 hover:bg-yellow-500 text-emerald-950 border-4 border-emerald-950 font-black uppercase tracking-widest h-14 shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all"
+                      className="w-14 rounded-none bg-yellow-400 hover:bg-yellow-500 text-emerald-950 border-4 border-emerald-950 font-black uppercase tracking-widest h-14 shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all mx-auto block"
+                      title="Jalankan Audit"
                     >
-                      {loadingPlayground ? 'Memproses Audit...' : <><Play className="h-5 w-5 mr-2 fill-emerald-950" /> Jalankan Audit (POST /full-process)</>}
+                      {loadingPlayground ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : <Play className="h-6 w-6 fill-emerald-950 mx-auto" />}
                     </Button>
 
                     <div className="bg-yellow-50 border-4 border-yellow-400 p-4 flex gap-3 items-start">
