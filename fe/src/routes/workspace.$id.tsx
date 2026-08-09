@@ -5,12 +5,15 @@ import { AuditWorkspace } from "@/components/AuditWorkspace";
 import { Loader2, ArrowLeft, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import { useAuth } from "@/lib/auth-context";
+
 export const Route = createFileRoute("/workspace/$id")({
   component: WorkspacePage,
 });
 
 function WorkspacePage() {
   const { id } = Route.useParams();
+  const { user } = useAuth();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -89,7 +92,8 @@ function WorkspacePage() {
             isFreemium={false} 
             initialResult={data} 
             initialStatus="result" 
-            userName="User"
+            userName={user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User"}
+            userEmail={user?.email || "user@example.com"}
           />
         </div>
       </main>

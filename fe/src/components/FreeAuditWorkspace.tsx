@@ -100,7 +100,7 @@ export function FreeAuditWorkspace() {
         {status === "result" && result && (
           <div className="flex-1 flex flex-col md:flex-row min-h-[600px]">
             {/* Left Panel: Document Viewer */}
-            <div className="w-full md:w-1/2 border-r-4 border-emerald-950 flex flex-col bg-white relative">
+            <div className="w-full md:w-1/2 md:border-r-4 border-b-4 md:border-b-0 border-emerald-950 flex flex-col bg-white relative h-[500px] md:h-auto">
               <div className="p-4 border-b-4 border-emerald-950 font-black text-xs uppercase tracking-widest bg-emerald-50">Preview Dokumen (Hal 1-3)</div>
               <div className="flex-1 p-6 overflow-y-auto space-y-6 relative">
                 <div className="p-4 border-l-4 border-emerald-950 bg-emerald-50 relative">
