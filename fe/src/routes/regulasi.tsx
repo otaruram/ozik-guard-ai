@@ -4,6 +4,8 @@ import { Search, Loader2, Leaf, ArrowRight, Circle, FileText, ExternalLink } fro
 import { apiFetch } from "@/lib/api";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export const Route = createFileRoute("/regulasi")({
   component: RegulasiHijau,
@@ -276,11 +278,13 @@ function RegulasiHijau() {
                   <div className="bg-gradient-to-br from-[#0F382C] to-emerald-950 rounded-2xl p-6 mb-8 text-white shadow-lg relative overflow-hidden">
                     <div className="flex items-center gap-2 mb-3 relative z-10">
                       <Leaf className="h-5 w-5 text-emerald-400" />
-                      <h3 className="font-bold text-lg text-emerald-50">Sintesis AI (Gemini 3.1 Flash Lite)</h3>
+                      <h3 className="font-bold text-lg text-emerald-50">Sintesis AI</h3>
                     </div>
-                    <p className="text-emerald-100/90 leading-relaxed relative z-10 whitespace-pre-wrap text-sm md:text-base">
-                      {aiSummary}
-                    </p>
+                    <div className="text-emerald-100/90 leading-relaxed relative z-10 text-sm md:text-base prose prose-sm prose-invert prose-emerald max-w-none">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {aiSummary}
+                      </ReactMarkdown>
+                    </div>
                     <div className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl"></div>
                   </div>
                 )}
