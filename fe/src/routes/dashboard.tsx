@@ -639,7 +639,13 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
           return fd;
         })()
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        data = text;
+      }
       setApiResponse({ status: res.status, data });
     } catch (err: any) {
       setApiResponse({ error: err.message });
