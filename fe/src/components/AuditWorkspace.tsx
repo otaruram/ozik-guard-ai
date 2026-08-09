@@ -70,7 +70,12 @@ export function AuditWorkspace({
     let interval: any;
     if (isAuditing) {
       interval = setInterval(() => {
-        setAuditStep((prev) => (prev < 4 ? prev + 1 : prev));
+        setStatus((prev) => {
+          if (prev === "parsing") return "masking";
+          if (prev === "masking") return "spatial";
+          if (prev === "spatial") return "law";
+          return "law"; // stays at law until complete
+        });
       }, 4000);
     } else {
       setAuditStep(0);
@@ -183,7 +188,7 @@ export function AuditWorkspace({
     }
     
     setIsAuditing(true);
-    setStatus("law");
+    setStatus("parsing");
     try {
       const res = effectiveFreemium ? await api.guestTeaser(formData) : await api.processFullAudit(formData);
       
