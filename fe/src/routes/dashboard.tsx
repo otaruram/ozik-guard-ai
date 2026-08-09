@@ -729,7 +729,7 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
           <div className="bg-emerald-50/50 rounded-xl border border-emerald-100 p-6 mb-8 relative">
             <Label className="text-sm font-semibold text-emerald-900 mb-3 block">Live API Key</Label>
             <div className="flex gap-3">
-              <Input readOnly value={dbUser?.apiKey || "Belum ada kunci API. Silakan buat (Regenerate)."} className="h-12 border-emerald-200 rounded-lg font-medium bg-white text-emerald-950 font-mono focus-visible:ring-emerald-500" />
+              <Input type="password" readOnly value={dbUser?.apiKey || ""} placeholder="Belum ada kunci API. Silakan buat (Regenerate)." className="h-12 border-emerald-200 rounded-lg font-medium bg-white text-emerald-950 font-mono focus-visible:ring-emerald-500" />
               <Button size="icon" variant="outline" onClick={() => {
                 if (dbUser?.apiKey) {
                   navigator.clipboard.writeText(dbUser.apiKey);
@@ -810,7 +810,7 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
               </div>
               <div className="flex gap-2">
                 <Button onClick={() => setApiTab('playground')} variant={apiTab === 'playground' ? 'default' : 'outline'} className={cn("rounded-none font-black text-xs uppercase border-2", apiTab === 'playground' ? 'bg-emerald-950 text-white border-emerald-950' : 'border-emerald-950 text-emerald-950 hover:bg-emerald-50')}>
-                  <Code2 className="h-4 w-4 mr-2" /> Playground
+                  <Code2 className="h-4 w-4 mr-2" /> Production Test
                 </Button>
                 <Button onClick={() => setApiTab('docs')} variant={apiTab === 'docs' ? 'default' : 'outline'} className={cn("rounded-none font-black text-xs uppercase border-2", apiTab === 'docs' ? 'bg-emerald-950 text-white border-emerald-950' : 'border-emerald-950 text-emerald-950 hover:bg-emerald-50')}>
                   <BookOpen className="h-4 w-4 mr-2" /> Dokumen
