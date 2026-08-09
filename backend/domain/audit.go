@@ -101,16 +101,20 @@ type AuditClause struct {
 }
 
 type ProcessAuditResponse struct {
-	AuditID           string        `json:"auditId"`
-	Status            string        `json:"status"`
-	FeasibilityScore  float64       `json:"feasibilityScore"`
-	ScoreLegal        float64       `json:"scoreLegal"`
-	ScoreTechnical    float64       `json:"scoreTechnical"`
-	ScoreSocial       float64       `json:"scoreSocial"`
-	ScoreTransparency float64       `json:"scoreTransparency"`
-	SHA256Hash        string        `json:"sha256Hash"`
-	Issues            []AuditIssue  `json:"issues"`
-	Clauses           []AuditClause `json:"clauses"`
+	AuditID            string        `json:"auditId"`
+	Status             string        `json:"status"`
+	FeasibilityScore   float64       `json:"feasibilityScore"`
+	ScoreLegal         float64       `json:"scoreLegal"`
+	ScoreTechnical     float64       `json:"scoreTechnical"`
+	ScoreSocial        float64       `json:"scoreSocial"`
+	ScoreTransparency  float64       `json:"scoreTransparency"`
+	SHA256Hash         string        `json:"sha256Hash"`
+	Issues             []AuditIssue  `json:"issues"`
+	Clauses            []AuditClause `json:"clauses"`
+	ParsedDocumentJson string        `json:"parsedDocumentJson,omitempty"`
+	TotalPages         int           `json:"totalPages"`
+	TotalWords         int           `json:"totalWords"`
+	TotalSentences     int           `json:"totalSentences"`
 }
 
 type GuestTeaserResponse struct {

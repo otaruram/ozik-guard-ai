@@ -281,13 +281,19 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 	}
 
 	return &domain.ProcessAuditResponse{
-		AuditID:           auditID,
-		Status:            status,
-		FeasibilityScore:  score,
-		ScoreLegal:        scoreLegal,
-		ScoreTechnical:    scoreTech,
-		ScoreSocial:       scoreSocial,
-		ScoreTransparency: scoreTrans,
-		SHA256Hash:        hash,
+		AuditID:            auditID,
+		Status:             status,
+		FeasibilityScore:   score,
+		ScoreLegal:         scoreLegal,
+		ScoreTechnical:     scoreTech,
+		ScoreSocial:        scoreSocial,
+		ScoreTransparency:  scoreTrans,
+		SHA256Hash:         hash,
+		Clauses:            clauses,
+		Issues:             auditIssues,
+		ParsedDocumentJson: parsedDocumentJson,
+		TotalPages:         totalPages,
+		TotalWords:         totalWords,
+		TotalSentences:     totalSentences,
 	}, nil
 }
