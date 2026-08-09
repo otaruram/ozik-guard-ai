@@ -1,10 +1,87 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { Search, Scale, AlertTriangle, ShieldCheck, Leaf, BookOpen, Loader2 } from "lucide-react";
+import { Search, Loader2, Leaf, ArrowRight, Circle } from "lucide-react";
 
 export const Route = createFileRoute("/regulasi")({
   component: RegulasiHijau,
 });
+
+const QUICK_CHIPS = [
+  "🌱 Bursa Karbon",
+  "☀️ PLTS Atap",
+  "🏭 Baku Mutu Emisi",
+  "📄 AMDAL & UKL-UPL"
+];
+
+const DEFAULT_RECOMMENDATIONS = [
+  {
+    id: "rec-1",
+    regName: "UU LHK No. 32 Tahun 2009",
+    article: "Pasal 36",
+    riskCategory: "HIGH_RISK",
+    content: "Setiap usaha dan/atau kegiatan yang wajib memiliki amdal atau UKL-UPL wajib memiliki izin lingkungan. Menteri, gubernur, atau bupati/walikota menerbitkan izin lingkungan sesuai dengan kewenangannya."
+  },
+  {
+    id: "rec-2",
+    regName: "Perpres No. 98 Tahun 2021",
+    article: "Pasal 47",
+    riskCategory: "MEDIUM_RISK",
+    content: "Penyelenggaraan Nilai Ekonomi Karbon meliputi Perdagangan Karbon, Pembayaran Berbasis Kinerja, Pungutan Atas Karbon, dan mekanisme lain sesuai dengan perkembangan ilmu pengetahuan."
+  },
+  {
+    id: "rec-3",
+    regName: "Permen ESDM No. 2 Tahun 2024",
+    article: "Pasal 5",
+    riskCategory: "LOW_RISK",
+    content: "Pembangunan sistem PLTS Atap harus memperhatikan aspek keamanan, keandalan instalasi tenaga listrik, dan tidak mengganggu sistem penyediaan tenaga listrik."
+  }
+];
+
+function ResultCard({ item }: { item: any }) {
+  const getRiskDisplay = (risk: string) => {
+    const r = (risk || "").toUpperCase();
+    if (r.includes("HIGH") || r.includes("CRITICAL")) {
+      return { label: "Kepatuhan Wajib / HIGH RISK", color: "text-red-500", bg: "bg-red-50 text-red-700 border-red-200" };
+    }
+    if (r.includes("MEDIUM")) {
+      return { label: "Perhatian / MEDIUM RISK", color: "text-yellow-500", bg: "bg-yellow-50 text-yellow-700 border-yellow-200" };
+    }
+    return { label: "Aman / LOW RISK", color: "text-green-500", bg: "bg-green-50 text-green-700 border-green-200" };
+  };
+
+  const riskData = getRiskDisplay(item.riskCategory);
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 p-5 mb-4 flex flex-col gap-3">
+      {/* Header */}
+      <div className="flex flex-row justify-between items-start gap-4">
+        <h3 className="text-lg font-bold text-[#0F382C] leading-snug">
+          {item.regName}
+        </h3>
+        <span className="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-md font-semibold whitespace-nowrap shrink-0">
+          {item.article}
+        </span>
+      </div>
+
+      {/* Body */}
+      <p className="line-clamp-3 text-gray-600 text-sm leading-relaxed">
+        {item.content}
+      </p>
+
+      {/* Footer */}
+      <div className="mt-2 pt-3 flex flex-row items-center justify-between border-t border-gray-50">
+        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-bold tracking-wide uppercase ${riskData.bg}`}>
+          <Circle className={`h-2 w-2 fill-current ${riskData.color}`} />
+          {riskData.label}
+        </div>
+
+        <button className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 hover:underline flex items-center gap-1 transition-colors">
+          Baca Selengkapnya <ArrowRight className="h-3 w-3" />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function RegulasiHijau() {
   const [query, setQuery] = useState("");
@@ -12,11 +89,11 @@ function RegulasiHijau() {
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Debounce search query
+  // Custom debounce hook logic (500ms)
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
-    }, 600);
+    }, 500);
     return () => clearTimeout(handler);
   }, [query]);
 
@@ -30,7 +107,7 @@ function RegulasiHijau() {
     const fetchResults = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`https://oziksustain.my.id/api/v1/regulasi/search?q=${encodeURIComponent(debouncedQuery)}`);
+        const response = await fetch(`https://ozikgrid.web.id/api/v1/regulasi/search?q=${encodeURIComponent(debouncedQuery)}`);
         if (!response.ok) throw new Error("Search failed");
         const data = await response.json();
         setResults(data || []);
@@ -44,112 +121,100 @@ function RegulasiHijau() {
     fetchResults();
   }, [debouncedQuery]);
 
-  const getRiskColor = (risk: string) => {
-    switch (risk) {
-      case "CRITICAL":
-        return "bg-red-600 text-white border-red-800";
-      case "HIGH":
-        return "bg-orange-500 text-white border-orange-700";
-      case "MEDIUM":
-        return "bg-yellow-400 text-emerald-950 border-yellow-600";
-      case "LOW":
-        return "bg-emerald-500 text-white border-emerald-700";
-      default:
-        return "bg-gray-200 text-gray-800 border-gray-400";
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-emerald-50 font-sans text-emerald-950">
+    <div className="min-h-screen bg-gray-50/50 font-sans text-gray-900 pb-20">
       {/* Hero Section */}
-      <div className="bg-emerald-950 text-white pt-24 pb-16 px-4 md:px-8 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
-        <div className="max-w-4xl mx-auto relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-900/50 border-2 border-emerald-700 text-emerald-300 text-xs font-black uppercase tracking-widest mb-6 shadow-[4px_4px_0_rgba(4,120,87,1)]">
-            <Leaf className="h-4 w-4" />
-            AI-Powered Legal Search
+      <div className="bg-white border-b border-gray-200 pt-20 pb-12 px-4 relative">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold mb-6 border border-emerald-100">
+            <Leaf className="h-3.5 w-3.5" />
+            Eksklusif OzikSustain
           </div>
-          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight mb-4">
+
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#0F382C] mb-4">
             Direktori Regulasi Hijau
           </h1>
-          <p className="text-emerald-100 text-lg md:text-xl font-medium max-w-2xl mx-auto mb-10">
-            Pencarian cerdas berbasis AI untuk UU, Peraturan Menteri, dan Standar ESG di Indonesia.
+
+          <p className="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+            Mesin pencari hukum pintar khusus Energi Terbarukan, Lingkungan Hidup (UU LHK), dan Perdagangan Karbon.
           </p>
 
-          <div className="relative max-w-3xl mx-auto">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <Search className="h-6 w-6 text-emerald-950/50" />
+          <div className="relative max-w-2xl mx-auto">
+            <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-gray-400" />
             </div>
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Cari regulasi tentang emisi karbon, izin lingkungan, dll..."
-              className="w-full pl-14 pr-16 py-5 text-lg font-bold text-emerald-950 bg-white border-4 border-emerald-950 shadow-[8px_8px_0_rgba(2,44,34,1)] focus:outline-none focus:translate-x-1 focus:-translate-y-1 focus:shadow-[12px_12px_0_rgba(2,44,34,1)] transition-all placeholder:text-emerald-950/40"
+              placeholder="Cari aturan... (misal: Izin PLTS Atap, Syarat IPPKH, Baku Mutu Emisi)"
+              className="w-full pl-14 pr-16 py-4 text-base md:text-lg text-gray-800 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all placeholder:text-gray-400"
             />
             {loading && (
-              <div className="absolute inset-y-0 right-4 flex items-center">
-                <Loader2 className="h-6 w-6 text-emerald-950 animate-spin" />
+              <div className="absolute inset-y-0 right-5 flex items-center">
+                <Loader2 className="h-5 w-5 text-emerald-500 animate-spin" />
               </div>
             )}
+          </div>
+
+          {/* Quick Search Chips */}
+          <div className="flex flex-row gap-2 flex-wrap justify-center items-center mt-6 max-w-2xl mx-auto">
+            {QUICK_CHIPS.map((chip, idx) => (
+              <button
+                key={idx}
+                onClick={() => setQuery(chip.substring(chip.indexOf(" ") + 1))}
+                className="px-4 py-2 bg-white border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50 text-sm font-medium text-gray-600 hover:text-emerald-700 rounded-full shadow-sm transition-all flex items-center gap-2"
+              >
+                {chip}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Results Section */}
-      <div className="max-w-5xl mx-auto px-4 md:px-8 py-12">
-        {!debouncedQuery && (
-          <div className="text-center py-20 opacity-50">
-            <BookOpen className="h-16 w-16 mx-auto mb-4 text-emerald-950" />
-            <h3 className="text-xl font-black uppercase tracking-widest">Mulai Pencarian</h3>
-            <p className="font-medium">Ketik topik hukum lingkungan yang ingin Anda cari</p>
+      {/* Main Content Area */}
+      <div className="max-w-3xl mx-auto px-4 mt-10">
+        {!debouncedQuery ? (
+          // Default State (Recommendations)
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex items-center gap-2 mb-6">
+              <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                🔥 Rekomendasi Regulasi Esensial
+              </h2>
+            </div>
+            <div className="space-y-4">
+              {DEFAULT_RECOMMENDATIONS.map((item) => (
+                <ResultCard key={item.id} item={item} />
+              ))}
+            </div>
           </div>
-        )}
+        ) : (
+          // Search Results
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-700">
+                {loading ? "Mencari regulasi..." : `Hasil pencarian untuk "${debouncedQuery}"`}
+              </h2>
+              {!loading && results.length > 0 && (
+                <span className="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
+                  {results.length} ditemukan
+                </span>
+              )}
+            </div>
 
-        {debouncedQuery && !loading && results.length === 0 && (
-          <div className="text-center py-20 border-4 border-dashed border-emerald-950/20">
-            <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-emerald-950/40" />
-            <h3 className="text-xl font-black uppercase tracking-widest text-emerald-950/60">Tidak Ditemukan</h3>
-            <p className="font-medium text-emerald-950/50">Coba gunakan kata kunci lain</p>
-          </div>
-        )}
-
-        {results.length > 0 && (
-          <div className="space-y-6">
-            {results.map((item, index) => (
-              <div 
-                key={item.id || index} 
-                className="bg-white border-4 border-emerald-950 p-6 shadow-[6px_6px_0_rgba(2,44,34,1)] hover:shadow-[10px_10px_0_rgba(2,44,34,1)] hover:-translate-y-1 transition-all"
-              >
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
-                  <div>
-                    <h3 className="text-xl font-black uppercase tracking-tight text-emerald-950 mb-1 flex items-center gap-2">
-                      <Scale className="h-5 w-5" />
-                      {item.regName}
-                    </h3>
-                    <div className="text-sm font-bold text-emerald-700 uppercase tracking-widest">
-                      {item.article}
-                    </div>
-                  </div>
-                  <div className={`px-3 py-1 font-black text-xs uppercase tracking-widest border-2 whitespace-nowrap inline-flex items-center gap-1 ${getRiskColor(item.riskCategory)}`}>
-                    {item.riskCategory === 'LOW' ? <ShieldCheck className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}
-                    Risiko: {item.riskCategory}
-                  </div>
-                </div>
-
-                <div className="bg-emerald-50 border-l-4 border-emerald-950 p-4 text-emerald-900 font-medium">
-                  {item.content}
-                </div>
-
-                {item.similarity && (
-                  <div className="mt-4 flex justify-end">
-                    <span className="text-[10px] font-black text-emerald-950/40 uppercase tracking-widest">
-                      Similarity Score: {(item.similarity * 100).toFixed(1)}%
-                    </span>
-                  </div>
-                )}
+            {!loading && results.length === 0 ? (
+              <div className="text-center py-20 bg-white rounded-2xl border border-gray-200 border-dashed">
+                <Search className="h-10 w-10 mx-auto mb-4 text-gray-300" />
+                <h3 className="text-lg font-bold text-gray-800 mb-1">Tidak Ditemukan</h3>
+                <p className="text-gray-500 text-sm">Coba gunakan kata kunci yang lebih umum.</p>
               </div>
-            ))}
+            ) : (
+              <div className="space-y-4">
+                {results.map((item, idx) => (
+                  <ResultCard key={item.id || idx} item={item} />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
