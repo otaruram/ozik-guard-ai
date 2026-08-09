@@ -9,6 +9,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { api } from "@/lib/api";
+import { toast } from "sonner";
+import { useAuth } from "@/lib/auth-context";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from "recharts";
 import { PDFReportTemplate } from "./PDFReportTemplate";
 
@@ -49,6 +51,41 @@ export function AuditWorkspace({
   const [zoom, setZoom] = useState(100);
   const [view, setView] = useState<"cover" | "workspace">("cover");
   const CLAUSES_PER_PAGE = 4;
+
+  const { session } = useAuth();
+  const [creditsBalance, setCreditsBalance] = useState<number | null>(null);
+  const [isAuditing, setIsAuditing] = useState(false);
+  const [auditStep, setAuditStep] = useState(0);
+
+  useEffect(() => {
+    if (session?.user) {
+      api.getMe().then((res: any) => setCreditsBalance(res.creditsBalance)).catch(console.error);
+    }
+  }, [session]);
+
+  const isGuest = !session?.user;
+  const effectiveFreemium = isFreemium || isGuest;
+
+  useEffect(() => {
+    let interval: any;
+    if (isAuditing) {
+      interval = setInterval(() => {
+        setAuditStep((prev) => (prev < 4 ? prev + 1 : prev));
+      }, 4000);
+    } else {
+      setAuditStep(0);
+    }
+    return () => clearInterval(interval);
+  }, [isAuditing]);
+
+  const loadingMessages = [
+    "📄 Mengekstrak teks dokumen PDF...",
+    "🛡️ Menyensor Data Pribadi (UU PDP Auto-Masking)...",
+    "⚖️ Mencari referensi hukum di database Pasal.id...",
+    "🤖 AI sedang menyusun draf perbaikan...",
+    "📊 Mengkalkulasi 4-Pilar Feasibility Score..."
+  ];
+
 
   const getFlatClauses = () => {
     if (result?.clauses && Array.isArray(result.clauses)) return result.clauses;
@@ -125,40 +162,53 @@ export function AuditWorkspace({
     setStatus("configure");
   };
 
+
   const startAudit = async () => {
     if (!file) return;
 
+    if (!effectiveFreemium && creditsBalance !== null && creditsBalance <= 0) {
+      toast.error("Saldo Kredit Habis", {
+        description: "Anda tidak memiliki kredit yang cukup untuk melakukan audit penuh."
+      });
+      return;
+    }
+
     const formData = new FormData();
     formData.append("document", file);
-    if (!isFreemium) formData.append("projectName", file.name);
+    if (!effectiveFreemium) formData.append("projectName", file.name);
     
-    // Append page slicing configuration
     formData.append("page_mode", pageScope);
     if (pageScope === "custom") {
       formData.append("custom_range", customRange);
     }
+    
+    setIsAuditing(true);
     setStatus("law");
     try {
-      const res = isFreemium ? await api.guestTeaser(formData) : await api.processFullAudit(formData);
+      const res = effectiveFreemium ? await api.guestTeaser(formData) : await api.processFullAudit(formData);
       
+      setIsAuditing(false);
       onAuditComplete?.();
 
-      if (res.auditId && !isFreemium) {
+      if (res.auditId && !effectiveFreemium) {
+        toast.success("Audit Selesai!", { description: "Mengalihkan ke Workspace..." });
         navigate({ to: `/workspace/${res.auditId}` });
         return;
       }
 
+      toast.success("Preview Selesai", { description: "Menampilkan hasil analisis." });
       setResult(res);
       setStatus("result");
       setCurrentPage(1);
-      setView("cover");
-    } catch (err) {
-      console.error(err);
+    } catch (e: any) {
+      console.error(e);
+      setIsAuditing(false);
       setStatus("idle");
-      alert("Gagal memproses audit.");
+      toast.error("Gagal memproses dokumen", {
+        description: "Server AI sedang sibuk atau terjadi kesalahan, coba beberapa saat lagi."
+      });
     }
   };
-
   const handleRegister = () => navigate({ to: "/auth" });
 
   const handleDownloadPDF = async () => {
@@ -223,6 +273,7 @@ export function AuditWorkspace({
           </div>
 
           <h4 className="font-black uppercase text-sm text-[#0F382C] mb-4">Pilih Cakupan Analisis (Page Scope)</h4>
+            {effectiveFreemium && <div className="mb-3 text-xs text-amber-600 bg-amber-50 p-2 border border-amber-200 rounded font-medium"><Lock className="inline w-3 h-3 mr-1" />Daftar Akun Gratis untuk Buka Full Audit & Custom Range.</div>}
           <div className="space-y-3 mb-8">
             <label className={`block border-2 p-4 cursor-pointer transition-all ${pageScope === "teaser" ? "border-[#0F382C] bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}>
               <div className="flex items-center gap-3">
@@ -235,11 +286,11 @@ export function AuditWorkspace({
             </label>
             <label className={`block border-2 p-4 cursor-pointer transition-all ${pageScope === "custom" ? "border-[#0F382C] bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}>
               <div className="flex items-center gap-3">
-                <input type="radio" name="scope" value="custom" checked={pageScope === "custom"} onChange={() => setPageScope("custom")} className="w-4 h-4 accent-[#0F382C]" disabled={isFreemium} />
+                <input type="radio" name="scope" value="custom" checked={pageScope === "custom"} onChange={() => setPageScope("custom")} className="w-4 h-4 accent-[#0F382C]" disabled={effectiveFreemium} />
                 <div className="w-full">
                   <div className="font-bold text-[#0F382C] flex items-center justify-between">
                     Custom Range
-                    {isFreemium && <Badge variant="outline" className="text-[9px] uppercase">Pro</Badge>}
+                    {effectiveFreemium && <Badge variant="outline" className="text-[9px] uppercase"><Lock className="w-2 h-2 inline mr-1"/>Pro</Badge>}
                   </div>
                   <div className="text-xs text-gray-500 mb-2">Pilih halaman spesifik.</div>
                   {pageScope === "custom" && (
@@ -250,11 +301,11 @@ export function AuditWorkspace({
             </label>
             <label className={`block border-2 p-4 cursor-pointer transition-all ${pageScope === "full" ? "border-[#0F382C] bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}>
               <div className="flex items-center gap-3">
-                <input type="radio" name="scope" value="full" checked={pageScope === "full"} onChange={() => setPageScope("full")} className="w-4 h-4 accent-[#0F382C]" disabled={isFreemium} />
+                <input type="radio" name="scope" value="full" checked={pageScope === "full"} onChange={() => setPageScope("full")} className="w-4 h-4 accent-[#0F382C]" disabled={effectiveFreemium} />
                 <div>
                   <div className="font-bold text-[#0F382C] flex items-center justify-between gap-2">
                     Full Document Audit (Semua Halaman)
-                    {isFreemium && <Badge variant="outline" className="text-[9px] uppercase">Pro</Badge>}
+                    {effectiveFreemium && <Badge variant="outline" className="text-[9px] uppercase"><Lock className="w-2 h-2 inline mr-1"/>Pro</Badge>}
                   </div>
                   <div className="text-xs text-gray-500">Analisis menyeluruh untuk seluruh dokumen PDD.</div>
                 </div>
