@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { Search, Loader2, Leaf, ArrowRight, Circle } from "lucide-react";
+import { Search, Loader2, Leaf, ArrowRight, Circle, FileText, ExternalLink } from "lucide-react";
+import { apiFetch } from "@/lib/api";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/regulasi")({
   component: RegulasiHijau,
@@ -52,34 +55,74 @@ function ResultCard({ item }: { item: any }) {
   const riskData = getRiskDisplay(item.riskCategory);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 p-5 mb-4 flex flex-col gap-3">
-      {/* Header */}
-      <div className="flex flex-row justify-between items-start gap-4">
-        <h3 className="text-lg font-bold text-[#0F382C] leading-snug">
-          {item.regName}
-        </h3>
-        <span className="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-md font-semibold whitespace-nowrap shrink-0">
-          {item.article}
-        </span>
-      </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 p-5 mb-4 flex flex-col gap-3 cursor-pointer group">
+          {/* Header */}
+          <div className="flex flex-row justify-between items-start gap-4">
+            <h3 className="text-lg font-bold text-[#0F382C] leading-snug group-hover:text-emerald-700 transition-colors">
+              {item.regName}
+            </h3>
+            <span className="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-md font-semibold whitespace-nowrap shrink-0">
+              {item.article}
+            </span>
+          </div>
 
-      {/* Body */}
-      <p className="line-clamp-3 text-gray-600 text-sm leading-relaxed">
-        {item.content}
-      </p>
+          {/* Body */}
+          <p className="line-clamp-3 text-gray-600 text-sm leading-relaxed">
+            {item.content}
+          </p>
 
-      {/* Footer */}
-      <div className="mt-2 pt-3 flex flex-row items-center justify-between border-t border-gray-50">
-        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-bold tracking-wide uppercase ${riskData.bg}`}>
-          <Circle className={`h-2 w-2 fill-current ${riskData.color}`} />
-          {riskData.label}
+          {/* Footer */}
+          <div className="mt-2 pt-3 flex flex-row items-center justify-between border-t border-gray-50">
+            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-bold tracking-wide uppercase ${riskData.bg}`}>
+              <Circle className={`h-2 w-2 fill-current ${riskData.color}`} />
+              {riskData.label}
+            </div>
+            
+            <button className="text-sm font-semibold text-emerald-600 group-hover:text-emerald-700 group-hover:underline flex items-center gap-1 transition-colors">
+              Baca Selengkapnya <ArrowRight className="h-3 w-3" />
+            </button>
+          </div>
         </div>
+      </DialogTrigger>
 
-        <button className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 hover:underline flex items-center gap-1 transition-colors">
-          Baca Selengkapnya <ArrowRight className="h-3 w-3" />
-        </button>
-      </div>
-    </div>
+      <DialogContent className="max-w-2xl bg-white border-0 shadow-2xl p-0 overflow-hidden">
+        <div className="bg-emerald-950 p-6 flex flex-col gap-2">
+          <div className="flex items-center gap-2 mb-2">
+            <FileText className="h-5 w-5 text-emerald-400" />
+            <span className="text-emerald-400 font-bold text-sm tracking-widest uppercase">{item.article}</span>
+          </div>
+          <DialogTitle className="text-2xl font-black text-white leading-tight">
+            {item.regName}
+          </DialogTitle>
+          <div className="flex items-center gap-3 mt-4">
+            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-transparent text-xs font-bold uppercase ${riskData.bg.replace('bg-', 'bg-').replace('border-', 'border-')}`}>
+              <Circle className={`h-2.5 w-2.5 fill-current ${riskData.color}`} />
+              {riskData.label}
+            </div>
+            {item.similarity && (
+              <Badge variant="outline" className="border-emerald-700 text-emerald-300 font-bold">
+                Kecocokan AI: {(item.similarity * 100).toFixed(1)}%
+              </Badge>
+            )}
+          </div>
+        </div>
+        
+        <div className="p-8 max-h-[60vh] overflow-y-auto">
+          <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Isi Regulasi / Konten Pasal</h4>
+          <DialogDescription className="text-gray-700 text-base leading-loose whitespace-pre-wrap">
+            {item.content}
+          </DialogDescription>
+        </div>
+        
+        <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-end">
+          <button className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-lg shadow-sm transition-colors flex items-center gap-2">
+            <ExternalLink className="h-4 w-4" /> Buka Dokumen Asli
+          </button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -107,9 +150,7 @@ function RegulasiHijau() {
     const fetchResults = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`https://ozikgrid.web.id/api/v1/regulasi/search?q=${encodeURIComponent(debouncedQuery)}`);
-        if (!response.ok) throw new Error("Search failed");
-        const data = await response.json();
+        const data = await apiFetch<any[]>(`/regulasi/search?q=${encodeURIComponent(debouncedQuery)}`);
         setResults(data || []);
       } catch (error) {
         console.error("Search error:", error);
