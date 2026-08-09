@@ -39,7 +39,7 @@ func main() {
 	llmFactory := service.NewLLMFactoryService(cfg.SumopodURL, cfg.SumopodKey)
 	scoringEngine := service.NewScoringEngineService()
 	documentParser := service.NewDocumentParserService()
-	auditService := service.NewAuditService(auditRepo, piiMasker, pasalID, llmFactory, scoringEngine)
+	auditService := service.NewAuditService(auditRepo, userRepo, piiMasker, pasalID, llmFactory, scoringEngine)
 
 	// 4. Handlers (DI)
 	auditHandler := handler.NewAuditHandler(auditService, auditRepo, userRepo, documentParser)

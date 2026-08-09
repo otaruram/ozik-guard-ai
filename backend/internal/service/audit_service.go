@@ -20,6 +20,7 @@ type AuditService interface {
 
 type auditService struct {
 	auditRepo     repository.AuditRepository
+	userRepo      repository.UserRepository
 	piiMasker     PIIMaskerService
 	pasalID       PasalIdService
 	llmFactory    LLMFactoryService
@@ -28,6 +29,7 @@ type auditService struct {
 
 func NewAuditService(
 	auditRepo repository.AuditRepository,
+	userRepo repository.UserRepository,
 	piiMasker PIIMaskerService,
 	pasalID PasalIdService,
 	llmFactory LLMFactoryService,
@@ -35,6 +37,7 @@ func NewAuditService(
 ) AuditService {
 	return &auditService{
 		auditRepo:     auditRepo,
+		userRepo:      userRepo,
 		piiMasker:     piiMasker,
 		pasalID:       pasalID,
 		llmFactory:    llmFactory,
@@ -411,6 +414,13 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 	_, err = s.auditRepo.CreateAudit(ctx, audit)
 	if err != nil {
 		return nil, err
+	}
+
+	// Deduct credit after successful audit save
+	err = s.userRepo.DeductCredit(ctx, req.UserID)
+	if err != nil {
+		log.Printf("⚠️ Failed to deduct credit for user %s: %v", req.UserID, err)
+		// We still return success for the audit since it completed, but we logged the billing failure
 	}
 
 	log.Printf("✅ Audit %s saved. Score=%.0f Status=%s Issues=%d", auditID, score, status, len(auditIssues))
