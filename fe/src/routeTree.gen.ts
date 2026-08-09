@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuditRouteImport } from './routes/audit'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as PlaygroundRouteImport } from './routes/playground'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PageIdRouteImport } from './routes/page.$id'
 import { Route as VerifyIdRouteImport } from './routes/verify.$id'
@@ -36,6 +37,11 @@ const AuthRoute = AuthRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlaygroundRoute = PlaygroundRouteImport.update({
+  id: '/playground',
+  path: '/playground',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/audit': typeof AuditRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/playground': typeof PlaygroundRoute
   '/pricing': typeof PricingRoute
   '/page/$id': typeof PageIdRoute
   '/verify/$id': typeof VerifyIdRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/audit': typeof AuditRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/playground': typeof PlaygroundRoute
   '/pricing': typeof PricingRoute
   '/page/$id': typeof PageIdRoute
   '/verify/$id': typeof VerifyIdRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/audit': typeof AuditRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/playground': typeof PlaygroundRoute
   '/pricing': typeof PricingRoute
   '/page/$id': typeof PageIdRoute
   '/verify/$id': typeof VerifyIdRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/auth'
     | '/dashboard'
+    | '/playground'
     | '/pricing'
     | '/page/$id'
     | '/verify/$id'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/auth'
     | '/dashboard'
+    | '/playground'
     | '/pricing'
     | '/page/$id'
     | '/verify/$id'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/auth'
     | '/dashboard'
+    | '/playground'
     | '/pricing'
     | '/page/$id'
     | '/verify/$id'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   AuditRoute: typeof AuditRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
+  PlaygroundRoute: typeof PlaygroundRoute
   PricingRoute: typeof PricingRoute
   PageIdRoute: typeof PageIdRoute
   VerifyIdRoute: typeof VerifyIdRoute
@@ -162,6 +175,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/playground': {
+      id: '/playground'
+      path: '/playground'
+      fullPath: '/playground'
+      preLoaderRoute: typeof PlaygroundRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuditRoute: AuditRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
+  PlaygroundRoute: PlaygroundRoute,
   PricingRoute: PricingRoute,
   PageIdRoute: PageIdRoute,
   VerifyIdRoute: VerifyIdRoute,
@@ -208,3 +229,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
