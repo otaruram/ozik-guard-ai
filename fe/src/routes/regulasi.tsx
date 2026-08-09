@@ -133,7 +133,24 @@ function RegulasiHijau() {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
+  const [recommendations, setRecommendations] = useState<any[]>(DEFAULT_RECOMMENDATIONS);
   const [loading, setLoading] = useState(false);
+
+  // Fetch dynamic personalized recommendations on mount
+  useEffect(() => {
+    const fetchRecs = async () => {
+      try {
+        const data = await apiFetch<any[]>('/regulasi/recommendations');
+        if (data && data.length > 0) {
+          setRecommendations(data);
+        }
+      } catch (e) {
+        console.error("Failed fetching recs:", e);
+      }
+    };
+    fetchRecs();
+  }, []);
 
   // Custom debounce hook logic (500ms)
   useEffect(() => {
@@ -153,8 +170,9 @@ function RegulasiHijau() {
     const fetchResults = async () => {
       setLoading(true);
       try {
-        const data = await apiFetch<any[]>(`/regulasi/search?q=${encodeURIComponent(debouncedQuery)}`);
-        setResults(data || []);
+        const data = await apiFetch<any>(`/regulasi/search?q=${encodeURIComponent(debouncedQuery)}`);
+        setResults(data.results || []);
+        setAiSummary(data.aiSummary || null);
       } catch (error) {
         console.error("Search error:", error);
       } finally {
@@ -227,7 +245,7 @@ function RegulasiHijau() {
               </h2>
             </div>
             <div className="space-y-4">
-              {DEFAULT_RECOMMENDATIONS.map((item) => (
+              {recommendations.map((item) => (
                 <ResultCard key={item.id} item={item} />
               ))}
             </div>
@@ -253,11 +271,25 @@ function RegulasiHijau() {
                 <p className="text-gray-500 text-sm">Coba gunakan kata kunci yang lebih umum.</p>
               </div>
             ) : (
-              <div className="space-y-4">
-                {results.map((item, idx) => (
-                  <ResultCard key={item.id || idx} item={item} />
-                ))}
-              </div>
+              <>
+                {!loading && aiSummary && (
+                  <div className="bg-gradient-to-br from-[#0F382C] to-emerald-950 rounded-2xl p-6 mb-8 text-white shadow-lg relative overflow-hidden">
+                    <div className="flex items-center gap-2 mb-3 relative z-10">
+                      <Leaf className="h-5 w-5 text-emerald-400" />
+                      <h3 className="font-bold text-lg text-emerald-50">Sintesis AI (Gemini 3.1 Flash Lite)</h3>
+                    </div>
+                    <p className="text-emerald-100/90 leading-relaxed relative z-10 whitespace-pre-wrap text-sm md:text-base">
+                      {aiSummary}
+                    </p>
+                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl"></div>
+                  </div>
+                )}
+                <div className="space-y-4">
+                  {results.map((item, idx) => (
+                    <ResultCard key={item.id || idx} item={item} />
+                  ))}
+                </div>
+              </>
             )}
           </div>
         )}
