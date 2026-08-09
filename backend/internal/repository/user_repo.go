@@ -39,7 +39,7 @@ func (r *userRepository) GetByID(ctx context.Context, id string) (*domain.User, 
 	}
 
 	var apiKeyPtr *string
-	if v, ok := record.ApiKey(); ok {
+	if v, ok := record.APIKey(); ok {
 		apiKeyPtr = &v
 	}
 
@@ -68,7 +68,7 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*domain.
 	}
 
 	var apiKeyPtr *string
-	if v, ok := record.ApiKey(); ok {
+	if v, ok := record.APIKey(); ok {
 		apiKeyPtr = &v
 	}
 
