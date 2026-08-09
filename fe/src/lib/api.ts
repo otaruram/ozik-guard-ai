@@ -1,6 +1,6 @@
 import { supabase } from "./supabase";
 
-const API_BASE = import.meta.env.DEV ? "http://localhost:10000/api/v1" : "https://otaruchain.my.id/api/v1";
+const API_BASE = import.meta.env.DEV ? "http://localhost:10000/api/v1" : "https://ozikgrid.web.id/api/v1";
 
 async function getAuthHeaders(isFormData = false): Promise<Record<string, string>> {
   const { data: { session } } = await supabase.auth.getSession();

@@ -14,8 +14,8 @@ import { useAuth } from "@/lib/auth-context";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Masuk dengan Google — OzikCarbon" },
-      { name: "description", content: "Masuk ke OzikCarbon dengan akun Google Anda untuk evaluasi kelayakan proyek energi & kepatuhan regulasi." },
+      { title: "Masuk dengan Google — OzikSustain" },
+      { name: "description", content: "Masuk ke OzikSustain dengan akun Google Anda untuk evaluasi kelayakan proyek energi & kepatuhan regulasi." },
     ],
   }),
   component: AuthPage,
@@ -61,11 +61,11 @@ function AuthPage() {
 
         <div className="relative z-10">
           <Link to="/" className="inline-flex items-center gap-3 group">
-            <span className="grid h-12 w-12 place-items-center rounded-sm bg-white text-emerald-950 transition-transform group-hover:scale-105">
-              <Leaf className="h-7 w-7" />
+            <span className="grid h-12 w-12 place-items-center rounded-sm bg-white text-emerald-950 transition-transform group-hover:scale-105 overflow-hidden">
+              <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-cover" />
             </span>
             <div className="flex flex-col leading-none">
-              <span className="text-xl font-black tracking-widest uppercase">OzikCarbon</span>
+              <span className="text-xl font-black tracking-widest uppercase">OzikSustain</span>
               <span className="mt-1 text-[11px] font-bold uppercase tracking-wider text-white/70">
                 Greentech & Legaltech
               </span>
@@ -104,10 +104,10 @@ function AuthPage() {
         <div className="w-full max-w-[420px]">
           <div className="lg:hidden mb-10 flex justify-center">
             <Link to="/" className="inline-flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-sm bg-emerald-950 text-white shadow-[4px_4px_0_rgba(2,44,34,1)]">
-                <Leaf className="h-5 w-5" />
+              <span className="grid h-10 w-10 place-items-center rounded-sm bg-emerald-950 text-white shadow-[4px_4px_0_rgba(2,44,34,1)] overflow-hidden">
+                <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-cover" />
               </span>
-              <span className="text-xl font-black tracking-widest uppercase text-emerald-950">OzikCarbon</span>
+              <span className="text-xl font-black tracking-widest uppercase text-emerald-950">OzikSustain</span>
             </Link>
           </div>
 
@@ -158,7 +158,7 @@ function AuthPage() {
 
           <div className="mt-6 text-center">
             <p className="text-xs font-bold text-emerald-950/50">
-              Dengan masuk, Anda menyetujui <a href="#" className="underline font-black">Ketentuan Layanan</a> dan <a href="#" className="underline font-black">Kebijakan Privasi</a> OzikCarbon.
+              Dengan masuk, Anda menyetujui <a href="#" className="underline font-black">Ketentuan Layanan</a> dan <a href="#" className="underline font-black">Kebijakan Privasi</a> OzikSustain.
             </p>
           </div>
         </div>

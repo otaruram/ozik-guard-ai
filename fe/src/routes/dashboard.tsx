@@ -29,6 +29,10 @@ import {
   AlertTriangle,
   QrCode,
   Lock,
+  Play,
+  Code2,
+  Terminal,
+  BookOpen
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuditWorkspace } from "@/components/AuditWorkspace";
@@ -36,6 +40,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -62,7 +67,7 @@ import { api } from "@/lib/api";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — OzikCarbon Workspace" },
+      { title: "Dashboard — OzikSustain Workspace" },
     ],
   }),
   component: Dashboard,
@@ -143,10 +148,10 @@ function Dashboard() {
       >
         <div className="h-20 flex items-center px-6 border-b-4 border-emerald-950 shrink-0 bg-emerald-950 text-white">
           <Link to="/" className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-sm bg-white text-emerald-950">
-              <Leaf className="h-6 w-6" />
-            </span>
-            <span className="text-[17px] font-black uppercase tracking-widest">OzikCarbon</span>
+            <div className="grid h-9 w-9 place-items-center rounded-sm bg-emerald-950 text-white shadow-[2px_2px_0_rgba(2,44,34,1)] overflow-hidden">
+              <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-cover" />
+            </div>
+            <span className="text-[17px] font-black uppercase tracking-widest">OzikSustain</span>
           </Link>
           <button
             onClick={() => setMobileOpen(false)}
@@ -480,7 +485,7 @@ function HistoriAudit({ history, loading }: { history: any[], loading: boolean }
                   <div className="bg-emerald-950 text-white p-1.5 shrink-0">
                     <ShieldCheck className="h-5 w-5" />
                   </div>
-                  <span className="font-black text-emerald-950 uppercase text-sm tracking-widest">OzikCarbon</span>
+                  <span className="font-black text-emerald-950 uppercase text-sm tracking-widest">OzikSustain</span>
                 </div>
                 
                 <div className="border-4 border-emerald-950 p-2 mb-4 w-32 h-32 flex items-center justify-center relative bg-white">
@@ -547,8 +552,58 @@ function HistoriAudit({ history, loading }: { history: any[], loading: boolean }
 function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => void }) {
   const { user } = useAuth();
   const [loadingKey, setLoadingKey] = useState(false);
+  const [pddText, setPddText] = useState('Paragraf ini memuat klaim pengurangan emisi karbon dari proyek PLTS, namun tidak terdapat bukti studi kelayakan yang memadai.');
+  const [projectName, setProjectName] = useState('Sample PDD Audit');
+  const [apiResponse, setApiResponse] = useState<any>(null);
+  const [loadingPlayground, setLoadingPlayground] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [apiTab, setApiTab] = useState<'playground' | 'docs'>('playground');
+
   const userEmail = user?.email || "";
   const userAvatar = user?.user_metadata?.avatar_url;
+
+  const handleTestAPI = async () => {
+    if (!dbUser?.apiKey) {
+      alert("Buat API Key terlebih dahulu di atas.");
+      return;
+    }
+    setLoadingPlayground(true);
+    setApiResponse(null);
+    
+    try {
+      const res = await fetch(import.meta.env.DEV ? "http://localhost:10000/api/v1/audit/full-process" : "https://ozikgrid.web.id/api/v1/audit/full-process", {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${dbUser.apiKey}`,
+        },
+        body: (() => {
+          const fd = new FormData();
+          fd.append('projectName', projectName);
+          const blob = new Blob([pddText], { type: 'text/plain' });
+          fd.append('document', blob, 'sample.txt');
+          return fd;
+        })()
+      });
+      const data = await res.json();
+      setApiResponse({ status: res.status, data });
+    } catch (err: any) {
+      setApiResponse({ error: err.message });
+    } finally {
+      setLoadingPlayground(false);
+      refreshUser(); // refresh credits
+    }
+  };
+
+  const curlCode = `curl -X POST https://ozikgrid.web.id/api/v1/audit/full-process \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -F "projectName=My Carbon Project" \\
+  -F "document=@/path/to/pdd.pdf"`;
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -642,7 +697,7 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3 mb-10">
             <div className="flex justify-between items-center text-xs font-black uppercase text-emerald-950">
               <span>Penggunaan API Bulan Ini</span>
               <span>450 / 1,000 Calls</span>
@@ -650,6 +705,135 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
             <div className="h-4 w-full bg-emerald-100 border-2 border-emerald-950 overflow-hidden">
               <div className="h-full bg-emerald-950" style={{ width: '45%' }}></div>
             </div>
+          </div>
+
+          <div className="border-t-4 border-emerald-950 pt-10">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+              <div>
+                <h3 className="text-xl font-black uppercase tracking-widest flex items-center gap-3 text-emerald-950">
+                  <Terminal className="h-6 w-6 text-emerald-600" /> Developer API
+                </h3>
+                <p className="text-emerald-950/70 font-bold text-xs uppercase tracking-wider mt-1">Integrasi Audit Kepatuhan & AI Spasial ke Sistem Anda</p>
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={() => setApiTab('playground')} variant={apiTab === 'playground' ? 'default' : 'outline'} className={cn("rounded-none font-black text-xs uppercase border-2", apiTab === 'playground' ? 'bg-emerald-950 text-white border-emerald-950' : 'border-emerald-950 text-emerald-950 hover:bg-emerald-50')}>
+                  <Code2 className="h-4 w-4 mr-2" /> Playground
+                </Button>
+                <Button onClick={() => setApiTab('docs')} variant={apiTab === 'docs' ? 'default' : 'outline'} className={cn("rounded-none font-black text-xs uppercase border-2", apiTab === 'docs' ? 'bg-emerald-950 text-white border-emerald-950' : 'border-emerald-950 text-emerald-950 hover:bg-emerald-50')}>
+                  <BookOpen className="h-4 w-4 mr-2" /> Dokumen
+                </Button>
+              </div>
+            </div>
+
+            {apiTab === 'playground' ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Request Panel */}
+                <div className="bg-white border-4 border-emerald-950 shadow-[6px_6px_0_rgba(2,44,34,1)] p-6">
+                  <h2 className="text-sm font-black uppercase tracking-widest text-emerald-950 border-b-4 border-emerald-950 pb-2 mb-6 flex items-center gap-2">
+                    <Code2 className="h-5 w-5 text-emerald-600" /> Request Configuration
+                  </h2>
+
+                  <div className="space-y-6">
+                    <div>
+                      <Label className="text-xs font-black uppercase text-emerald-950 mb-2 block">1. Project Name</Label>
+                      <Input 
+                        value={projectName} 
+                        onChange={e => setProjectName(e.target.value)}
+                        className="border-4 border-emerald-950 rounded-none h-12 font-bold focus-visible:ring-0"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-xs font-black uppercase text-emerald-950 mb-2 block">2. PDD Document Text (Simulasi)</Label>
+                      <Textarea 
+                        value={pddText}
+                        onChange={e => setPddText(e.target.value)}
+                        className="border-4 border-emerald-950 rounded-none min-h-[150px] font-mono text-sm focus-visible:ring-0"
+                      />
+                    </div>
+
+                    <Button 
+                      onClick={handleTestAPI}
+                      disabled={loadingPlayground}
+                      className="w-full rounded-none bg-yellow-400 hover:bg-yellow-500 text-emerald-950 border-4 border-emerald-950 font-black uppercase tracking-widest h-14 shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all"
+                    >
+                      {loadingPlayground ? 'Memproses Audit...' : <><Play className="h-5 w-5 mr-2 fill-emerald-950" /> Jalankan Audit (POST /full-process)</>}
+                    </Button>
+
+                    <div className="bg-yellow-50 border-4 border-yellow-400 p-4 flex gap-3 items-start">
+                      <AlertTriangle className="h-5 w-5 text-yellow-600 shrink-0" />
+                      <p className="text-[10px] font-bold text-yellow-800 leading-relaxed uppercase">Setiap hit ke endpoint ini akan memotong 1 kredit dari akun Anda. Pastikan API key Anda dijaga kerahasiaannya.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Response Panel */}
+                <div className="bg-emerald-950 border-4 border-emerald-950 shadow-[6px_6px_0_rgba(2,44,34,1)] p-6 text-white flex flex-col">
+                  <div className="flex items-center justify-between border-b-4 border-white/20 pb-2 mb-6">
+                    <h2 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+                      <Terminal className="h-5 w-5 text-yellow-400" /> API Response
+                    </h2>
+                    {apiResponse && (
+                      <div className={cn("px-3 py-1 font-black text-xs rounded-none border-2", apiResponse.status === 200 ? 'bg-emerald-500 border-emerald-300' : 'bg-red-500 border-red-300')}>
+                        HTTP {apiResponse.status || 'ERROR'}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex-1 bg-black/50 border-2 border-white/10 p-4 overflow-auto font-mono text-[11px] leading-relaxed relative min-h-[300px]">
+                    {apiResponse ? (
+                      <pre className="whitespace-pre-wrap text-emerald-400">{JSON.stringify(apiResponse.data || apiResponse.error, null, 2)}</pre>
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-white/30 italic">
+                        Tunggu respons API... Tekan Jalankan Audit.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-emerald-50 border-4 border-emerald-950 shadow-[6px_6px_0_rgba(2,44,34,1)] p-8">
+                <h2 className="text-2xl font-black uppercase tracking-widest text-emerald-950 mb-8">Dokumentasi API</h2>
+                
+                <div className="prose max-w-none prose-emerald">
+                  <h3 className="font-black text-lg uppercase text-emerald-950 border-b-4 border-emerald-950 pb-2 inline-block">Authentication</h3>
+                  <p className="font-bold text-emerald-950/80 mt-4 mb-4 text-sm">Semua permintaan ke API OzikSustain memerlukan header <code>Authorization: Bearer &lt;API_KEY&gt;</code>.</p>
+                  
+                  <h3 className="font-black text-lg uppercase text-emerald-950 border-b-4 border-emerald-950 pb-2 inline-block mt-8">Endpoint Utama</h3>
+                  
+                  <div className="bg-white border-4 border-emerald-950 p-6 mt-4">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="bg-yellow-400 border-2 border-emerald-950 text-emerald-950 font-black px-3 py-1 text-sm uppercase">POST</span>
+                      <span className="font-mono font-bold text-emerald-950 text-sm sm:text-base">/api/v1/audit/full-process</span>
+                    </div>
+                    <p className="text-sm font-bold text-emerald-950/70 mb-4">Mengeksekusi audit legalitas dan kelayakan secara menyeluruh terhadap dokumen PDD.</p>
+                    
+                    <h4 className="font-black uppercase text-xs mb-2 text-emerald-950">Request Format (multipart/form-data)</h4>
+                    <ul className="list-disc pl-5 text-sm font-bold text-emerald-950/80 space-y-1 mb-6">
+                      <li><code>projectName</code> (string, optional) - Nama proyek karbon.</li>
+                      <li><code>document</code> (file, required) - File PDF / DOCX / TXT maksimal 10MB.</li>
+                    </ul>
+
+                    <h4 className="font-black uppercase text-xs mb-2 text-emerald-950">Contoh cURL</h4>
+                    <div className="relative">
+                      <pre className="bg-emerald-950 text-emerald-400 p-4 font-mono text-[11px] overflow-x-auto border-4 border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,1)]">
+                        {curlCode}
+                      </pre>
+                      <Button 
+                        onClick={() => handleCopy(curlCode)} 
+                        size="icon" 
+                        className="absolute top-2 right-2 h-8 w-8 bg-white/10 hover:bg-white/20 text-white rounded-none border border-white/30"
+                      >
+                        {copied ? <CheckCircle2 className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <h3 className="font-black text-lg uppercase text-emerald-950 border-b-4 border-emerald-950 pb-2 inline-block mt-10">Rate Limit & Credit</h3>
+                  <p className="font-bold text-emerald-950/80 mt-4 text-sm">Setiap kali Anda menembak endpoint <code>/full-process</code>, sistem akan memotong 1 kredit dari akun Anda. Batasan (Rate Limit) standar adalah 60 request per menit per IP address.</p>
+                </div>
+              </div>
+            )}
           </div>
         </TabsContent>
       </Tabs>
