@@ -145,42 +145,79 @@ export function FreeAuditWorkspace() {
                     <div className="text-xs font-bold leading-tight text-emerald-950/80">{result.spatialSummary}</div>
                   </div>
                 </div>
-                
-                {/* 1 Red Flag Law (Unlocked) */}
-                <div className="border-4 border-red-900 bg-white p-5 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 bg-red-600 text-white font-black text-[9px] uppercase px-2 py-1 border-b-4 border-l-4 border-red-900">
-                    Red Flag
-                  </div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <AlertTriangle className="h-5 w-5 text-red-600" />
-                    <span className="font-black text-sm uppercase text-red-900">Pelanggaran Kritis</span>
-                  </div>
-                  <div className="bg-red-900 text-white px-3 py-1.5 inline-block text-[10px] font-black mb-3 uppercase tracking-wider">
-                    {result.topViolation?.matchedLaw}
-                  </div>
-                  <p className="text-xs font-bold text-red-900/80 mb-4">{result.topViolation?.originalLawText}</p>
-                </div>
 
-                {/* Big Paywall Lock Card */}
-                <div className="border-4 border-emerald-950 bg-emerald-950 text-white p-6 shadow-[8px_8px_0_rgba(2,44,34,1)] relative overflow-hidden mt-8">
-                  <div className="absolute -right-4 -bottom-4 opacity-10">
-                    <ShieldCheck className="h-32 w-32" />
+                {/* 4 Pillars Drilldown (Limited) */}
+                <div className="mt-8">
+                  <h4 className="font-black uppercase text-sm text-emerald-950 mb-4 border-b-4 border-emerald-950 pb-2">Rincian Analisis (Drilldown)</h4>
+                  
+                  {/* Pillar 1 (Unlocked) */}
+                  <div className="border-4 border-red-900 bg-white p-5 mb-4 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 bg-red-600 text-white font-black text-[9px] uppercase px-2 py-1 border-b-4 border-l-4 border-red-900">
+                      High Risk
+                    </div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <AlertTriangle className="h-5 w-5 text-red-600" />
+                      <span className="font-black text-sm uppercase text-red-900">1. Kepatuhan Regulasi (Legal)</span>
+                    </div>
+                    <div className="bg-red-900 text-white px-3 py-1.5 inline-block text-[10px] font-black mb-3 uppercase tracking-wider">
+                      {result.topViolation?.matchedLaw || "UU Ketenagalistrikan"}
+                    </div>
+                    <p className="text-xs font-bold text-red-900/80 mb-4">{result.topViolation?.originalLawText || "Ditemukan pelanggaran kritis terkait izin usaha penyediaan tenaga listrik."}</p>
                   </div>
-                  <div className="relative z-10 text-center">
-                    <Lock className="h-10 w-10 text-yellow-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-black uppercase tracking-wide mb-3 leading-snug">
-                      Daftar Akun Gratis untuk Membuka Laporan Lengkap
-                    </h3>
-                    <p className="text-xs font-bold text-white/80 mb-6 px-4">
-                      Dapatkan akses ke Draf Perbaikan AI (Auto-Revision), temuan regulasi tambahan, dan klaim lencana verifikasi QR SHA-256.
-                    </p>
-                    <Button 
-                      onClick={handleRegister}
-                      size="lg" 
-                      className="w-full bg-yellow-400 hover:bg-yellow-500 text-emerald-950 border-4 border-emerald-950 h-14 font-black uppercase tracking-widest rounded-none shadow-[4px_4px_0_rgba(255,255,255,0.2)] hover:translate-y-1 hover:shadow-none transition-all"
-                    >
-                      Daftar (Dapat 3 Kredit)
-                    </Button>
+
+                  {/* Pillars 2, 3, 4 (Locked & Blurred) */}
+                  <div className="relative">
+                    <div className="space-y-4 filter blur-sm opacity-50 pointer-events-none select-none">
+                      {/* Pillar 2 */}
+                      <div className="border-4 border-emerald-950 bg-emerald-50 p-5">
+                        <div className="flex items-center gap-2 mb-2">
+                          <FileText className="h-5 w-5 text-emerald-950" />
+                          <span className="font-black text-sm uppercase text-emerald-950">2. Teknis & Sipil</span>
+                        </div>
+                        <div className="h-2 w-3/4 bg-emerald-950/20 mb-2"></div>
+                        <div className="h-2 w-1/2 bg-emerald-950/20"></div>
+                      </div>
+                      
+                      {/* Pillar 3 */}
+                      <div className="border-4 border-emerald-950 bg-emerald-50 p-5">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Globe className="h-5 w-5 text-emerald-950" />
+                          <span className="font-black text-sm uppercase text-emerald-950">3. Lingkungan & Spasial</span>
+                        </div>
+                        <div className="h-2 w-2/3 bg-emerald-950/20 mb-2"></div>
+                        <div className="h-2 w-1/3 bg-emerald-950/20"></div>
+                      </div>
+                      
+                      {/* Pillar 4 */}
+                      <div className="border-4 border-emerald-950 bg-emerald-50 p-5">
+                        <div className="flex items-center gap-2 mb-2">
+                          <ShieldCheck className="h-5 w-5 text-emerald-950" />
+                          <span className="font-black text-sm uppercase text-emerald-950">4. Analisis Risiko & Mitigasi</span>
+                        </div>
+                        <div className="h-2 w-5/6 bg-emerald-950/20 mb-2"></div>
+                        <div className="h-2 w-1/2 bg-emerald-950/20"></div>
+                      </div>
+                    </div>
+
+                    {/* Paywall Overlay */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center z-10 p-4">
+                      <div className="bg-emerald-950 text-white p-6 border-4 border-emerald-950 shadow-[8px_8px_0_rgba(250,204,21,1)] w-full max-w-sm text-center">
+                        <Lock className="h-10 w-10 text-yellow-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-black uppercase tracking-wide mb-3 leading-snug">
+                          Akses Terkunci
+                        </h3>
+                        <p className="text-xs font-bold text-white/80 mb-6 px-2">
+                          Login ke aplikasi untuk melihat Drilldown 4 Pilar secara lengkap, Draf Revisi AI, dan klaim lencana verifikasi QR SHA-256.
+                        </p>
+                        <Button 
+                          onClick={handleRegister}
+                          size="lg" 
+                          className="w-full bg-yellow-400 hover:bg-yellow-500 text-emerald-950 border-4 border-emerald-950 h-12 font-black uppercase tracking-widest rounded-none hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0_rgba(255,255,255,0.2)] transition-all"
+                        >
+                          Login / Daftar (Gratis)
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
