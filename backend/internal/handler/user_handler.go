@@ -3,6 +3,7 @@ package handler
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"ozikcarbon-backend/config"
 	"ozikcarbon-backend/domain"
 	"ozikcarbon-backend/internal/repository"
 
@@ -11,10 +12,11 @@ import (
 
 type UserHandler struct {
 	userRepo repository.UserRepository
+	cfg      *config.Config
 }
 
-func NewUserHandler(userRepo repository.UserRepository) *UserHandler {
-	return &UserHandler{userRepo: userRepo}
+func NewUserHandler(userRepo repository.UserRepository, cfg *config.Config) *UserHandler {
+	return &UserHandler{userRepo: userRepo, cfg: cfg}
 }
 
 // GetMe returns the authenticated user's profile
@@ -36,6 +38,19 @@ func (h *UserHandler) GetMe(c *fiber.Ctx) error {
 		})
 	}
 
+	credits := user.CreditsBalance
+	
+	// Check Admin Bypass for unlimited credits
+	if userEmail := c.Locals("userEmail"); userEmail != nil {
+		emailStr := userEmail.(string)
+		for _, admin := range h.cfg.AdminEmails {
+			if admin != "" && emailStr == admin {
+				credits = 999999 // Unlimited credits for UI
+				break
+			}
+		}
+	}
+
 	return c.Status(fiber.StatusOK).JSON(domain.UserMeResponse{
 		ID:             user.ID,
 		Email:          user.Email,
@@ -43,7 +58,7 @@ func (h *UserHandler) GetMe(c *fiber.Ctx) error {
 		AvatarURL:      user.AvatarURL,
 		Company:        user.Company,
 		Provider:       user.Provider,
-		CreditsBalance: user.CreditsBalance,
+		CreditsBalance: credits,
 		APIKey:         user.APIKey,
 	})
 }

@@ -44,7 +44,7 @@ func main() {
 	// 4. Handlers (DI)
 	auditHandler := handler.NewAuditHandler(auditService, auditRepo, userRepo, documentParser)
 	verifyHandler := handler.NewVerifyHandler(auditRepo)
-	userHandler := handler.NewUserHandler(userRepo)
+	userHandler := handler.NewUserHandler(userRepo, cfg)
 	freeAuditHandler := handler.NewFreeAuditHandler(piiMasker, pasalID, llmFactory, scoringEngine)
 	freeAuditHandler.SetAuditService(auditService)
 
