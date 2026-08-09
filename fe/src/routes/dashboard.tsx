@@ -556,6 +556,7 @@ function HistoriAudit({ history, loading, refreshHistory }: { history: any[], lo
               </div>
             </div>
           </div>
+        </DialogContent>
       </Dialog>
 
       {/* Delete Confirmation Modal */}

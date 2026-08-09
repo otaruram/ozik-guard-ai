@@ -33,16 +33,16 @@ func (r *userRepository) GetByID(ctx context.Context, id string) (*domain.User, 
 		return nil, err
 	}
 
-	var comp string
+	var compPtr *string
 	if v, ok := record.Company(); ok {
-		comp = v
+		compPtr = &v
 	}
 
 	return &domain.User{
 		ID:             record.ID,
 		Email:          record.Email,
 		Name:           record.Name,
-		Company:        comp,
+		Company:        compPtr,
 		Provider:       record.Provider,
 		CreditsBalance: record.CreditsBalance,
 	}, nil
@@ -56,16 +56,16 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*domain.
 		return nil, err
 	}
 
-	var comp string
+	var compPtr *string
 	if v, ok := record.Company(); ok {
-		comp = v
+		compPtr = &v
 	}
 
 	return &domain.User{
 		ID:             record.ID,
 		Email:          record.Email,
 		Name:           record.Name,
-		Company:        comp,
+		Company:        compPtr,
 		Provider:       record.Provider,
 		CreditsBalance: record.CreditsBalance,
 	}, nil
@@ -107,16 +107,16 @@ func (r *userRepository) UpdateProfile(ctx context.Context, id string, req *doma
 		return nil, err
 	}
 
-	var comp string
+	var compPtr *string
 	if v, ok := record.Company(); ok {
-		comp = v
+		compPtr = &v
 	}
 
 	return &domain.User{
 		ID:      record.ID,
 		Name:    record.Name,
 		Email:   record.Email,
-		Company: comp,
+		Company: compPtr,
 	}, nil
 }
 
