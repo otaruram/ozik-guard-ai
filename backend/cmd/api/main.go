@@ -43,7 +43,7 @@ func main() {
 
 	// 4. Handlers (DI)
 	auditHandler := handler.NewAuditHandler(auditService, auditRepo, userRepo, documentParser)
-	verifyHandler := handler.NewVerifyHandler(auditRepo)
+	verifyHandler := handler.NewVerifyHandler(auditRepo, scoringEngine)
 	userHandler := handler.NewUserHandler(userRepo, cfg)
 	freeAuditHandler := handler.NewFreeAuditHandler(piiMasker, pasalID, llmFactory, scoringEngine)
 	freeAuditHandler.SetAuditService(auditService)
@@ -66,7 +66,7 @@ func main() {
 
 	// === Public Routes (No Auth) ===
 	v1.Post("/audit/guest-teaser", freeAuditHandler.GuestTeaser)
-	v1.Get("/verify/:qr_hash", verifyHandler.GetVerification)
+	v1.Get("/verify/:hash_or_id", verifyHandler.GetVerification)
 
 	// === Protected Routes (Supabase JWT) ===
 	protected := v1.Group("", middleware.SupabaseAuthMiddleware(cfg, userRepo))

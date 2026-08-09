@@ -9,8 +9,10 @@ import (
 type AuditRepository interface {
 	CreateAudit(ctx context.Context, audit *domain.ProjectAudit) (*domain.ProjectAudit, error)
 	GetAuditByID(ctx context.Context, id string) (*domain.ProjectAudit, error)
+	GetAuditByIDOrHash(ctx context.Context, idOrHash string) (*domain.ProjectAudit, error)
 	GetAuditsByUserID(ctx context.Context, userID string) ([]domain.ProjectAudit, error)
 	GetAuditBySHA256Hash(ctx context.Context, hash string) (*domain.ProjectAudit, error)
+	UpdateAuditStatus(ctx context.Context, id string, status string) error
 	DeleteAudit(ctx context.Context, id string, userID string) error
 }
 
@@ -182,6 +184,71 @@ func (r *auditRepository) GetAuditsByUserID(ctx context.Context, userID string) 
 		})
 	}
 	return audits, nil
+}
+
+func (r *auditRepository) GetAuditByIDOrHash(ctx context.Context, idOrHash string) (*domain.ProjectAudit, error) {
+	record, err := r.client.ProjectAudit.FindFirst(
+		db.ProjectAudit.Or(
+			db.ProjectAudit.ID.Equals(idOrHash),
+			db.ProjectAudit.Sha256Hash.Equals(idOrHash),
+		),
+	).With(
+		db.ProjectAudit.Issues.Fetch(),
+		db.ProjectAudit.User.Fetch(),
+	).Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	issues := make([]domain.AuditIssue, len(record.Issues()))
+	for i, iss := range record.Issues() {
+		issues[i] = domain.AuditIssue{
+			ID:                iss.ID,
+			AuditID:           iss.AuditID,
+			Severity:          domain.RiskSeverity(iss.Severity),
+			ClauseText:        iss.ClauseText,
+			MatchedLaw:        iss.MatchedLaw,
+			OriginalLawText:   iss.OriginalLawText,
+			SuggestedRevision: iss.SuggestedRevision,
+			CreatedAt:         iss.CreatedAt,
+		}
+	}
+
+	parsedDocJSON, _ := record.ParsedDocumentJSON()
+
+	auditResp := &domain.ProjectAudit{
+		ID:                 record.ID,
+		UserID:             record.UserID,
+		ProjectName:        record.ProjectName,
+		FeasibilityScore:   record.FeasibilityScore,
+		ScoreLegal:         record.ScoreLegal,
+		ScoreTechnical:     record.ScoreTechnical,
+		ScoreSocial:        record.ScoreSocial,
+		ScoreTransparency:  record.ScoreTransparency,
+		Status:             domain.BadgeStatus(record.Status),
+		AuthorName:         record.User().Name,
+		AuthorEmail:        record.User().Email,
+		CreatedAt:          record.CreatedAt,
+		UpdatedAt:          record.UpdatedAt,
+		SHA256Hash:         record.Sha256Hash,
+		Issues:             issues,
+		PDDFileType:        record.PddFileType,
+		ParsedDocumentJson: string(parsedDocJSON),
+		TotalPages:         record.TotalPages,
+		TotalWords:         record.TotalWords,
+		TotalSentences:     record.TotalSentences,
+	}
+
+	return auditResp, nil
+}
+
+func (r *auditRepository) UpdateAuditStatus(ctx context.Context, id string, status string) error {
+	_, err := r.client.ProjectAudit.FindUnique(
+		db.ProjectAudit.ID.Equals(id),
+	).Update(
+		db.ProjectAudit.Status.Set(db.BadgeStatus(status)),
+	).Exec(ctx)
+	return err
 }
 
 func (r *auditRepository) GetAuditBySHA256Hash(ctx context.Context, hash string) (*domain.ProjectAudit, error) {
