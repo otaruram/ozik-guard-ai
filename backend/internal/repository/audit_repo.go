@@ -23,19 +23,6 @@ func NewAuditRepository(client *db.PrismaClient) AuditRepository {
 }
 
 func (r *auditRepository) CreateAudit(ctx context.Context, audit *domain.ProjectAudit) (*domain.ProjectAudit, error) {
-	if audit.UserID == "mock-uuid" {
-		// Ensure mock user exists to prevent foreign key constraint error
-		_, errUser := r.client.User.FindUnique(
-			db.User.ID.Equals("mock-uuid"),
-		).Exec(ctx)
-		if errUser != nil {
-			_, _ = r.client.User.CreateOne(
-				db.User.ID.Set("mock-uuid"),
-				db.User.Email.Set("mock@example.com"),
-				db.User.Name.Set("Mock User"),
-			).Exec(ctx)
-		}
-	}
 
 	fileType := audit.PDDFileType
 	if fileType == "" {

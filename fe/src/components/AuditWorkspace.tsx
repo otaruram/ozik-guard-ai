@@ -137,12 +137,6 @@ export function AuditWorkspace({
     if (pageScope === "custom") {
       formData.append("custom_range", customRange);
     }
-    setStatus("parsing");
-    await new Promise(r => setTimeout(r, 800));
-    setStatus("masking");
-    await new Promise(r => setTimeout(r, 800));
-    setStatus("spatial");
-    await new Promise(r => setTimeout(r, 800));
     setStatus("law");
     try {
       const res = isFreemium ? await api.guestTeaser(formData) : await api.processFullAudit(formData);

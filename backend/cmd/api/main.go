@@ -46,6 +46,7 @@ func main() {
 	verifyHandler := handler.NewVerifyHandler(auditRepo)
 	userHandler := handler.NewUserHandler(userRepo)
 	freeAuditHandler := handler.NewFreeAuditHandler(piiMasker, pasalID, llmFactory, scoringEngine)
+	freeAuditHandler.SetAuditService(auditService)
 
 	// 5. Fiber App Init
 	app := fiber.New(fiber.Config{
