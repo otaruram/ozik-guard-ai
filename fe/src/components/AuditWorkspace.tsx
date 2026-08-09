@@ -138,13 +138,6 @@ export function AuditWorkspace({
     }
   }, [activeClauseId]);
 
-  useEffect(() => {
-    if (status === "result" && result?.clauses?.length > 0) {
-      const firstIssue = result.clauses.find((c: any) => c.status !== "compliant");
-      setActiveClauseId(firstIssue ? firstIssue.id : result.clauses[0].id);
-    }
-  }, [status, result]);
-
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
@@ -626,60 +619,80 @@ export function AuditWorkspace({
               </div>
             </div>
 
-            {/* Cards */}
-            <div ref={rightPanelRef} className="flex-1 overflow-y-auto p-3 space-y-3">
-              {flatClauses.map((clause: any, idx: number) => {
-                const isActive = activeClauseId === clause.id;
-                const isLockedCard = isFreemium && idx > 0;
-                return (
-                  <div key={clause.id} data-clause-id={clause.id} onClick={() => !isLockedCard && setActiveClauseId(clause.id)} className={`border-2 transition-all ${isLockedCard ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'}`} style={{ borderColor: isActive ? getBorder(clause.status) : "#E5E7EB", boxShadow: isActive ? "0 4px 12px rgba(0,0,0,0.08)" : "none" }}>
-                    <div className="px-3 py-1.5 flex items-center justify-between" style={{ backgroundColor: (clause.status === "high" || clause.status === "HIGH_RISK") ? "#EF4444" : (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "#F59E0B" : "#10B981" }}>
-                      <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "#78350F" : "#FFF" }}>
-                        {(clause.status === "high" || clause.status === "HIGH_RISK") ? "🔴 HIGH RISK" : (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "🟡 MEDIUM RISK" : "🟢 COMPLIANT"}
-                      </span>
-                      <span className="text-[8px] font-bold uppercase tracking-wider" style={{ color: clause.status === "medium" ? "#78350F" : "rgba(255,255,255,0.8)" }}>{clause.clause}</span>
-                    </div>
-                    {isLockedCard ? (
-                      <div className="p-5 text-center bg-gray-50">
-                        <Lock className="h-5 w-5 mx-auto mb-2 text-gray-400" />
-                        <p className="text-[9px] font-bold uppercase text-gray-400 mb-2">🔒 Upgrade untuk Buka</p>
-                        <Button onClick={handleRegister} size="sm" className="bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] rounded-none border-2 border-[#0F382C] font-black text-[8px] uppercase h-6">Upgrade (3 Kredit)</Button>
+            {/* Dynamic Inspector Right Panel */}
+            <div ref={rightPanelRef} className="flex-1 overflow-y-auto p-4">
+              {(!activeClauseId || !flatClauses.find((c: any) => c.id === activeClauseId)) ? (
+                <div className="flex flex-col items-center justify-center h-full text-center p-8 bg-gray-50 border-2 border-dashed border-gray-200">
+                  <BookOpen className="h-12 w-12 text-gray-300 mb-4" />
+                  <p className="text-sm font-bold text-gray-500 max-w-xs leading-relaxed">
+                    🔍 Klik salah satu paragraf berwarna di dokumen sebelah kiri untuk melihat detail analisis, pasal rujukan, dan rekomendasi perbaikan.
+                  </p>
+                </div>
+              ) : (
+                (() => {
+                  const clause = flatClauses.find((c: any) => c.id === activeClauseId);
+                  const isLockedCard = isFreemium && flatClauses.findIndex((c: any) => c.id === activeClauseId) > 0;
+                  return (
+                    <div key={clause.id} data-clause-id={clause.id} className="border-2 border-emerald-500 shadow-[0_4px_12px_rgba(0,0,0,0.08)] bg-white">
+                      <div className="px-3 py-1.5 flex items-center justify-between" style={{ backgroundColor: (clause.status === "high" || clause.status === "HIGH_RISK") ? "#EF4444" : (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "#F59E0B" : "#10B981" }}>
+                        <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "#78350F" : "#FFF" }}>
+                          {(clause.status === "high" || clause.status === "HIGH_RISK") ? "🔴 HIGH RISK" : (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "🟡 MEDIUM RISK" : "🟢 COMPLIANT"}
+                        </span>
+                        <span className="text-[8px] font-bold uppercase tracking-wider" style={{ color: clause.status === "medium" ? "#78350F" : "rgba(255,255,255,0.8)" }}>{clause.clause}</span>
                       </div>
-                    ) : clause.status === "compliant" ? (
-                      <div className="p-3 bg-emerald-50/50">
-                        <div className="flex items-center gap-1.5 mb-1"><CheckCircle2 className="h-3 w-3 text-emerald-600" /><span className="text-[10px] font-black text-emerald-800 uppercase">Klausul Aman</span></div>
-                        <p className="text-[11px] text-gray-600 leading-relaxed">Tidak ada pelanggaran terdeteksi. Memenuhi standar kepatuhan regulasi.</p>
-                      </div>
-                    ) : (
-                      <div className="divide-y divide-gray-100">
-                        <div className="p-4">
-                          <div className="flex items-center gap-2 mb-2"><AlertTriangle className={`h-4 w-4 ${clause.status === "high" ? "text-red-600" : "text-yellow-600"}`} /><span className="text-[10px] font-black uppercase tracking-wider text-[#0F382C]">Problem Analysis</span></div>
-                          <p className="text-sm text-gray-700 leading-relaxed font-medium">{clause.issue?.severity === "HIGH_RISK" ? "Klausul ini melanggar regulasi tata ruang dan lingkungan. PDD tidak mencantumkan persyaratan perizinan yang diwajibkan oleh undang-undang." : "Terdapat ambiguitas dalam komitmen lingkungan. Klaim tidak didukung oleh rujukan pasal atau dokumen pendukung yang memadai."}</p>
+                      
+                      {isLockedCard ? (
+                        <div className="p-5 text-center bg-gray-50">
+                          <Lock className="h-5 w-5 mx-auto mb-2 text-gray-400" />
+                          <p className="text-[9px] font-bold uppercase text-gray-400 mb-2">🔒 Upgrade untuk Buka</p>
+                          <Button onClick={handleRegister} size="sm" className="bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] rounded-none border-2 border-[#0F382C] font-black text-[8px] uppercase h-6">Upgrade (3 Kredit)</Button>
                         </div>
-                        <div className="p-4 bg-[#F0FFF4]">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] font-black uppercase tracking-wider text-[#0F382C] flex items-center gap-1"><BookOpen className="h-4 w-4" /> Official Law Citation (Pasal.id)</span>
-                            <Badge variant="outline" className="border border-[#0F382C]/20 rounded-none text-[8px] uppercase font-bold px-2 py-0.5">Live FRBR URI</Badge>
+                      ) : clause.status === "compliant" || clause.status === "COMPLIANT" ? (
+                        <div className="p-4 bg-emerald-50/50">
+                          <div className="flex items-center gap-1.5 mb-2"><CheckCircle2 className="h-4 w-4 text-emerald-600" /><span className="text-xs font-black text-emerald-800 uppercase">Klausul Aman</span></div>
+                          <p className="text-xs text-gray-600 leading-relaxed font-serif italic border-l-2 border-emerald-300 pl-3">"{clause.text}"</p>
+                          <p className="text-xs text-gray-600 leading-relaxed mt-4 bg-white p-3 border border-emerald-100 rounded-sm">Tidak ada pelanggaran terdeteksi pada klausul ini. Kalimat telah mematuhi standar hukum yang berlaku.</p>
+                        </div>
+                      ) : (
+                        <div className="divide-y divide-gray-100">
+                          <div className="p-4 bg-gray-50/50">
+                            <p className="text-xs text-gray-600 leading-relaxed font-serif italic border-l-2 border-gray-300 pl-3">"{clause.text}"</p>
                           </div>
-                          <a href="#" className="bg-[#0F382C] text-white px-2 py-1 text-[10px] font-black uppercase tracking-wider inline-block mb-2 hover:underline">
-                            {clause.issue?.matchedLaw || "Referensi Hukum"}
-                          </a>
-                          <p className="text-xs text-[#0F382C]/90 leading-relaxed font-serif italic border-l-2 border-[#0F382C]/30 pl-3">"{clause.issue?.originalLawText || "—"}"</p>
+                          <div className="p-4">
+                            <div className="flex items-center gap-2 mb-2"><AlertTriangle className={`h-4 w-4 ${clause.status === "high" || clause.status === "HIGH_RISK" ? "text-red-600" : "text-yellow-600"}`} /><span className="text-[10px] font-black uppercase tracking-wider text-[#0F382C]">Problem Analysis</span></div>
+                            <p className="text-sm text-gray-800 leading-relaxed font-medium bg-red-50/50 p-3 rounded-sm border border-red-100">{clause.issue?.clauseText || clause.issue?.explanation || "Risiko terdeteksi oleh mesin analisis."}</p>
+                          </div>
+                          {clause.issue?.matchedLaw && (
+                            <div className="p-4 bg-[#F0FFF4]">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-[10px] font-black uppercase tracking-wider text-[#0F382C] flex items-center gap-1"><BookOpen className="h-4 w-4" /> Official Law Citation (Pasal.id)</span>
+                                <Badge variant="outline" className="border border-[#0F382C]/20 rounded-none text-[8px] uppercase font-bold px-2 py-0.5">Live FRBR URI</Badge>
+                              </div>
+                              <a href="#" className="bg-[#0F382C] text-white px-2 py-1 text-[10px] font-black uppercase tracking-wider inline-block mb-2 hover:underline">
+                                {clause.issue?.matchedLaw}
+                              </a>
+                              {clause.issue?.originalLawText && (
+                                <p className="text-xs text-[#0F382C]/90 leading-relaxed font-serif italic border-l-2 border-[#0F382C]/30 pl-3">"{clause.issue?.originalLawText}"</p>
+                              )}
+                            </div>
+                          )}
+                          {clause.issue?.suggestedRevision && (
+                            <div className="p-4 relative">
+                              <div className="absolute top-0 right-0 bg-[#10B981] text-white text-[8px] font-black uppercase px-2 py-1 border-l-2 border-b-2 border-[#10B981]">AI Revision</div>
+                              <span className="text-[10px] font-black uppercase tracking-wider text-[#10B981] block mb-2">AI Suggested Solution & Draft Revision</span>
+                              <div className="p-4 bg-[#ECFDF5] border-2 border-[#10B981] font-serif text-sm text-[#064E3B] leading-relaxed shadow-inner">"{clause.issue?.suggestedRevision}"</div>
+                              <Button onClick={() => handleCopy(clause.issue?.suggestedRevision || "")} className="mt-4 w-full rounded-none bg-[#10B981] hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 h-10 shadow-[4px_4px_0_rgba(15,56,44,1)] border-2 border-[#0F382C] transition-all active:translate-x-1 active:translate-y-1 active:shadow-none">
+                                {copied ? <CheckCircle2 className="h-4 w-4 text-white" /> : <Copy className="h-4 w-4" />}
+                                {copied ? "Berhasil Disalin!" : "Salin Draf Perbaikan"}
+                              </Button>
+                            </div>
+                          )}
                         </div>
-                        <div className="p-4 relative">
-                          <div className="absolute top-0 right-0 bg-[#10B981] text-white text-[8px] font-black uppercase px-2 py-1 border-l-2 border-b-2 border-[#10B981]">AI Revision</div>
-                          <span className="text-[10px] font-black uppercase tracking-wider text-[#10B981] block mb-2">AI Suggested Solution & Draft Revision</span>
-                          <div className="p-4 bg-[#ECFDF5] border-2 border-[#10B981] font-serif text-sm text-[#064E3B] leading-relaxed shadow-inner">"{clause.issue?.suggestedRevision || "Gunakan kalimat revisi yang mencakup lampiran dokumen perizinan dari otoritas berwenang."}"</div>
-                          <Button onClick={() => handleCopy(clause.issue?.suggestedRevision || "Revisi otomatis")} className="mt-4 w-full rounded-none bg-[#10B981] hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 h-10 shadow-[4px_4px_0_rgba(15,56,44,1)] border-2 border-[#0F382C] transition-all active:translate-x-1 active:translate-y-1 active:shadow-none">
-                            {copied ? <CheckCircle2 className="h-4 w-4 text-white" /> : <Copy className="h-4 w-4" />}
-                            {copied ? "Berhasil Disalin!" : "Salin Draf Perbaikan"}
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                      )}
+                    </div>
+                  );
+                })()
+              )}
             </div>
           </div>
         </div>

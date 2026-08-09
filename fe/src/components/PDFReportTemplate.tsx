@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font, Image, Svg, Polygon, Line, Circle } from '@react-pdf/renderer';
 
 // Register fonts if needed (using default for now)
 const styles = StyleSheet.create({
@@ -165,6 +165,20 @@ export const PDFReportTemplate = ({ data, userName, userEmail }: PDFReportTempla
     return [styles.chunk, styles.compliantChunk];
   };
 
+  // Radar Chart Calculations
+  const maxR = 60; // Max radius for SVG
+  const lPct = Math.min(100, Math.max(0, ((data.scoreLegal || 0) / 40) * 100));
+  const tPct = Math.min(100, Math.max(0, ((data.scoreTechnical || 0) / 30) * 100));
+  const sPct = Math.min(100, Math.max(0, ((data.scoreSocial || 0) / 15) * 100));
+  const trPct = Math.min(100, Math.max(0, ((data.scoreTransparency || 0) / 15) * 100));
+
+  const L = (lPct / 100) * maxR;
+  const T = (tPct / 100) * maxR;
+  const S = (sPct / 100) * maxR;
+  const TR = (trPct / 100) * maxR;
+
+  const points = `0,-${L} ${T},0 0,${S} -${TR},0`;
+
   return (
     <Document>
       {/* PAGE 1: COVER PAGE */}
@@ -225,22 +239,56 @@ export const PDFReportTemplate = ({ data, userName, userEmail }: PDFReportTempla
         </View>
         
         <Text style={styles.sectionTitle}>03. 4-Pillar Scoring Breakdown</Text>
-        <View style={styles.table}>
-          <View style={styles.tableRow}>
-            <Text style={styles.tableColHeader}>Legal Compliance (Max 40)</Text>
-            <Text style={styles.tableCol}>{data.scoreLegal || 0}</Text>
+        
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
+          <View style={{ flex: 1, paddingRight: 20 }}>
+            <View style={styles.table}>
+              <View style={styles.tableRow}>
+                <Text style={styles.tableColHeader}>Legal Compliance (Max 40)</Text>
+                <Text style={styles.tableCol}>{data.scoreLegal || 0}</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={styles.tableColHeader}>Technical (Max 30)</Text>
+                <Text style={styles.tableCol}>{data.scoreTechnical || 0}</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={styles.tableColHeader}>Social (Max 15)</Text>
+                <Text style={styles.tableCol}>{data.scoreSocial || 0}</Text>
+              </View>
+              <View style={[styles.tableRow, { borderBottom: 'none' }]}>
+                <Text style={styles.tableColHeader}>Transparency (Max 15)</Text>
+                <Text style={styles.tableCol}>{data.scoreTransparency || 0}</Text>
+              </View>
+            </View>
           </View>
-          <View style={styles.tableRow}>
-            <Text style={styles.tableColHeader}>Technical (Max 30)</Text>
-            <Text style={styles.tableCol}>{data.scoreTechnical || 0}</Text>
-          </View>
-          <View style={styles.tableRow}>
-            <Text style={styles.tableColHeader}>Social (Max 15)</Text>
-            <Text style={styles.tableCol}>{data.scoreSocial || 0}</Text>
-          </View>
-          <View style={styles.tableRow}>
-            <Text style={styles.tableColHeader}>Transparency (Max 15)</Text>
-            <Text style={styles.tableCol}>{data.scoreTransparency || 0}</Text>
+          
+          <View style={{ width: 160, height: 160, position: 'relative' }}>
+            <Svg width="160" height="160" viewBox="-80 -80 160 160">
+              {/* Grid Lines */}
+              <Polygon points={`0,-${maxR} ${maxR},0 0,${maxR} -${maxR},0`} fill="none" stroke="#e5e7eb" strokeWidth={1} />
+              <Polygon points={`0,-${maxR*0.75} ${maxR*0.75},0 0,${maxR*0.75} -${maxR*0.75},0`} fill="none" stroke="#e5e7eb" strokeWidth={1} />
+              <Polygon points={`0,-${maxR*0.5} ${maxR*0.5},0 0,${maxR*0.5} -${maxR*0.5},0`} fill="none" stroke="#e5e7eb" strokeWidth={1} />
+              <Polygon points={`0,-${maxR*0.25} ${maxR*0.25},0 0,${maxR*0.25} -${maxR*0.25},0`} fill="none" stroke="#e5e7eb" strokeWidth={1} />
+              
+              {/* Axes */}
+              <Line x1="0" y1={`-${maxR}`} x2="0" y2={`${maxR}`} stroke="#e5e7eb" strokeWidth={1} />
+              <Line x1={`-${maxR}`} y1="0" x2={`${maxR}`} y2="0" stroke="#e5e7eb" strokeWidth={1} />
+
+              {/* Data Polygon */}
+              <Polygon points={points} fill="rgba(16, 185, 129, 0.4)" stroke="#10b981" strokeWidth={2} />
+              
+              {/* Points */}
+              <Circle cx="0" cy={`-${L}`} r="3" fill="#047857" />
+              <Circle cx={`${T}`} cy="0" r="3" fill="#047857" />
+              <Circle cx="0" cy={`${S}`} r="3" fill="#047857" />
+              <Circle cx={`-${TR}`} cy="0" r="3" fill="#047857" />
+            </Svg>
+
+            {/* Labels using absolute positioning over the SVG */}
+            <Text style={{ position: 'absolute', top: 5, left: 65, fontSize: 8, fontWeight: 'bold', color: '#022c22' }}>Legal</Text>
+            <Text style={{ position: 'absolute', top: 75, right: 0, fontSize: 8, fontWeight: 'bold', color: '#022c22' }}>Tech</Text>
+            <Text style={{ position: 'absolute', bottom: 5, left: 65, fontSize: 8, fontWeight: 'bold', color: '#022c22' }}>Social</Text>
+            <Text style={{ position: 'absolute', top: 75, left: 0, fontSize: 8, fontWeight: 'bold', color: '#022c22' }}>Transp.</Text>
           </View>
         </View>
 

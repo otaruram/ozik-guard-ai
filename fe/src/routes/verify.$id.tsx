@@ -29,9 +29,7 @@ function VerifyPage() {
   useEffect(() => {
     api.verifyBadge(id)
       .then(res => {
-        // Strict integrity check (Simulated or Backend driven)
-        // If the backend returns an error or if status is not ACTIVE/VERIFIED, it triggers error state
-        if (!res || res.status === "INVALID" || res.status === "REJECTED") {
+        if (!res || res.status === "INVALID" || res.status === "REJECTED" || res.error || res.valid === false) {
           setError(true);
         } else {
           setData(res);
