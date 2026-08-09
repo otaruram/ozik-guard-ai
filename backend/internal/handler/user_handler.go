@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"ozikcarbon-backend/domain"
 	"ozikcarbon-backend/internal/repository"
 
@@ -42,6 +44,7 @@ func (h *UserHandler) GetMe(c *fiber.Ctx) error {
 		Company:        user.Company,
 		Provider:       user.Provider,
 		CreditsBalance: user.CreditsBalance,
+		APIKey:         user.APIKey,
 	})
 }
 
@@ -72,4 +75,35 @@ func (h *UserHandler) UpdateMe(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(updated)
+}
+
+// RegenerateAPIKey POST /api/v1/user/api-key/regenerate
+func (h *UserHandler) RegenerateAPIKey(c *fiber.Ctx) error {
+	userID := c.Locals("userId")
+	if userID == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(domain.ErrorResponse{
+			Error: "UNAUTHORIZED",
+		})
+	}
+	uid := userID.(string)
+
+	bytes := make([]byte, 16)
+	if _, err := rand.Read(bytes); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(domain.ErrorResponse{
+			Error: "GENERATION_FAILED",
+		})
+	}
+	
+	newKey := "ozik_live_" + hex.EncodeToString(bytes)
+	
+	err := h.userRepo.UpdateAPIKey(c.Context(), uid, newKey)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(domain.ErrorResponse{
+			Error: "UPDATE_FAILED",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"apiKey": newKey,
+	})
 }

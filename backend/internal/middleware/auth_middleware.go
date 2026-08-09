@@ -30,6 +30,19 @@ func SupabaseAuthMiddleware(cfg *config.Config, userRepo repository.UserReposito
 
 		token := parts[1]
 
+		if strings.HasPrefix(token, "ozik_live_") {
+			// This is an API Key
+			user, err := userRepo.FindByAPIKey(c.Context(), token)
+			if err != nil || user == nil {
+				return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+					"error": "Invalid API Key",
+				})
+			}
+			c.Locals("userId", user.ID)
+			c.Locals("userEmail", user.Email)
+			return c.Next()
+		}
+
 		// In a real application, you would use a JWT library (e.g., golang-jwt) 
 		// to parse and verify the token signature using cfg.SupabaseJWTSecret.
 		// For MVP, we simply check if the token is present.

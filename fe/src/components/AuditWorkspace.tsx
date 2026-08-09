@@ -324,8 +324,8 @@ export function AuditWorkspace({
           </button>
         </div>
         <div className="flex items-center gap-2">
-          <Button size="sm" onClick={handleDownloadPDF} className="rounded-none bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] font-black text-[9px] uppercase h-7 border-2 border-[#0F382C] flex items-center gap-1">
-            <Download className="h-3 w-3" /> Download PDF
+          <Button size="sm" onClick={handleDownloadPDF} className="rounded-none bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] font-black text-[10px] uppercase h-9 px-4 border-2 border-[#0F382C] flex items-center gap-2 shadow-[2px_2px_0_rgba(15,56,44,1)] hover:translate-y-0.5 hover:shadow-none transition-all">
+            <Download className="h-4 w-4" /> Unduh Laporan PDF
           </Button>
           <Button size="sm" variant="outline" onClick={() => { 
             setStatus("idle"); 
@@ -362,7 +362,7 @@ export function AuditWorkspace({
                   </Badge>
                   <div className="bg-white p-1 rounded-sm">
                     <img 
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(`https://oziksustain.vercel.app/verify/${result.sha256Hash || result.auditId}`)}`} 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(`https://oziksustain.my.id/verify/${result.sha256Hash || result.auditId}`)}`} 
                       alt="Verification QR" 
                       className="w-12 h-12"
                     />

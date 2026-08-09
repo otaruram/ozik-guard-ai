@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { QRCodeSVG } from 'qrcode.react';
 import {
   Leaf,
   LayoutDashboard,
@@ -248,7 +249,7 @@ function Dashboard() {
           {active === "history" && <HistoriAudit history={historyData} loading={loadingHistory} />}
           {active === "profile" && <ProfilPengguna dbUser={dbUser} onProfileUpdate={refreshHistory} />}
           {active === "admin" && <AdminPanel />}
-          {active === "settings" && <Pengaturan />}
+          {active === "settings" && <Pengaturan dbUser={dbUser} refreshUser={refreshHistory} />}
           {active === "billing" && <PaketPricing />}
         </main>
       </div>
@@ -330,6 +331,44 @@ function DashboardUtama({ history, onAuditComplete, userName, userEmail }: { his
 function HistoriAudit({ history, loading }: { history: any[], loading: boolean }) {
   const [badgeOpen, setBadgeOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<any>(null);
+  const qrRef = useRef<SVGSVGElement>(null);
+
+  const downloadSVG = () => {
+    if (!qrRef.current) return;
+    const svgData = new XMLSerializer().serializeToString(qrRef.current);
+    const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `QR-${selectedProject?.code}.svg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const downloadPNG = () => {
+    if (!qrRef.current) return;
+    const svgData = new XMLSerializer().serializeToString(qrRef.current);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      if (ctx) {
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+      }
+      const pngFile = canvas.toDataURL("image/png");
+      const downloadLink = document.createElement("a");
+      downloadLink.download = `QR-${selectedProject?.code}.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    };
+    img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
+  };
+
 
   const mappedHistory = history.map((item) => ({
     id: item.id,
@@ -444,14 +483,15 @@ function HistoriAudit({ history, loading }: { history: any[], loading: boolean }
                   <span className="font-black text-emerald-950 uppercase text-sm tracking-widest">OzikCarbon</span>
                 </div>
                 
-                <div className="border-4 border-emerald-950 p-2 mb-4 w-32 h-32 flex items-center justify-center relative">
-                   <div className="absolute inset-0 grid grid-cols-[repeat(21,1fr)] gap-0 p-2 opacity-80">
-                     {Array.from({ length: 441 }).map((_, i) => (
-                       <div key={i} className={Math.random() > 0.5 ? "bg-emerald-950" : "bg-transparent"} />
-                     ))}
-                   </div>
-                   <div className="absolute inset-0 border-[10px] border-white m-3 z-10 pointer-events-none"></div>
-                   <QrCode className="h-6 w-6 text-emerald-950 absolute z-20 bg-white" />
+                <div className="border-4 border-emerald-950 p-2 mb-4 w-32 h-32 flex items-center justify-center relative bg-white">
+                   <QRCodeSVG 
+                     value={`https://oziksustain.my.id/verify/${selectedProject?.id}`} 
+                     size={110} 
+                     bgColor={"#ffffff"} 
+                     fgColor={"#022c22"} 
+                     level={"Q"} 
+                     ref={qrRef}
+                   />
                 </div>
 
                 <div className="w-full text-center border-t-4 border-emerald-950 pt-3 mt-1">
@@ -466,10 +506,10 @@ function HistoriAudit({ history, loading }: { history: any[], loading: boolean }
               <div className="mb-6">
                 <h3 className="font-black uppercase tracking-widest text-emerald-950 border-b-4 border-emerald-950 pb-2 mb-3 text-sm">A. Unduh Gambar QR</h3>
                 <div className="flex gap-3">
-                  <Button className="flex-1 rounded-none border-4 border-yellow-400 bg-yellow-400 hover:bg-yellow-500 text-emerald-950 font-black uppercase text-xs h-12 shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all">
+                  <Button onClick={downloadPNG} className="flex-1 rounded-none border-4 border-yellow-400 bg-yellow-400 hover:bg-yellow-500 text-emerald-950 font-black uppercase text-xs h-12 shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all">
                     Download PNG
                   </Button>
-                  <Button variant="outline" className="flex-1 rounded-none border-4 border-emerald-950 font-black text-emerald-950 uppercase text-[10px] h-10 hover:bg-emerald-50">
+                  <Button onClick={downloadSVG} variant="outline" className="flex-1 rounded-none border-4 border-emerald-950 font-black text-emerald-950 uppercase text-[10px] h-10 hover:bg-emerald-50">
                     Download SVG
                   </Button>
                 </div>
@@ -504,8 +544,9 @@ function HistoriAudit({ history, loading }: { history: any[], loading: boolean }
 // ----------------------------------------------------------------------
 // 4. PENGATURAN (Google Auth — no password tab)
 // ----------------------------------------------------------------------
-function Pengaturan() {
+function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => void }) {
   const { user } = useAuth();
+  const [loadingKey, setLoadingKey] = useState(false);
   const userEmail = user?.email || "";
   const userAvatar = user?.user_metadata?.avatar_url;
 
@@ -572,13 +613,32 @@ function Pengaturan() {
           <div className="bg-emerald-50 border-4 border-emerald-950 p-6 mb-8 relative">
             <Label className="text-xs font-black uppercase text-emerald-950 mb-2 block">Live API Key</Label>
             <div className="flex gap-2">
-              <Input readOnly value="ozik_live_89a7f3b2e11..." className="h-12 border-4 border-emerald-950 rounded-none font-bold bg-white font-mono" />
-              <Button size="icon" variant="outline" className="h-12 w-12 shrink-0 border-4 border-emerald-950 rounded-none hover:bg-emerald-950 hover:text-white">
+              <Input readOnly value={dbUser?.apiKey || "Belum ada kunci API. Silakan buat (Regenerate)."} className="h-12 border-4 border-emerald-950 rounded-none font-bold bg-white font-mono" />
+              <Button size="icon" variant="outline" onClick={() => {
+                if (dbUser?.apiKey) {
+                  navigator.clipboard.writeText(dbUser.apiKey);
+                  alert("API Key disalin ke clipboard!");
+                }
+              }} className="h-12 w-12 shrink-0 border-4 border-emerald-950 rounded-none hover:bg-emerald-950 hover:text-white">
                 <Copy className="h-5 w-5" />
               </Button>
             </div>
             <div className="mt-4 flex gap-4">
-              <Button size="sm" variant="outline" className="border-2 border-emerald-950 rounded-none font-black text-xs uppercase hover:bg-emerald-100">Regenerate Key</Button>
+              <Button size="sm" variant="outline" disabled={loadingKey} onClick={async () => {
+                if(confirm("Apakah Anda yakin ingin mengganti kunci API lama? Kunci yang lama akan langsung hangus.")) {
+                  setLoadingKey(true);
+                  try {
+                    await api.regenerateApiKey();
+                    refreshUser();
+                    alert("Kunci API baru berhasil dibuat!");
+                  } catch(e) {
+                    alert("Gagal membuat kunci API");
+                  }
+                  setLoadingKey(false);
+                }
+              }} className="border-2 border-emerald-950 rounded-none font-black text-xs uppercase hover:bg-emerald-100">
+                {loadingKey ? <Loader2 className="h-4 w-4 animate-spin" /> : "Regenerate Key"}
+              </Button>
             </div>
           </div>
 
@@ -603,29 +663,31 @@ function Pengaturan() {
 function PaketPricing() {
   const plans = [
     {
-      name: "Pay-Per-Audit (Eceran)",
-      price: "Rp 99rb",
-      period: "/ 1x Evaluasi",
-      desc: "Cocok untuk proyek tunggal. Bayar hanya ketika Anda mengunggah PDD.",
-      button: "Beli Kredit Eceran",
-      active: false
+      name: "Free (Starter)",
+      price: "Gratis",
+      period: "",
+      desc: "Evaluasi personal, 3 kredit gratis untuk UI & API OzikSustain.",
+      button: "Saat Ini Aktif",
+      active: true,
+      highlight: false
     },
     {
-      name: "B2B Eco-Basic",
+      name: "Developer (Pro)",
       price: "Rp 499rb",
       period: "/ bulan",
-      desc: "10 Evaluasi Proyek, Verified Green Badge, Akses Dasar Pasal.id API.",
-      button: "Pilih Paket Ini",
-      active: false
-    },
-    {
-      name: "Enterprise Aggregator",
-      price: "Rp 1.999rb",
-      period: "/ bulan",
-      desc: "Unlimited Audit, Custom Rulebook Regulasi, Dedicated Support.",
-      button: "Upgrade ke Enterprise",
+      desc: "100 Kredit Audit/API per bulan, Lencana QR Publik, Support Email.",
+      button: "Langganan Sekarang",
       active: false,
       highlight: true
+    },
+    {
+      name: "Enterprise",
+      price: "Rp 2.499rb",
+      period: "/ bulan",
+      desc: "Unlimited Audit, Private VPC, SSO, 24/7 Dedicated Support.",
+      button: "Hubungi Sales",
+      active: false,
+      highlight: false
     }
   ];
 

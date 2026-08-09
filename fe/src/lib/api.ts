@@ -41,6 +41,7 @@ export const api = {
   getMe: () => apiFetch<any>("/user/me"),
   updateMe: (data: { name: string; company?: string }) =>
     apiFetch<any>("/user/me", { method: "PUT", body: JSON.stringify(data) }),
+  regenerateApiKey: () => apiFetch<any>("/user/api-key/regenerate", { method: "POST" }),
 
   // Audit
   getHistory: () => apiFetch<{ audits: any[]; totalCount: number }>("/audit/history"),

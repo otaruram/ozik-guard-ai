@@ -73,6 +73,7 @@ func main() {
 	// User Profile
 	protected.Get("/user/me", userHandler.GetMe)
 	protected.Put("/user/me", userHandler.UpdateMe)
+	protected.Post("/user/api-key/regenerate", userHandler.RegenerateAPIKey)
 
 	// Audit (Credit-gated for full process)
 	protected.Post("/audit/full-process", middleware.CreditMiddleware(userRepo, cfg), auditHandler.ProcessAudit)

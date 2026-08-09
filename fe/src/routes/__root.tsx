@@ -131,7 +131,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const hideChrome = pathname.startsWith("/dashboard") || pathname.startsWith("/workspace") || pathname.startsWith("/auth") || pathname === "/audit";
+  const hideChrome = pathname.startsWith("/dashboard") || pathname.startsWith("/workspace") || pathname.startsWith("/auth") || pathname.startsWith("/playground") || pathname === "/audit";
 
   return (
     <QueryClientProvider client={queryClient}>
