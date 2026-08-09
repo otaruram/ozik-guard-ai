@@ -512,21 +512,21 @@ function Pengaturan() {
   return (
     <div className="max-w-5xl mx-auto">
       <Tabs defaultValue="account" className="w-full">
-        <TabsList className="bg-white border-4 border-emerald-950 h-16 p-1 rounded-none shadow-[6px_6px_0_rgba(2,44,34,1)] mb-8 flex w-full">
+        <TabsList className="bg-white border-4 border-emerald-950 h-auto sm:h-16 p-1 rounded-none shadow-[6px_6px_0_rgba(2,44,34,1)] mb-8 flex flex-col sm:flex-row w-full gap-1 sm:gap-0">
           {["account", "notifications", "api"].map((val, idx) => (
             <TabsTrigger 
               key={val} 
               value={val}
-              className="flex-1 rounded-none data-[state=active]:bg-emerald-950 data-[state=active]:text-white font-black uppercase tracking-widest text-xs h-full"
+              className="w-full sm:flex-1 rounded-none data-[state=active]:bg-emerald-950 data-[state=active]:text-white font-black uppercase tracking-widest text-xs h-12 sm:h-full"
             >
               {idx === 0 ? "Akun Google" : idx === 1 ? "Notifikasi" : "Kunci API"}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        <TabsContent value="account" className="border-4 border-emerald-950 bg-white p-8 shadow-[8px_8px_0_rgba(2,44,34,1)]">
+        <TabsContent value="account" className="border-4 border-emerald-950 bg-white p-6 sm:p-8 shadow-[8px_8px_0_rgba(2,44,34,1)]">
           <h3 className="text-xl font-black uppercase text-emerald-950 mb-6">Akun Google Terhubung</h3>
-          <div className="border-4 border-emerald-950 bg-emerald-50 p-6 flex items-center gap-6">
+          <div className="border-4 border-emerald-950 bg-emerald-50 p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
             <div className="grid h-16 w-16 place-items-center bg-white border-4 border-emerald-950 shrink-0">
               <svg viewBox="0 0 24 24" className="h-8 w-8" aria-hidden>
                 <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.44c-.28 1.48-1.12 2.73-2.39 3.58v2.98h3.86c2.26-2.09 3.58-5.17 3.58-8.8z"/>
@@ -535,11 +535,11 @@ function Pengaturan() {
                 <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z"/>
               </svg>
             </div>
-            <div>
-              <div className="font-black text-emerald-950 text-sm uppercase">{userEmail}</div>
-              <div className="text-xs font-bold text-emerald-950/60 mt-1">Autentikasi via Google OAuth 2.0 — Tidak ada kata sandi yang disimpan.</div>
+            <div className="flex-1 w-full truncate">
+              <div className="font-black text-emerald-950 text-sm uppercase truncate">{userEmail}</div>
+              <div className="text-xs font-bold text-emerald-950/60 mt-1 whitespace-normal">Autentikasi via Google OAuth 2.0 — Tidak ada kata sandi yang disimpan.</div>
             </div>
-            <Badge className="ml-auto bg-emerald-950 text-white font-black uppercase text-[10px] rounded-none px-3 py-1 shrink-0 hidden sm:block">Terhubung</Badge>
+            <Badge className="sm:ml-auto mt-2 sm:mt-0 bg-emerald-950 text-white font-black uppercase text-[10px] rounded-none px-3 py-1 shrink-0">Terhubung</Badge>
           </div>
           <p className="mt-6 text-xs font-bold text-emerald-950/50">
             Untuk mengubah email atau menghapus akun, silakan kelola melalui pengaturan akun Google Anda.
