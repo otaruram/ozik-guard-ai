@@ -48,7 +48,13 @@ func (s *regulasiService) getEmbedding(ctx context.Context, text string) ([]floa
 		return nil, fmt.Errorf("SUMOPOD_URL or SUMOPOD_API_KEY is missing")
 	}
 
-	endpoint := strings.TrimSuffix(s.sumopodURL, "/") + "/v1/embeddings"
+	sumopodURL := strings.TrimSuffix(s.sumopodURL, "/")
+	var endpoint string
+	if strings.HasSuffix(sumopodURL, "/v1") {
+		endpoint = sumopodURL + "/embeddings"
+	} else {
+		endpoint = sumopodURL + "/v1/embeddings"
+	}
 	
 	reqBody, _ := json.Marshal(map[string]interface{}{
 		"model": "text-embedding-3-small",
