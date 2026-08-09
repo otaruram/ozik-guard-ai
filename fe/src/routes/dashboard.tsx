@@ -163,34 +163,57 @@ function Dashboard() {
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-4 space-y-2 mt-4">
+        <nav className="flex-1 overflow-y-auto p-4 space-y-6 mt-4">
           {[
-            { key: "overview", label: "Dashboard Utama", icon: LayoutDashboard },
-            { key: "history", label: "Histori Audit", icon: History },
-            { key: "billing", label: "Paket & Pricing", icon: CreditCard },
-            { key: "profile", label: "Profil Akun", icon: UserIcon },
-            ...(user && ["okitr52@gmail.com", "okitarunaramadhan@gmail.com"].includes(user?.email || "") 
-              ? [{ key: "admin", label: "Admin Panel", icon: ShieldCheck }] : []),
-            { key: "settings", label: "Pengaturan", icon: Settings },
-          ].map((item) => {
-            const isActive = item.key === active;
+            {
+              group: "Analisis & Data",
+              items: [
+                { key: "overview", label: "Dashboard Utama", icon: LayoutDashboard },
+                { key: "history", label: "Histori Audit", icon: History },
+              ]
+            },
+            {
+              group: "Akun & Pembayaran",
+              items: [
+                { key: "billing", label: "Paket & Pricing", icon: CreditCard },
+                { key: "profile", label: "Profil Akun", icon: UserIcon },
+              ]
+            },
+            {
+              group: "Sistem",
+              items: [
+                ...(user && ["okitr52@gmail.com", "okitarunaramadhan@gmail.com"].includes(user?.email || "") 
+                  ? [{ key: "admin", label: "Admin Panel", icon: ShieldCheck }] : []),
+                { key: "settings", label: "Pengaturan", icon: Settings },
+              ]
+            }
+          ].map((group) => {
+            if (group.items.length === 0) return null;
             return (
-              <button
-                key={item.key}
-                onClick={() => {
-                  setActive(item.key);
-                  setMobileOpen(false);
-                }}
-                className={cn(
-                  "w-full flex items-center gap-4 px-4 py-3.5 text-sm font-black uppercase tracking-widest transition-all rounded-none border-4",
-                  isActive
-                    ? "bg-emerald-950 text-white border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,0.3)] translate-x-1"
-                    : "bg-transparent text-emerald-950/70 border-transparent hover:border-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
-                )}
-              >
-                <item.icon className="h-5 w-5 shrink-0" />
-                <span>{item.label}</span>
-              </button>
+              <div key={group.group} className="space-y-2">
+                <h4 className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-950/40 mb-3">{group.group}</h4>
+                {group.items.map((item) => {
+                  const isActive = item.key === active;
+                  return (
+                    <button
+                      key={item.key}
+                      onClick={() => {
+                        setActive(item.key);
+                        setMobileOpen(false);
+                      }}
+                      className={cn(
+                        "w-full flex items-center gap-4 px-4 py-3 text-sm font-black uppercase tracking-widest transition-all rounded-none border-4",
+                        isActive
+                          ? "bg-emerald-950 text-white border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,0.3)] translate-x-1"
+                          : "bg-transparent text-emerald-950/70 border-transparent hover:border-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
+                      )}
+                    >
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      <span>{item.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             );
           })}
         </nav>
@@ -476,23 +499,23 @@ function HistoriAudit({ history, loading, refreshHistory }: { history: any[], lo
       </div>
 
       <Dialog open={badgeOpen} onOpenChange={setBadgeOpen}>
-        <DialogContent className="border-4 border-emerald-950 rounded-none shadow-[12px_12px_0_rgba(2,44,34,1)] p-0 max-w-3xl bg-white overflow-hidden">
-          <div className="bg-emerald-950 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-4 border-emerald-950 gap-3">
+        <DialogContent className="border-4 border-emerald-950 rounded-none shadow-[8px_8px_0_rgba(2,44,34,1)] md:shadow-[12px_12px_0_rgba(2,44,34,1)] p-0 max-w-[95vw] md:max-w-3xl max-h-[90vh] overflow-y-auto bg-white">
+          <div className="bg-emerald-950 p-4 md:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-4 border-emerald-950 gap-3">
             <div>
-              <DialogTitle className="text-xl font-black uppercase tracking-widest text-white mb-1">
+              <DialogTitle className="text-lg md:text-xl font-black uppercase tracking-widest text-white mb-1">
                 Lencana Verifikasi Proyek Hijau
               </DialogTitle>
               <DialogDescription className="text-white/70 font-bold text-xs">
                 Verified Green Project Badge untuk {selectedProject?.name}
               </DialogDescription>
             </div>
-            <Badge className="bg-white text-emerald-950 border-2 border-transparent font-black uppercase text-xs rounded-none px-3 py-1">
+            <Badge className="bg-white text-emerald-950 border-2 border-transparent font-black uppercase text-[10px] md:text-xs rounded-none px-2 md:px-3 py-1">
               Status: Aktif & Terverifikasi
             </Badge>
           </div>
 
           <div className="flex flex-col md:flex-row">
-            <div className="w-full md:w-1/2 p-6 border-r-4 border-emerald-950 bg-emerald-50 flex flex-col items-center justify-center">
+            <div className="w-full md:w-1/2 p-6 border-b-4 md:border-b-0 md:border-r-4 border-emerald-950 bg-emerald-50 flex flex-col items-center justify-center">
               <div className="border-4 border-emerald-950 bg-white shadow-[6px_6px_0_rgba(2,44,34,1)] p-4 max-w-[240px] w-full flex flex-col items-center">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="bg-emerald-950 text-white p-1.5 shrink-0">

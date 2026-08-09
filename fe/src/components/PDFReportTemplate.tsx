@@ -123,6 +123,37 @@ const styles = StyleSheet.create({
     borderTop: '1px solid #022c22',
     paddingTop: 10,
     textAlign: 'justify'
+  },
+  chunkContainer: {
+    marginBottom: 20
+  },
+  originalText: {
+    fontSize: 10,
+    lineHeight: 1.5,
+    color: '#1f2937'
+  },
+  aiAnalysisBox: {
+    backgroundColor: '#fffbeb',
+    border: '1px solid #f59e0b',
+    padding: 10,
+    marginTop: 5
+  },
+  analysisTitle: {
+    fontSize: 10,
+    fontWeight: 'extrabold',
+    color: '#b45309',
+    marginBottom: 6,
+    textTransform: 'uppercase'
+  },
+  analysisText: {
+    fontSize: 9,
+    lineHeight: 1.4,
+    color: '#1f2937',
+    marginBottom: 4
+  },
+  boldText: {
+    fontWeight: 'bold',
+    color: '#78350f'
   }
 });
 
@@ -146,10 +177,11 @@ export const PDFReportTemplate = ({ data, userName, userEmail }: PDFReportTempla
   let highCount = 0;
 
   pages.forEach((page: any) => {
-    page.chunks.forEach((chunk: any) => {
+    page.chunks?.forEach((chunk: any) => {
       totalChunks++;
-      if (chunk.status === 'HIGH_RISK' || chunk.status === 'high') highCount++;
-      else if (chunk.status === 'MEDIUM_RISK' || chunk.status === 'medium') mediumCount++;
+      const status = (chunk.severity || chunk.status || '').toUpperCase();
+      if (status === 'HIGH_RISK' || status === 'HIGH') highCount++;
+      else if (status === 'MEDIUM_RISK' || status === 'MEDIUM') mediumCount++;
       else compliantCount++;
     });
   });
@@ -158,8 +190,8 @@ export const PDFReportTemplate = ({ data, userName, userEmail }: PDFReportTempla
   const mediumPct = totalChunks > 0 ? Math.round((mediumCount / totalChunks) * 100) : 0;
   const highPct = totalChunks > 0 ? Math.round((highCount / totalChunks) * 100) : 0;
 
-  const getHighlightStyle = (status: string) => {
-    const s = status?.toUpperCase();
+  const getHighlightStyle = (severity: string, status: string) => {
+    const s = (severity || status || '').toUpperCase();
     if (s === 'HIGH_RISK' || s === 'HIGH') return [styles.chunk, styles.highChunk];
     if (s === 'MEDIUM_RISK' || s === 'MEDIUM') return [styles.chunk, styles.mediumChunk];
     return [styles.chunk, styles.compliantChunk];
@@ -303,20 +335,31 @@ export const PDFReportTemplate = ({ data, userName, userEmail }: PDFReportTempla
         <Page key={`page-${pageIndex}`} size="A4" style={[styles.page, { padding: 40 }]}>
           <Text style={styles.pageHeader}>DOCUMENT ANALYSIS - Page {page.page_number}</Text>
           
-          {page.chunks?.map((chunk: any, chunkIndex: number) => (
-            <View key={`chunk-${chunk.id || chunkIndex}`} style={getHighlightStyle(chunk.status)}>
-              <Text style={styles.paragraph}>{chunk.text}</Text>
-              
-              {/* Inline Annotation for Non-Compliant */}
-              {(chunk.status?.toUpperCase() === 'HIGH_RISK' || chunk.status?.toUpperCase() === 'HIGH' || chunk.status?.toUpperCase() === 'MEDIUM_RISK' || chunk.status?.toUpperCase() === 'MEDIUM') && chunk.issue && (
-                <View style={styles.explanationNote}>
-                  <Text style={{ fontWeight: 'bold', marginBottom: 2 }}>Citation: {chunk.issue.matchedLaw || chunk.issue.MatchedLaw}</Text>
-                  <Text style={{ fontStyle: 'italic', marginBottom: 2 }}>"{chunk.issue.originalLawText || chunk.issue.OriginalLawText}"</Text>
-                  <Text style={{ color: '#047857', fontWeight: 'bold' }}>Suggestion: {chunk.issue.suggestedRevision || chunk.issue.SuggestedRevision}</Text>
+          {page.chunks?.map((chunk: any, chunkIndex: number) => {
+            const severity = (chunk.severity || chunk.status || '').toUpperCase();
+            const isCompliant = severity !== 'HIGH_RISK' && severity !== 'HIGH' && severity !== 'MEDIUM_RISK' && severity !== 'MEDIUM';
+            
+            return (
+              <View key={`chunk-${chunk.id || chunkIndex}`} style={styles.chunkContainer} wrap={false}>
+                {/* 1. ORIGINAL TEXT WITH DYNAMIC BACKGROUND COLOR */}
+                <View style={getHighlightStyle(chunk.severity, chunk.status)}>
+                  <Text style={styles.originalText}>{chunk.text}</Text>
                 </View>
-              )}
-            </View>
-          ))}
+
+                {/* 2. AI SOLUTION BOX (RENDER IF NOT COMPLIANT) */}
+                {!isCompliant && (
+                  <View style={styles.aiAnalysisBox}>
+                    <Text style={styles.analysisTitle}>⚠️ HASIL ANALISIS & SOLUSI AI:</Text>
+                    <Text style={styles.analysisText}><Text style={styles.boldText}>Masalah: </Text>{chunk.explanation || chunk.issue?.explanation || "Tidak ada detail masalah."}</Text>
+                    <Text style={styles.analysisText}><Text style={styles.boldText}>Dasar Hukum: </Text>{chunk.matched_law || chunk.issue?.matchedLaw || chunk.issue?.MatchedLaw || "Tidak ditemukan referensi hukum."}</Text>
+                    {(chunk.suggested_revision || chunk.issue?.suggestedRevision || chunk.issue?.SuggestedRevision) && (
+                      <Text style={styles.analysisText}><Text style={styles.boldText}>Draf Perbaikan: </Text>{chunk.suggested_revision || chunk.issue?.suggestedRevision || chunk.issue?.SuggestedRevision}</Text>
+                    )}
+                  </View>
+                )}
+              </View>
+            );
+          })}
           
           <Text style={styles.footer}>
             OzikSustain Confidential • Page {pageIndex + 2}

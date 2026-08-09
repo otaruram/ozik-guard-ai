@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as PlaygroundRouteImport } from './routes/playground'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as RegulasiRouteImport } from './routes/regulasi'
 import { Route as PageIdRouteImport } from './routes/page.$id'
 import { Route as VerifyIdRouteImport } from './routes/verify.$id'
 import { Route as WorkspaceIdRouteImport } from './routes/workspace.$id'
@@ -49,6 +50,11 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegulasiRoute = RegulasiRouteImport.update({
+  id: '/regulasi',
+  path: '/regulasi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PageIdRoute = PageIdRouteImport.update({
   id: '/page/$id',
   path: '/page/$id',
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/playground': typeof PlaygroundRoute
   '/pricing': typeof PricingRoute
+  '/regulasi': typeof RegulasiRoute
   '/page/$id': typeof PageIdRoute
   '/verify/$id': typeof VerifyIdRoute
   '/workspace/$id': typeof WorkspaceIdRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/playground': typeof PlaygroundRoute
   '/pricing': typeof PricingRoute
+  '/regulasi': typeof RegulasiRoute
   '/page/$id': typeof PageIdRoute
   '/verify/$id': typeof VerifyIdRoute
   '/workspace/$id': typeof WorkspaceIdRoute
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/playground': typeof PlaygroundRoute
   '/pricing': typeof PricingRoute
+  '/regulasi': typeof RegulasiRoute
   '/page/$id': typeof PageIdRoute
   '/verify/$id': typeof VerifyIdRoute
   '/workspace/$id': typeof WorkspaceIdRoute
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/playground'
     | '/pricing'
+    | '/regulasi'
     | '/page/$id'
     | '/verify/$id'
     | '/workspace/$id'
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/playground'
     | '/pricing'
+    | '/regulasi'
     | '/page/$id'
     | '/verify/$id'
     | '/workspace/$id'
@@ -130,6 +141,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/playground'
     | '/pricing'
+    | '/regulasi'
     | '/page/$id'
     | '/verify/$id'
     | '/workspace/$id'
@@ -142,6 +154,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   PlaygroundRoute: typeof PlaygroundRoute
   PricingRoute: typeof PricingRoute
+  RegulasiRoute: typeof RegulasiRoute
   PageIdRoute: typeof PageIdRoute
   VerifyIdRoute: typeof VerifyIdRoute
   WorkspaceIdRoute: typeof WorkspaceIdRoute
@@ -191,6 +204,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/regulasi': {
+      id: '/regulasi'
+      path: '/regulasi'
+      fullPath: '/regulasi'
+      preLoaderRoute: typeof RegulasiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/page/$id': {
       id: '/page/$id'
       path: '/page/$id'
@@ -222,6 +242,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   PlaygroundRoute: PlaygroundRoute,
   PricingRoute: PricingRoute,
+  RegulasiRoute: RegulasiRoute,
   PageIdRoute: PageIdRoute,
   VerifyIdRoute: VerifyIdRoute,
   WorkspaceIdRoute: WorkspaceIdRoute,

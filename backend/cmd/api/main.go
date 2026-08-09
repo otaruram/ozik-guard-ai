@@ -39,12 +39,14 @@ func main() {
 	llmFactory := service.NewLLMFactoryService(cfg.SumopodURL, cfg.SumopodKey)
 	scoringEngine := service.NewScoringEngineService()
 	documentParser := service.NewDocumentParserService()
+	regulasiService := service.NewRegulasiService(client, cfg.SumopodURL, cfg.SumopodKey)
 	auditService := service.NewAuditService(auditRepo, userRepo, piiMasker, pasalID, llmFactory, scoringEngine)
 
 	// 4. Handlers (DI)
 	auditHandler := handler.NewAuditHandler(auditService, auditRepo, userRepo, documentParser)
 	verifyHandler := handler.NewVerifyHandler(auditRepo, scoringEngine)
 	userHandler := handler.NewUserHandler(userRepo, cfg)
+	regulasiHandler := handler.NewRegulasiHandler(regulasiService)
 	freeAuditHandler := handler.NewFreeAuditHandler(piiMasker, pasalID, llmFactory, scoringEngine)
 	freeAuditHandler.SetAuditService(auditService)
 
@@ -67,6 +69,7 @@ func main() {
 	// === Public Routes (No Auth) ===
 	v1.Post("/audit/guest-teaser", freeAuditHandler.GuestTeaser)
 	v1.Get("/verify/:hash_or_id", verifyHandler.GetVerification)
+	v1.Get("/regulasi/search", regulasiHandler.SearchRegulasi)
 
 	// === Protected Routes (Supabase JWT) ===
 	protected := v1.Group("", middleware.SupabaseAuthMiddleware(cfg, userRepo))
