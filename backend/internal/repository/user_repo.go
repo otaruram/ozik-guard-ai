@@ -13,6 +13,8 @@ type UserRepository interface {
 	UpdateProfile(ctx context.Context, id string, req *domain.UpdateProfileRequest) (*domain.User, error)
 	DeductCredit(ctx context.Context, id string) error
 	GetCreditsBalance(ctx context.Context, id string) (int, error)
+	FindByAPIKey(ctx context.Context, apiKey string) (*domain.User, error)
+	UpdateAPIKey(ctx context.Context, id string, apiKey string) error
 }
 
 type userRepository struct {
@@ -117,4 +119,37 @@ func (r *userRepository) GetCreditsBalance(ctx context.Context, id string) (int,
 		return 0, err
 	}
 	return record.CreditsBalance, nil
+}
+
+func (r *userRepository) FindByAPIKey(ctx context.Context, apiKey string) (*domain.User, error) {
+	record, err := r.client.User.FindUnique(
+		db.User.APIKey.Equals(apiKey),
+	).Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+	
+	var apik *string
+	v, ok := record.APIKey()
+	if ok {
+		apik = &v
+	}
+	
+	return &domain.User{
+		ID:             record.ID,
+		Email:          record.Email,
+		Name:           record.Name,
+		Provider:       record.Provider,
+		CreditsBalance: record.CreditsBalance,
+		APIKey:         apik,
+	}, nil
+}
+
+func (r *userRepository) UpdateAPIKey(ctx context.Context, id string, apiKey string) error {
+	_, err := r.client.User.FindUnique(
+		db.User.ID.Equals(id),
+	).Update(
+		db.User.APIKey.Set(apiKey),
+	).Exec(ctx)
+	return err
 }

@@ -10,6 +10,7 @@ type User struct {
 	Company        *string   `json:"company,omitempty"`
 	Provider       string    `json:"provider"`
 	CreditsBalance int       `json:"creditsBalance"`
+	APIKey         *string   `json:"apiKey,omitempty"`
 	CreatedAt      time.Time `json:"createdAt"`
 	UpdatedAt      time.Time `json:"updatedAt"`
 }
@@ -27,4 +28,5 @@ type UserMeResponse struct {
 	Company        *string `json:"company,omitempty"`
 	Provider       string  `json:"provider"`
 	CreditsBalance int     `json:"creditsBalance"`
+	APIKey         *string `json:"apiKey,omitempty"`
 }
