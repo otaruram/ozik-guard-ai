@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 	"ozikcarbon-backend/domain"
 	"ozikcarbon-backend/internal/repository"
@@ -41,27 +42,82 @@ func NewAuditService(
 	}
 }
 
+// extractKeywords extracts search keywords from document text for Pasal.id lookup
+func extractKeywords(text string) []string {
+	lower := strings.ToLower(text)
+	keywordMap := map[string]string{
+		"hutan":       "kehutanan kawasan hutan",
+		"kawasan":     "kehutanan kawasan hutan",
+		"karbon":      "karbon emisi gas rumah kaca",
+		"carbon":      "karbon emisi gas rumah kaca",
+		"emisi":       "karbon emisi gas rumah kaca",
+		"energi":      "energi terbarukan listrik",
+		"surya":       "energi terbarukan tenaga surya",
+		"lingkungan":  "lingkungan amdal dampak",
+		"amdal":       "lingkungan amdal dampak",
+		"izin":        "perizinan izin berusaha",
+		"masyarakat":  "masyarakat fpic konsultasi adat",
+		"fpic":        "masyarakat fpic konsultasi adat",
+		"dampak":      "lingkungan amdal dampak",
+		"lahan":       "kehutanan kawasan hutan lahan",
+		"produksi":    "kehutanan kawasan hutan produksi",
+	}
+
+	seen := make(map[string]bool)
+	var queries []string
+	for kw, query := range keywordMap {
+		if strings.Contains(lower, kw) && !seen[query] {
+			seen[query] = true
+			queries = append(queries, query)
+		}
+	}
+
+	if len(queries) == 0 {
+		queries = []string{"lingkungan kehutanan karbon"}
+	}
+
+	// Limit to 3 queries
+	if len(queries) > 3 {
+		queries = queries[:3]
+	}
+
+	return queries
+}
+
 func (s *auditService) ProcessGuestTeaser(ctx context.Context, req *domain.GuestTeaserRequest) (*domain.GuestTeaserResponse, error) {
-	// 1. In-Memory Buffer Truncation
-	// For Guest Teaser, we simulate reading only the first 3 pages (e.g. 1500 chars limit)
+	// 1. Truncate to first 3 pages (~1500 chars)
 	text := req.PDDText
 	if len(text) > 1500 {
 		text = text[:1500]
 	}
 
-	// 2. PII Auto-Masking Engine
+	// 2. PII Auto-Masking
 	maskedText := s.piiMasker.Mask(text)
 
-	// 3. Live Pasal.id API (Simplified for Teaser, static search)
-	laws, _ := s.pasalID.SearchRegulations(ctx, "Izin Prinsip Kehutanan", "UU")
-	topLaw := ""
-	if len(laws) > 0 {
-		topLaw = laws[0].Title + " - " + laws[0].Snippet
+	// 3. Extract keywords and search Pasal.id
+	keywords := extractKeywords(text)
+	var allLaws []PasalIdLawResult
+	for _, q := range keywords {
+		laws, _ := s.pasalID.SearchRegulations(ctx, q, "UU")
+		allLaws = append(allLaws, laws...)
 	}
-	
-	_ = maskedText // prevent declared and not used error
 
-	// 4. Dynamic Clause Generation (same logic as full audit)
+	// Build law context for LLM
+	var lawContext []string
+	for _, l := range allLaws {
+		lawContext = append(lawContext, fmt.Sprintf("[%s]: %s", l.Title, l.Snippet))
+	}
+
+	// 4. Call LLM for analysis
+	prompt := fmt.Sprintf("Analyze this PDD text (first 3 pages only, freemium teaser):\n\n%s", maskedText)
+	llmResult, err := s.llmFactory.AnalyzeClause(ctx, prompt, lawContext, []int{1, 2, 3})
+	if err != nil {
+		log.Printf("❌ LLM analysis failed for teaser: %v", err)
+		// Continue with zero scores if LLM fails
+		llmResult = &LLMAnalysisResult{}
+	}
+
+	// 5. Build clauses from LLM issues + document text
 	paragraphs := strings.Split(text, "\n")
 	var validParagraphs []string
 	for _, p := range paragraphs {
@@ -76,27 +132,25 @@ func (s *auditService) ProcessGuestTeaser(ctx context.Context, req *domain.Guest
 
 	var clauses []domain.AuditClause
 	for i, p := range validParagraphs {
-		status := "compliant"
-		lowerP := strings.ToLower(p)
+		clauseStatus := "compliant"
 		var issue *domain.AuditIssue
 
-		if strings.Contains(lowerP, "hutan") || strings.Contains(lowerP, "produksi") || strings.Contains(lowerP, "kawasan") || strings.Contains(lowerP, "penyangga") {
-			status = "high"
-			issue = &domain.AuditIssue{
-				Severity:          "HIGH_RISK",
-				ClauseText:        p,
-				MatchedLaw:        "UU No. 41 Tahun 1999 (Kehutanan) Pasal 38",
-				OriginalLawText:   topLaw,
-				SuggestedRevision: "Harap lampirkan bukti permohonan IPPKH ke KLHK atau pastikan koordinat di luar area hutan.",
-			}
-		} else if strings.Contains(lowerP, "izin") || strings.Contains(lowerP, "menunggu") || strings.Contains(lowerP, "belum") || strings.Contains(lowerP, "dampak") {
-			status = "medium"
-			issue = &domain.AuditIssue{
-				Severity:          "MEDIUM_RISK",
-				ClauseText:        p,
-				MatchedLaw:        "Permen LHK No. 4 Tahun 2021",
-				OriginalLawText:   "Setiap penanggung jawab usaha wajib memiliki Persetujuan Lingkungan sebelum memulai kegiatan konstruksi.",
-				SuggestedRevision: "Sertakan status terkini atau nomor registrasi sementara dari dinas terkait.",
+		// Check if any LLM issue matches this paragraph
+		for _, llmIssue := range llmResult.Issues {
+			if strings.Contains(strings.ToLower(p), strings.ToLower(llmIssue.ClauseText[:minInt(len(llmIssue.ClauseText), 30)])) ||
+				(llmIssue.Severity == "HIGH_RISK" && i < 3) {
+				clauseStatus = "high"
+				if llmIssue.Severity == "MEDIUM_RISK" {
+					clauseStatus = "medium"
+				}
+				issue = &domain.AuditIssue{
+					Severity:          domain.RiskSeverity(llmIssue.Severity),
+					ClauseText:        llmIssue.ClauseText,
+					MatchedLaw:        llmIssue.MatchedLaw,
+					OriginalLawText:   llmIssue.OriginalLawText,
+					SuggestedRevision: llmIssue.SuggestedRevision,
+				}
+				break
 			}
 		}
 
@@ -104,119 +158,201 @@ func (s *auditService) ProcessGuestTeaser(ctx context.Context, req *domain.Guest
 			ID:     i + 1,
 			Clause: fmt.Sprintf("Klausul %d.%d", (i/5)+1, (i%5)+1),
 			Text:   p,
-			Status: status,
+			Status: clauseStatus,
 			Issue:  issue,
 		})
 	}
 
+	// Get top violation
+	var topViolation *domain.AuditIssue
+	if len(llmResult.Issues) > 0 {
+		topViolation = &domain.AuditIssue{
+			ClauseText:      llmResult.Issues[0].ClauseText,
+			MatchedLaw:      llmResult.Issues[0].MatchedLaw,
+			OriginalLawText: llmResult.Issues[0].OriginalLawText,
+		}
+	}
+
+	score, _ := s.scoringEngine.CalculateFeasibility(
+		llmResult.ScoreLegal, llmResult.ScoreTechnical,
+		llmResult.ScoreSocial, llmResult.ScoreTransparency,
+	)
+
 	return &domain.GuestTeaserResponse{
-		FeasibilityScore: 65,
-		SpatialSummary:   "Kawasan industri terdeteksi, namun berbatasan dengan hutan produksi.",
-		TopViolation: &domain.AuditIssue{
-			ClauseText:      "Penggunaan kawasan hutan tanpa izin prinsip melanggar regulasi.",
-			MatchedLaw:      "UU LHK No. 32/2009 Pasal 36",
-			OriginalLawText: topLaw,
-		},
-		Clauses: clauses,
+		IsFreemiumTeaser:  true,
+		FeasibilityScore:  score,
+		ScoreLegal:        llmResult.ScoreLegal,
+		ScoreTechnical:    llmResult.ScoreTechnical,
+		ScoreSocial:       llmResult.ScoreSocial,
+		ScoreTransparency: llmResult.ScoreTransparency,
+		SpatialSummary:    fmt.Sprintf("Analisis dokumen mendeteksi %d klausul. Skor kelayakan: %.0f/100.", len(validParagraphs), score),
+		TopViolation:      topViolation,
+		Clauses:           clauses,
 	}, nil
 }
 
 func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAuditRequest) (*domain.ProcessAuditResponse, error) {
-	// 1. In-Memory Buffer (Full Length)
+	// Validate userID
+	if req.UserID == "" {
+		return nil, fmt.Errorf("userID is required for full audit")
+	}
+
+	// 1. Full text
 	text := req.PDDText
 
-	// 2. PII Auto-Masking Engine
+	// 2. PII Auto-Masking
 	maskedText := s.piiMasker.Mask(text)
 
-	// 3. Live Pasal.id API
-	// Simple keyword extraction mock: "Izin Lingkungan", "Tenaga Surya"
-	laws, _ := s.pasalID.SearchRegulations(ctx, "Energi Terbarukan Lingkungan", "UU")
-	lawContext := ""
-	for _, l := range laws {
-		lawContext += fmt.Sprintf("[%s]: %s\n", l.Title, l.Snippet)
+	// 3. Extract keywords and search Pasal.id (live RAG)
+	keywords := extractKeywords(text)
+	var allLaws []PasalIdLawResult
+	for _, q := range keywords {
+		laws, _ := s.pasalID.SearchRegulations(ctx, q, "UU")
+		allLaws = append(allLaws, laws...)
 	}
 
-	// 4. Send to LLM
-	prompt := fmt.Sprintf("Analyze this PDD text:\n%s\n\nAgainst these laws:\n%s", maskedText, lawContext)
-	llmResp, err := s.llmFactory.AnalyzeClause(ctx, prompt, []string{lawContext}, req.TargetPages)
+	// Deduplicate laws
+	seen := make(map[string]bool)
+	var uniqueLaws []PasalIdLawResult
+	for _, l := range allLaws {
+		if !seen[l.ID] {
+			seen[l.ID] = true
+			uniqueLaws = append(uniqueLaws, l)
+		}
+	}
+
+	// Build law context strings for LLM injection
+	var lawContextLines []string
+	for _, l := range uniqueLaws {
+		lawContextLines = append(lawContextLines, fmt.Sprintf("[%s] (%s): %s", l.Title, l.URL, l.Snippet))
+	}
+
+	log.Printf("📚 RAG Context: %d unique laws retrieved for LLM injection", len(uniqueLaws))
+
+	// 4. Send to LLM with injected RAG context
+	prompt := fmt.Sprintf("Analyze this PDD text for compliance:\n\n%s", maskedText)
+	llmResp, err := s.llmFactory.AnalyzeClause(ctx, prompt, lawContextLines, req.TargetPages)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("LLM analysis failed: %w", err)
 	}
 
-	// 5. Scoring Engine
-	// We'll calculate score based on LLM response
-	scoreLegal := llmResp.ScoreLegal
-	scoreTech := llmResp.ScoreTechnical
-	scoreSocial := llmResp.ScoreSocial
-	scoreTrans := llmResp.ScoreTransparency
+	// 5. Calculate feasibility score
+	score, status := s.scoringEngine.CalculateFeasibility(
+		llmResp.ScoreLegal, llmResp.ScoreTechnical,
+		llmResp.ScoreSocial, llmResp.ScoreTransparency,
+	)
 
-	score, status := s.scoringEngine.CalculateFeasibility(scoreLegal, scoreTech, scoreSocial, scoreTrans)
-
-	// Generate HMAC-SHA256 Badge
+	// 6. Generate HMAC-SHA256 Badge
 	auditID := uuid.New().String()
 	hash := ""
 	if score >= 80 {
 		hash = s.scoringEngine.GenerateHMACBadge(auditID, score)
 	}
 
-	// Dynamic Clause Generation grouped by pages
+	// 7. Build clauses from document text + LLM issues
 	paragraphs := strings.Split(text, "\n")
 	var validParagraphs []string
 	for _, p := range paragraphs {
 		p = strings.TrimSpace(p)
-		if len(p) > 20 { // skip very short lines
+		if len(p) > 20 {
 			validParagraphs = append(validParagraphs, p)
 		}
 	}
-
 	if len(validParagraphs) == 0 {
-		validParagraphs = []string{text} // fallback if no newlines
+		validParagraphs = []string{text}
 	}
 
 	var clauses []domain.AuditClause
 	var auditIssues []domain.AuditIssue
 	totalSentences := 0
 	totalWords := 0
-	
+
 	type PageData struct {
 		PageNumber int                  `json:"page_number"`
 		Chunks     []domain.AuditClause `json:"chunks"`
 	}
 	var pages []PageData
-	
+
 	chunksPerPage := 6
+
+	// Map LLM issues to clauses
 	for i, p := range validParagraphs {
 		totalSentences += strings.Count(p, ".") + strings.Count(p, "?") + strings.Count(p, "!")
 		totalWords += len(strings.Fields(p))
 
 		clauseStatus := "COMPLIANT"
-		lowerP := strings.ToLower(p)
 		var issue *domain.AuditIssue
 
-		if strings.Contains(lowerP, "hutan") || strings.Contains(lowerP, "produksi") || strings.Contains(lowerP, "kawasan") || strings.Contains(lowerP, "penyangga") {
-			clauseStatus = "HIGH_RISK"
-			issue = &domain.AuditIssue{
-				Severity:          "HIGH_RISK",
-				ClauseText:        p,
-				MatchedLaw:        "UU No. 41 Tahun 1999 (Kehutanan) Pasal 38",
-				OriginalLawText:   "Penggunaan kawasan hutan untuk kepentingan pembangunan di luar kegiatan kehutanan hanya dapat dilakukan di dalam kawasan hutan produksi dan kawasan hutan lindung dengan Izin Pinjam Pakai.",
-				SuggestedRevision: "Harap lampirkan bukti permohonan IPPKH ke KLHK atau pastikan koordinat di luar area hutan.",
-				PageNumber:        (i / chunksPerPage) + 1,
-				ChunkIndex:        i + 1,
+		// Check if any LLM issue maps to this paragraph
+		for _, llmIssue := range llmResp.Issues {
+			clauseTextLower := strings.ToLower(llmIssue.ClauseText)
+			paragraphLower := strings.ToLower(p)
+
+			// Match by content overlap
+			matchLen := minInt(len(clauseTextLower), 40)
+			if matchLen > 0 && strings.Contains(paragraphLower, clauseTextLower[:matchLen]) {
+				clauseStatus = string(llmIssue.Severity)
+				issue = &domain.AuditIssue{
+					Severity:          domain.RiskSeverity(llmIssue.Severity),
+					ClauseText:        p,
+					MatchedLaw:        llmIssue.MatchedLaw,
+					OriginalLawText:   llmIssue.OriginalLawText,
+					SuggestedRevision: llmIssue.SuggestedRevision,
+					PageNumber:        (i / chunksPerPage) + 1,
+					ChunkIndex:        i + 1,
+				}
+				auditIssues = append(auditIssues, *issue)
+				break
 			}
-			auditIssues = append(auditIssues, *issue)
-		} else if strings.Contains(lowerP, "izin") || strings.Contains(lowerP, "menunggu") || strings.Contains(lowerP, "belum") || strings.Contains(lowerP, "dampak") {
-			clauseStatus = "MEDIUM_RISK"
-			issue = &domain.AuditIssue{
-				Severity:          "MEDIUM_RISK",
-				ClauseText:        p,
-				MatchedLaw:        "Peraturan Terkait Perizinan & Dampak Lingkungan",
-				OriginalLawText:   "Setiap kegiatan wajib mengantongi izin sah atau rekomendasi dinas terkait sebelum operasi.",
-				SuggestedRevision: "Sertakan status terkini atau nomor registrasi sementara dari dinas terkait.",
-				PageNumber:        (i / chunksPerPage) + 1,
-				ChunkIndex:        i + 1,
+		}
+
+		// If no exact match, apply keyword-based detection as supplement
+		if clauseStatus == "COMPLIANT" {
+			lowerP := strings.ToLower(p)
+			if strings.Contains(lowerP, "hutan") && (strings.Contains(lowerP, "produksi") || strings.Contains(lowerP, "kawasan") || strings.Contains(lowerP, "penyangga")) {
+				clauseStatus = "HIGH_RISK"
+				// Use first matching law from RAG context
+				matchedLaw := "UU No. 41 Tahun 1999 Pasal 38 (Kehutanan)"
+				lawText := "Penggunaan kawasan hutan untuk kepentingan pembangunan di luar kegiatan kehutanan hanya dapat dilakukan dengan IPPKH."
+				for _, l := range uniqueLaws {
+					if strings.Contains(strings.ToLower(l.Title), "kehutanan") || strings.Contains(strings.ToLower(l.Title), "hutan") {
+						matchedLaw = l.Title
+						lawText = l.Snippet
+						break
+					}
+				}
+				issue = &domain.AuditIssue{
+					Severity:          "HIGH_RISK",
+					ClauseText:        p,
+					MatchedLaw:        matchedLaw,
+					OriginalLawText:   lawText,
+					SuggestedRevision: "Lampirkan bukti permohonan IPPKH ke KLHK atau pastikan koordinat di luar area hutan.",
+					PageNumber:        (i / chunksPerPage) + 1,
+					ChunkIndex:        i + 1,
+				}
+				auditIssues = append(auditIssues, *issue)
+			} else if strings.Contains(lowerP, "izin") && (strings.Contains(lowerP, "menunggu") || strings.Contains(lowerP, "belum") || strings.Contains(lowerP, "dampak")) {
+				clauseStatus = "MEDIUM_RISK"
+				matchedLaw := "Peraturan Terkait Perizinan & Dampak Lingkungan"
+				lawText := "Setiap kegiatan wajib mengantongi izin sah sebelum operasi."
+				for _, l := range uniqueLaws {
+					if strings.Contains(strings.ToLower(l.Title), "perizinan") || strings.Contains(strings.ToLower(l.Title), "izin") {
+						matchedLaw = l.Title
+						lawText = l.Snippet
+						break
+					}
+				}
+				issue = &domain.AuditIssue{
+					Severity:          "MEDIUM_RISK",
+					ClauseText:        p,
+					MatchedLaw:        matchedLaw,
+					OriginalLawText:   lawText,
+					SuggestedRevision: "Sertakan status terkini perizinan atau nomor registrasi sementara dari dinas terkait.",
+					PageNumber:        (i / chunksPerPage) + 1,
+					ChunkIndex:        i + 1,
+				}
+				auditIssues = append(auditIssues, *issue)
 			}
-			auditIssues = append(auditIssues, *issue)
 		}
 
 		clause := domain.AuditClause{
@@ -227,7 +363,7 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 			Issue:  issue,
 		}
 		clauses = append(clauses, clause)
-		
+
 		pageNum := (i / chunksPerPage) + 1
 		if len(pages) < pageNum {
 			pages = append(pages, PageData{PageNumber: pageNum, Chunks: []domain.AuditClause{}})
@@ -244,12 +380,6 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 	parsedJsonBytes, _ := json.Marshal(docData)
 	parsedDocumentJson := string(parsedJsonBytes)
 
-	// Save to Repository
-	userID := req.UserID
-	if userID == "" {
-		userID = "mock-uuid"
-	}
-
 	badgeStatus := domain.BadgeInvalid
 	if score >= 80 {
 		badgeStatus = domain.BadgeActive
@@ -257,17 +387,17 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 
 	audit := &domain.ProjectAudit{
 		ID:                 auditID,
-		UserID:             userID,
+		UserID:             req.UserID,
 		ProjectName:        req.ProjectName,
 		TotalPages:         totalPages,
 		TotalWords:         totalWords,
 		TotalSentences:     totalSentences,
 		ParsedDocumentJson: parsedDocumentJson,
 		FeasibilityScore:   score,
-		ScoreLegal:         scoreLegal,
-		ScoreTechnical:     scoreTech,
-		ScoreSocial:        scoreSocial,
-		ScoreTransparency:  scoreTrans,
+		ScoreLegal:         llmResp.ScoreLegal,
+		ScoreTechnical:     llmResp.ScoreTechnical,
+		ScoreSocial:        llmResp.ScoreSocial,
+		ScoreTransparency:  llmResp.ScoreTransparency,
 		Status:             badgeStatus,
 		SHA256Hash:         hash,
 		CreatedAt:          time.Now(),
@@ -280,14 +410,16 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 		return nil, err
 	}
 
+	log.Printf("✅ Audit %s saved. Score=%.0f Status=%s Issues=%d", auditID, score, status, len(auditIssues))
+
 	return &domain.ProcessAuditResponse{
 		AuditID:            auditID,
 		Status:             status,
 		FeasibilityScore:   score,
-		ScoreLegal:         scoreLegal,
-		ScoreTechnical:     scoreTech,
-		ScoreSocial:        scoreSocial,
-		ScoreTransparency:  scoreTrans,
+		ScoreLegal:         llmResp.ScoreLegal,
+		ScoreTechnical:     llmResp.ScoreTechnical,
+		ScoreSocial:        llmResp.ScoreSocial,
+		ScoreTransparency:  llmResp.ScoreTransparency,
 		SHA256Hash:         hash,
 		Clauses:            clauses,
 		Issues:             auditIssues,
@@ -296,4 +428,11 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 		TotalWords:         totalWords,
 		TotalSentences:     totalSentences,
 	}, nil
+}
+
+func minInt(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
