@@ -663,36 +663,38 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
           </div>
         </TabsContent>
 
-        <TabsContent value="api" className="border-4 border-emerald-950 bg-white p-8 shadow-[8px_8px_0_rgba(2,44,34,1)]">
-          <h3 className="text-xl font-black uppercase text-emerald-950 mb-6">Manajemen Kunci API</h3>
-          <div className="bg-emerald-50 border-4 border-emerald-950 p-6 mb-8 relative">
-            <Label className="text-xs font-black uppercase text-emerald-950 mb-2 block">Live API Key</Label>
-            <div className="flex gap-2">
-              <Input readOnly value={dbUser?.apiKey || "Belum ada kunci API. Silakan buat (Regenerate)."} className="h-12 border-4 border-emerald-950 rounded-none font-bold bg-white font-mono" />
+        <TabsContent value="api" className="bg-white p-8 rounded-2xl shadow-sm border border-emerald-100">
+          <h3 className="text-xl font-bold text-emerald-950 mb-6">Manajemen Kunci API</h3>
+          <div className="bg-emerald-50/50 rounded-xl border border-emerald-100 p-6 mb-8 relative">
+            <Label className="text-sm font-semibold text-emerald-900 mb-3 block">Live API Key</Label>
+            <div className="flex gap-3">
+              <Input readOnly value={dbUser?.apiKey || "Belum ada kunci API. Silakan buat (Regenerate)."} className="h-12 border-emerald-200 rounded-lg font-medium bg-white text-emerald-950 font-mono focus-visible:ring-emerald-500" />
               <Button size="icon" variant="outline" onClick={() => {
                 if (dbUser?.apiKey) {
                   navigator.clipboard.writeText(dbUser.apiKey);
                   alert("API Key disalin ke clipboard!");
                 }
-              }} className="h-12 w-12 shrink-0 border-4 border-emerald-950 rounded-none hover:bg-emerald-950 hover:text-white">
+              }} className="h-12 w-12 shrink-0 border-emerald-200 rounded-lg hover:bg-emerald-100 hover:text-emerald-900">
                 <Copy className="h-5 w-5" />
               </Button>
             </div>
-            <div className="mt-4 flex gap-4">
-              <Button size="sm" variant="outline" disabled={loadingKey} onClick={async () => {
+            <div className="mt-5 flex gap-4">
+              <Button size="sm" disabled={loadingKey} onClick={async () => {
                 if(confirm("Apakah Anda yakin ingin mengganti kunci API lama? Kunci yang lama akan langsung hangus.")) {
                   setLoadingKey(true);
                   try {
                     await api.regenerateApiKey();
-                    refreshUser();
+                    const newMe = await api.getMe();
+                    setDbUser(newMe);
                     alert("Kunci API baru berhasil dibuat!");
                   } catch(e) {
                     alert("Gagal membuat kunci API");
                   }
                   setLoadingKey(false);
                 }
-              }} className="border-2 border-emerald-950 rounded-none font-black text-xs uppercase hover:bg-emerald-100">
-                {loadingKey ? <Loader2 className="h-4 w-4 animate-spin" /> : "Regenerate Key"}
+              }} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold h-10 px-4">
+                {loadingKey ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Zap className="h-4 w-4 mr-2" />} 
+                {loadingKey ? "Memproses..." : "Generate Key Baru"}
               </Button>
             </div>
           </div>

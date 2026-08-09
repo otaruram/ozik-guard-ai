@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useAuth } from "@/lib/auth-context";
 import {
   ShieldCheck,
   ArrowRight,
@@ -20,15 +22,17 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  return (
-    <div className="bg-[#040D09] min-h-screen text-slate-300 font-sans selection:bg-emerald-500/30 overflow-hidden">
-      {/* Ambient glowing background effects */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-600/20 rounded-full blur-[120px] opacity-50 mix-blend-screen" />
-        <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-teal-800/20 rounded-full blur-[150px] opacity-40 mix-blend-screen" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_10%,transparent_100%)]" />
-      </div>
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!loading && user) {
+      navigate({ to: "/dashboard", replace: true });
+    }
+  }, [user, loading, navigate]);
+
+  return (
+    <div className="bg-emerald-50/30 min-h-screen text-emerald-950 font-sans selection:bg-emerald-900 selection:text-white overflow-hidden">
       <div className="relative z-10">
         <Hero />
         <Features />
@@ -43,31 +47,30 @@ function Index() {
 
 function Hero() {
   return (
-    <section className="relative pt-24 pb-32 md:pt-36 md:pb-40 px-4">
-      <div className="max-w-7xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold tracking-wide uppercase mb-8 shadow-[0_0_20px_rgba(16,185,129,0.15)] animate-pulse">
+    <section className="relative pt-24 pb-32 md:pt-36 md:pb-40 px-4 bg-white border-b-4 border-emerald-950">
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(2,44,34,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(2,44,34,0.05)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_80%)]" />
+      <div className="max-w-7xl mx-auto text-center relative z-10">
+        <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-emerald-950 bg-emerald-100 text-emerald-950 font-black uppercase tracking-widest text-xs mb-8 shadow-[4px_4px_0_rgba(2,44,34,1)]">
           <Sparkles className="h-4 w-4" /> Smart Greentech & Legaltech Aggregator
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-[1.1] mb-8">
-          Validasi Proyek Energi & Hukum <br className="hidden md:block" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
-            Dalam Hitungan Detik
-          </span>
+        <h1 className="text-5xl md:text-7xl font-black text-emerald-950 tracking-tight leading-[1.1] mb-8 uppercase">
+          Validasi Proyek Energi <br className="hidden md:block" />
+          <span className="text-emerald-600">Dalam Hitungan Detik</span>
         </h1>
         
-        <p className="max-w-3xl mx-auto text-lg md:text-xl text-slate-400 leading-relaxed mb-12">
+        <p className="max-w-3xl mx-auto text-lg md:text-xl font-bold text-emerald-950/70 leading-relaxed mb-12">
           OzikSustain mengautomasi audit Project Design Document (PDD) Anda. Deteksi risiko lingkungan, pastikan kepatuhan regulasi secara deterministik, dan dapatkan sertifikasi tanpa *greenwashing*.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
           <Link to="/auth">
-            <Button size="lg" className="h-14 px-8 rounded-full bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold text-base transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(16,185,129,0.4)]">
+            <Button size="lg" className="h-16 px-10 rounded-none bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest text-base transition-all hover:translate-y-1 hover:translate-x-1 shadow-[6px_6px_0_rgba(2,44,34,1)] border-4 border-emerald-950 hover:shadow-none">
               Mulai Audit Gratis <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
           <Link to="/playground">
-            <Button size="lg" variant="outline" className="h-14 px-8 rounded-full border-white/20 bg-white/5 hover:bg-white/10 text-white font-bold text-base backdrop-blur-md transition-all">
+            <Button size="lg" variant="outline" className="h-16 px-10 rounded-none border-4 border-emerald-950 bg-white hover:bg-emerald-50 text-emerald-950 font-black uppercase tracking-widest text-base transition-all hover:translate-y-1 hover:translate-x-1 shadow-[6px_6px_0_rgba(2,44,34,1)] hover:shadow-none">
               <Code2 className="mr-2 h-5 w-5" /> Developer API
             </Button>
           </Link>
@@ -102,23 +105,23 @@ function Features() {
   ];
 
   return (
-    <section id="features" className="py-24 relative">
+    <section id="features" className="py-24 relative bg-emerald-50/50">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="text-center mb-20">
-          <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-4">
+          <h2 className="text-3xl md:text-5xl font-black uppercase text-emerald-950 tracking-tight mb-4">
             Keunggulan OzikSustain
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">Kami menggabungkan kekuatan AI dan basis data hukum untuk mencegah klaim keliru.</p>
+          <p className="text-emerald-950/70 font-bold max-w-2xl mx-auto">Kami menggabungkan kekuatan AI dan basis data hukum untuk mencegah klaim keliru.</p>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((f, i) => (
-            <div key={i} className="group p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all duration-500 hover:-translate-y-2 hover:border-emerald-500/30 hover:shadow-[0_10px_40px_rgba(16,185,129,0.1)]">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 border border-emerald-500/20">
-                <f.icon className="h-7 w-7 text-emerald-400" />
+            <div key={i} className="group p-8 bg-white border-4 border-emerald-950 hover:-translate-y-2 hover:-translate-x-2 transition-transform shadow-[8px_8px_0_rgba(2,44,34,1)] hover:shadow-[12px_12px_0_rgba(2,44,34,1)]">
+              <div className="w-14 h-14 bg-emerald-100 flex items-center justify-center mb-6 border-2 border-emerald-950">
+                <f.icon className="h-7 w-7 text-emerald-950" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-3">{f.title}</h3>
-              <p className="text-slate-400 leading-relaxed text-sm">{f.desc}</p>
+              <h3 className="text-xl font-black uppercase text-emerald-950 mb-3">{f.title}</h3>
+              <p className="text-emerald-950/70 font-bold leading-relaxed text-sm">{f.desc}</p>
             </div>
           ))}
         </div>
@@ -134,28 +137,24 @@ function HowItWorks() {
     { num: "03", title: "Terima Sertifikat", desc: "Dapatkan Green Badge, skor kelayakan, dan kode QR unik." },
   ];
   return (
-    <section id="how" className="py-24 relative">
+    <section id="how" className="py-24 relative bg-emerald-950 text-white border-y-4 border-emerald-950">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <div className="p-12 md:p-20 rounded-[3rem] bg-gradient-to-b from-white/5 to-transparent border border-white/10 backdrop-blur-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-[100px]" />
-          
-          <div className="text-center mb-16 relative z-10">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Cara Kerja Kami</h2>
-            <p className="text-slate-400">Proses otomatis tanpa intervensi manusia.</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-10 relative z-10">
-            {steps.map((s, i) => (
-              <div key={i} className="text-center relative">
-                {i !== 2 && <div className="hidden md:block absolute top-10 left-[60%] w-full h-[1px] bg-gradient-to-r from-emerald-500/50 to-transparent" />}
-                <div className="w-20 h-20 mx-auto rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center text-2xl font-black text-emerald-400 mb-6 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-                  {s.num}
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">{s.title}</h3>
-                <p className="text-slate-400 text-sm">{s.desc}</p>
+        <div className="text-center mb-16 relative z-10">
+          <h2 className="text-3xl md:text-5xl font-black uppercase mb-4">Cara Kerja Kami</h2>
+          <p className="text-white/70 font-bold">Proses otomatis tanpa intervensi manusia.</p>
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-10 relative z-10">
+          {steps.map((s, i) => (
+            <div key={i} className="text-center relative">
+              {i !== 2 && <div className="hidden md:block absolute top-10 left-[60%] w-full h-[4px] bg-emerald-800" />}
+              <div className="w-20 h-20 mx-auto bg-white border-4 border-emerald-950 flex items-center justify-center text-3xl font-black text-emerald-950 mb-6 shadow-[6px_6px_0_rgba(16,185,129,1)]">
+                {s.num}
               </div>
-            ))}
-          </div>
+              <h3 className="text-xl font-black uppercase mb-3">{s.title}</h3>
+              <p className="text-white/70 font-bold text-sm">{s.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -164,56 +163,56 @@ function HowItWorks() {
 
 function Pricing() {
   return (
-    <section id="pricing" className="py-24 relative">
+    <section id="pricing" className="py-24 relative bg-white">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Skema API Fleksibel</h2>
-          <p className="text-slate-400">Pilih paket sesuai dengan jumlah audit dan skala proyek Anda.</p>
+          <h2 className="text-3xl md:text-5xl font-black uppercase text-emerald-950 mb-4">Skema API Fleksibel</h2>
+          <p className="text-emerald-950/70 font-bold">Pilih paket sesuai dengan jumlah audit dan skala proyek Anda.</p>
         </div>
         
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {/* Plan 1 */}
-          <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md flex flex-col">
-            <div className="text-emerald-400 font-semibold mb-2 uppercase tracking-wide text-xs">Eceran</div>
-            <h3 className="text-2xl font-bold text-white mb-4">Single Audit</h3>
-            <div className="text-4xl font-extrabold text-white mb-1">Rp 99rb</div>
-            <div className="text-slate-500 text-sm mb-6">/ 1x Audit Penuh</div>
-            <ul className="space-y-4 text-sm text-slate-300 mb-8 flex-1">
-              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> Laporan PDF Komprehensif</li>
-              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> Akses Pasal.id Terbatas</li>
+          <div className="p-8 bg-emerald-50 border-4 border-emerald-950 shadow-[8px_8px_0_rgba(2,44,34,1)] flex flex-col">
+            <div className="text-emerald-700 font-black mb-2 uppercase tracking-wide text-xs">Eceran</div>
+            <h3 className="text-2xl font-black uppercase text-emerald-950 mb-4">Single Audit</h3>
+            <div className="text-4xl font-black text-emerald-950 mb-1">Rp 99rb</div>
+            <div className="text-emerald-950/60 font-bold text-sm mb-6">/ 1x Audit Penuh</div>
+            <ul className="space-y-4 text-sm font-bold text-emerald-950/80 mb-8 flex-1">
+              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0"/> Laporan PDF Komprehensif</li>
+              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0"/> Akses Pasal.id Terbatas</li>
             </ul>
-            <Button className="w-full rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20">Beli Kredit</Button>
+            <Button className="w-full rounded-none border-2 border-emerald-950 bg-white hover:bg-emerald-100 text-emerald-950 font-black uppercase shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none">Beli Kredit</Button>
           </div>
 
           {/* Plan 2 */}
-          <div className="p-8 rounded-3xl bg-gradient-to-b from-emerald-900/40 to-emerald-950/40 border border-emerald-500/40 backdrop-blur-md flex flex-col relative transform md:-translate-y-4 shadow-[0_0_40px_rgba(16,185,129,0.15)]">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-emerald-500 to-teal-400 text-emerald-950 font-bold px-4 py-1 rounded-full text-xs shadow-lg">
+          <div className="p-8 bg-yellow-400 border-4 border-emerald-950 shadow-[12px_12px_0_rgba(2,44,34,1)] flex flex-col relative transform md:-translate-y-4">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-950 text-white font-black uppercase px-4 py-1 text-xs border-2 border-emerald-950">
               PALING POPULER
             </div>
-            <div className="text-emerald-400 font-semibold mb-2 uppercase tracking-wide text-xs">UMKM & B2B</div>
-            <h3 className="text-2xl font-bold text-white mb-4">B2B Eco-Basic</h3>
-            <div className="text-4xl font-extrabold text-white mb-1">Rp 499rb</div>
-            <div className="text-emerald-500/70 text-sm mb-6">/ bulan</div>
-            <ul className="space-y-4 text-sm text-slate-200 mb-8 flex-1">
-              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0"/> 10 Kredit Audit per Bulan</li>
-              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0"/> Verified Green Badge Premium</li>
-              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0"/> Akses API Terbuka</li>
+            <div className="text-emerald-950 font-black mb-2 uppercase tracking-wide text-xs">UMKM & B2B</div>
+            <h3 className="text-2xl font-black uppercase text-emerald-950 mb-4">B2B Eco-Basic</h3>
+            <div className="text-4xl font-black text-emerald-950 mb-1">Rp 499rb</div>
+            <div className="text-emerald-950/70 font-bold text-sm mb-6">/ bulan</div>
+            <ul className="space-y-4 text-sm font-bold text-emerald-950 mb-8 flex-1">
+              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-950 shrink-0"/> 10 Kredit Audit per Bulan</li>
+              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-950 shrink-0"/> Verified Green Badge Premium</li>
+              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-950 shrink-0"/> Akses API Terbuka</li>
             </ul>
-            <Button className="w-full rounded-xl bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold">Mulai Percobaan</Button>
+            <Button className="w-full rounded-none bg-emerald-950 hover:bg-emerald-800 text-white font-black uppercase border-2 border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none">Mulai Percobaan</Button>
           </div>
 
           {/* Plan 3 */}
-          <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md flex flex-col">
-            <div className="text-slate-400 font-semibold mb-2 uppercase tracking-wide text-xs">Korporat</div>
-            <h3 className="text-2xl font-bold text-white mb-4">Enterprise</h3>
-            <div className="text-4xl font-extrabold text-white mb-1">Kustom</div>
-            <div className="text-slate-500 text-sm mb-6">/ Skema API Tinggi</div>
-            <ul className="space-y-4 text-sm text-slate-300 mb-8 flex-1">
-              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> Unlimited API Calls</li>
-              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> SLA & Dedicated Support</li>
-              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> Whitelabel Report</li>
+          <div className="p-8 bg-emerald-50 border-4 border-emerald-950 shadow-[8px_8px_0_rgba(2,44,34,1)] flex flex-col">
+            <div className="text-emerald-700 font-black mb-2 uppercase tracking-wide text-xs">Korporat</div>
+            <h3 className="text-2xl font-black uppercase text-emerald-950 mb-4">Enterprise</h3>
+            <div className="text-4xl font-black text-emerald-950 mb-1">Kustom</div>
+            <div className="text-emerald-950/60 font-bold text-sm mb-6">/ Skema API Tinggi</div>
+            <ul className="space-y-4 text-sm font-bold text-emerald-950/80 mb-8 flex-1">
+              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0"/> Unlimited API Calls</li>
+              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0"/> SLA & Dedicated Support</li>
+              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0"/> Whitelabel Report</li>
             </ul>
-            <Button className="w-full rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20">Hubungi Penjualan</Button>
+            <Button className="w-full rounded-none border-2 border-emerald-950 bg-white hover:bg-emerald-100 text-emerald-950 font-black uppercase shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none">Hubungi Penjualan</Button>
           </div>
         </div>
       </div>
@@ -223,15 +222,14 @@ function Pricing() {
 
 function FinalCTA() {
   return (
-    <section className="py-24 relative overflow-hidden">
-      <div className="absolute inset-0 bg-emerald-900/20" />
+    <section className="py-24 relative overflow-hidden bg-emerald-100 border-y-4 border-emerald-950">
       <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Amankan Reputasi ESG Anda</h2>
-        <p className="text-lg text-slate-400 mb-10">
+        <h2 className="text-4xl md:text-5xl font-black uppercase text-emerald-950 mb-6">Amankan Reputasi ESG Anda</h2>
+        <p className="text-lg font-bold text-emerald-950/70 mb-10">
           OzikSustain telah digunakan oleh puluhan UMKM dan korporat untuk mempercepat audit berkelanjutan dan mencegah greenwashing.
         </p>
         <Link to="/auth">
-          <Button size="lg" className="h-16 px-10 rounded-full bg-white text-emerald-950 hover:bg-slate-200 font-bold text-lg transition-transform hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+          <Button size="lg" className="h-16 px-10 rounded-none bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest text-lg transition-transform hover:-translate-y-1 hover:-translate-x-1 shadow-[8px_8px_0_rgba(2,44,34,1)] border-4 border-emerald-950">
             Mulai Gratis Sekarang
           </Button>
         </Link>
@@ -242,45 +240,53 @@ function FinalCTA() {
 
 function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-[#020503] pt-16 pb-8 relative z-10">
+    <footer className="bg-white pt-16 pb-8 relative z-10">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="grid gap-12 md:grid-cols-4 mb-16">
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center gap-3 mb-6 group">
-              <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden border border-white/20 group-hover:border-emerald-500/50 transition-colors">
-                <img src="/logo.png" alt="OzikSustain" className="w-full h-full object-cover" />
+              <div className="w-10 h-10 rounded-sm bg-white flex items-center justify-center overflow-hidden border-2 border-emerald-950">
+                <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
               </div>
-              <span className="text-xl font-bold text-white tracking-wide">OzikSustain</span>
+              <span className="text-lg font-black uppercase tracking-widest text-emerald-950">OzikSustain</span>
             </Link>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              Mendukung Transisi Energi Indonesia melalui verifikasi data instan dan agregasi tepercaya.
+            <p className="text-sm font-bold text-emerald-950/70 mb-6">
+              Platform agregator kepatuhan hukum dan kelayakan energi hijau terdepan.
             </p>
           </div>
           <div>
-            <h4 className="font-semibold text-white mb-6">Platform</h4>
-            <ul className="space-y-3 text-sm text-slate-400">
-              <li><a href="#features" className="hover:text-emerald-400 transition-colors">Fitur AI</a></li>
-              <li><a href="#pricing" className="hover:text-emerald-400 transition-colors">Harga B2B</a></li>
-              <li><Link to="/playground" className="hover:text-emerald-400 transition-colors">Developer API</Link></li>
+            <h4 className="text-sm font-black uppercase text-emerald-950 mb-4 tracking-widest">Platform</h4>
+            <ul className="space-y-3 text-sm font-bold text-emerald-950/70">
+              <li><Link to="/auth" className="hover:text-emerald-600">Audit PDD</Link></li>
+              <li><Link to="/playground" className="hover:text-emerald-600">API Documentation</Link></li>
+              <li><Link to="/" className="hover:text-emerald-600">Pricing</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold text-white mb-6">Tentang</h4>
-            <ul className="space-y-3 text-sm text-slate-400">
-              <li><Link to="/page/pln-sustainaction" className="hover:text-emerald-400 transition-colors">PLN SustainAction</Link></li>
-              <li><Link to="/page/kontak" className="hover:text-emerald-400 transition-colors">Hubungi Tim</Link></li>
+            <h4 className="text-sm font-black uppercase text-emerald-950 mb-4 tracking-widest">Legal</h4>
+            <ul className="space-y-3 text-sm font-bold text-emerald-950/70">
+              <li><a href="#" className="hover:text-emerald-600">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-emerald-600">Terms of Service</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold text-white mb-6">Legalitas</h4>
-            <ul className="space-y-3 text-sm text-slate-400">
-              <li><Link to="/page/privasi" className="hover:text-emerald-400 transition-colors">Privasi Data</Link></li>
-              <li><Link to="/page/disclaimer" className="hover:text-emerald-400 transition-colors">Disclaimer Hak Cipta</Link></li>
-            </ul>
+            <h4 className="text-sm font-black uppercase text-emerald-950 mb-4 tracking-widest">Follow Us</h4>
+            <div className="flex gap-4">
+              {['Twitter', 'LinkedIn', 'GitHub'].map((s) => (
+                <a key={s} href="#" className="w-10 h-10 rounded-none bg-emerald-50 border-2 border-emerald-950 flex items-center justify-center text-emerald-950 hover:bg-emerald-950 hover:text-white transition-colors">
+                  <span className="sr-only">{s}</span>
+                  <Globe className="w-4 h-4" />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="border-t border-white/10 pt-8 text-center text-sm text-slate-600">
-          &copy; {new Date().getFullYear()} OzikSustain Inc. Seluruh Hak Cipta Dilindungi.
+        <div className="border-t-4 border-emerald-950 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-bold text-emerald-950/60 uppercase">
+          <p>© 2026 OzikSustain. All rights reserved.</p>
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <span>Verified by Pasal.id Engine</span>
+          </div>
         </div>
       </div>
     </footer>

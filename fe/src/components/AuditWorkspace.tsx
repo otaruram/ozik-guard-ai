@@ -171,7 +171,7 @@ export function AuditWorkspace({
     if (!reportRef.current) return;
     try {
       const { pdf } = await import("@react-pdf/renderer");
-      const blob = await pdf(<PDFReportTemplate data={result} userName={userName || "OzikSustain User"} userEmail={userEmail} />).toBlob();
+      const blob = await pdf(<PDFReportTemplate data={{...result, projectName: fileName || result?.projectName || "PDD Document"}} userName={userName || "OzikSustain User"} userEmail={userEmail} />).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -376,9 +376,9 @@ export function AuditWorkspace({
           </div>
 
           {/* Two Columns: Metadata + Pie Chart */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border-b-2 border-[#0F382C]/10">
+          <div className="flex flex-col md:flex-row gap-0 border-b-2 border-[#0F382C]/10">
             {/* Left: Submission Information */}
-            <div className="p-6 border-r-2 border-[#0F382C]/10">
+            <div className="p-6 md:border-r-2 border-[#0F382C]/10 border-b-2 md:border-b-0 w-full md:w-1/2">
               <h3 className="font-black text-[11px] uppercase tracking-widest text-[#0F382C] mb-4 flex items-center gap-2">
                 <FileStack className="h-4 w-4" /> Submission Information
               </h3>
@@ -466,10 +466,10 @@ export function AuditWorkspace({
 
       {/* ═══════════════════ DRILLBIT WORKSPACE ═══════════════════ */}
       {view === "workspace" && (
-        <div className="flex-1 flex flex-col md:flex-row overflow-hidden" style={{ height: "calc(100vh - 240px)", minHeight: "500px" }}>
+        <div className="flex-1 flex flex-col md:flex-row h-auto md:h-[calc(100vh-240px)] min-h-[500px]">
 
           {/* ─── LEFT PANEL ─── */}
-          <div className="w-full md:w-1/2 flex flex-col bg-[#F8F9FA] border-r-4 border-[#0F382C]">
+          <div className="w-full md:w-1/2 flex flex-col bg-[#F8F9FA] md:border-r-4 border-b-4 md:border-b-0 border-[#0F382C] h-[600px] md:h-auto overflow-hidden">
             {/* Toolbar */}
             <div className="px-3 py-2 border-b-2 border-[#0F382C]/20 bg-white flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2 min-w-0">
