@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"ozikcarbon-backend/internal/repository"
@@ -40,15 +41,19 @@ type regulasiService struct {
 	sumopodURL string
 	sumopodKey string
 	httpClient *http.Client
+
+	cacheMutex  sync.RWMutex
+	searchCache map[string]*RegulasiSearchResponse
 }
 
 func NewRegulasiService(dbClient *db.PrismaClient, auditRepo repository.AuditRepository, sumopodURL, sumopodKey string) RegulasiService {
 	return &regulasiService{
-		dbClient:   dbClient,
-		auditRepo:  auditRepo,
-		sumopodURL: sumopodURL,
-		sumopodKey: sumopodKey,
-		httpClient: &http.Client{Timeout: 60 * time.Second},
+		dbClient:    dbClient,
+		auditRepo:   auditRepo,
+		sumopodURL:  sumopodURL,
+		sumopodKey:  sumopodKey,
+		httpClient:  &http.Client{Timeout: 60 * time.Second},
+		searchCache: make(map[string]*RegulasiSearchResponse),
 	}
 }
 
@@ -171,6 +176,14 @@ Referensi Regulasi:
 }
 
 func (s *regulasiService) Search(ctx context.Context, query string) (*RegulasiSearchResponse, error) {
+	// Check cache first
+	s.cacheMutex.RLock()
+	if cached, ok := s.searchCache[query]; ok {
+		s.cacheMutex.RUnlock()
+		return cached, nil
+	}
+	s.cacheMutex.RUnlock()
+
 	emb, err := s.getEmbedding(ctx, query)
 	if err != nil {
 		log.Printf("❌ Failed to get embedding: %v", err)
@@ -197,10 +210,17 @@ func (s *regulasiService) Search(ctx context.Context, query string) (*RegulasiSe
 
 	aiSummary := s.generateAISynthesis(ctx, query, results)
 
-	return &RegulasiSearchResponse{
+	response := &RegulasiSearchResponse{
 		AiSummary: aiSummary,
 		Results:   results,
-	}, nil
+	}
+
+	// Save to cache
+	s.cacheMutex.Lock()
+	s.searchCache[query] = response
+	s.cacheMutex.Unlock()
+
+	return response, nil
 }
 
 func (s *regulasiService) GetRecommendations(ctx context.Context, userID string) ([]RegulasiSearchResult, error) {
