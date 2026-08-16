@@ -31,7 +31,7 @@ func (h *ReviewerHandler) GetQueue(c *fiber.Ctx) error {
 
 func (h *ReviewerHandler) SubmitReview(c *fiber.Ctx) error {
 	auditID := c.Params("id")
-	userID := c.Locals("userID").(string)
+	userID := c.Locals("userId").(string)
 
 	type Req struct {
 		Verdict  string `json:"verdict"` // APPROVED, REJECTED, NEEDS_REVISION
