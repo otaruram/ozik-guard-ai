@@ -35,6 +35,8 @@ model User {
   updatedAt        DateTime       @updatedAt
   notifyReportDone Boolean        @default(true)
   notifyRegulation Boolean        @default(true)
+  role             String         @default("USER")
+  isBanned         Boolean        @default(false)
   audits           ProjectAudit[]
 
   @@map("users")

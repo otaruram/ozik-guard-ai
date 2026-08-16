@@ -62,4 +62,12 @@ export const api = {
   // Public Verify
   verifyBadge: (hash: string) =>
     fetch(`${API_BASE}/verify/${hash}`).then((r) => r.json()),
+
+  // Admin
+  adminGetAllUsers: () => apiFetch<{ users: any[] }>("/admin/users"),
+  adminUpdateCredits: (id: string, credits: number) =>
+    apiFetch<any>(`/admin/users/${id}/credits`, { method: "PUT", body: JSON.stringify({ credits }) }),
+  adminToggleBan: (id: string, isBanned: boolean) =>
+    apiFetch<any>(`/admin/users/${id}/ban`, { method: "PUT", body: JSON.stringify({ isBanned }) }),
+  adminGetUserHistory: (id: string) => apiFetch<{ history: any[] }>(`/admin/users/${id}/history`),
 };
