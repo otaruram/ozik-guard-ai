@@ -44,7 +44,7 @@ func main() {
 	auditService := service.NewAuditService(auditRepo, userRepo, piiMasker, pasalID, llmFactory, scoringEngine)
 
 	// 4. Handlers (DI)
-	auditHandler := handler.NewAuditHandler(auditService, auditRepo, userRepo, documentParser)
+	auditHandler := handler.NewAuditHandler(auditService, auditRepo, userRepo, documentParser, emailService)
 	verifyHandler := handler.NewVerifyHandler(auditRepo, scoringEngine)
 	userHandler := handler.NewUserHandler(userRepo, cfg)
 	regulasiHandler := handler.NewRegulasiHandler(regulasiService)
@@ -81,6 +81,7 @@ func main() {
 	// User Profile
 	protected.Get("/user/me", userHandler.GetMe)
 	protected.Put("/user/me", userHandler.UpdateMe)
+	protected.Put("/user/me/notifications", userHandler.UpdateNotifications)
 	protected.Post("/user/api-key/regenerate", userHandler.RegenerateAPIKey)
 
 	// Audit (Credit-gated for full process)

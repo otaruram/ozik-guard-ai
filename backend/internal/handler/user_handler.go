@@ -60,6 +60,8 @@ func (h *UserHandler) GetMe(c *fiber.Ctx) error {
 		Provider:       user.Provider,
 		CreditsBalance: credits,
 		APIKey:         user.APIKey,
+		NotifyReportDone: user.NotifyReportDone,
+		NotifyRegulation: user.NotifyRegulation,
 	})
 }
 
@@ -120,5 +122,34 @@ func (h *UserHandler) RegenerateAPIKey(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"apiKey": newKey,
+	})
+}
+
+// UpdateNotifications PUT /api/v1/user/me/notifications
+func (h *UserHandler) UpdateNotifications(c *fiber.Ctx) error {
+	userID := c.Locals("userId")
+	if userID == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(domain.ErrorResponse{
+			Error: "UNAUTHORIZED",
+		})
+	}
+	uid := userID.(string)
+
+	var req domain.UpdateNotificationRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(domain.ErrorResponse{
+			Error: "Invalid request payload",
+		})
+	}
+
+	err := h.userRepo.UpdateNotifications(c.Context(), uid, &req)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(domain.ErrorResponse{
+			Error: "UPDATE_FAILED",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Preferensi notifikasi berhasil diperbarui",
 	})
 }

@@ -14,6 +14,7 @@ type AuditHandler struct {
 	auditRepo      repository.AuditRepository
 	userRepo       repository.UserRepository
 	documentParser service.DocumentParserService
+	emailService   service.EmailService
 }
 
 func NewAuditHandler(
@@ -21,12 +22,14 @@ func NewAuditHandler(
 	auditRepo repository.AuditRepository,
 	userRepo repository.UserRepository,
 	documentParser service.DocumentParserService,
+	emailService service.EmailService,
 ) *AuditHandler {
 	return &AuditHandler{
 		auditService:   auditService,
 		auditRepo:      auditRepo,
 		userRepo:       userRepo,
 		documentParser: documentParser,
+		emailService:   emailService,
 	}
 }
 
@@ -104,6 +107,12 @@ func (h *AuditHandler) ProcessAudit(c *fiber.Ctx) error {
 		if err != nil {
 			// Even if deduction fails, we might still want to return the result, but log it
 			// Or fail it. We will just proceed since generation succeeded.
+		}
+
+		// Trigger Email if preferences allow
+		user, errUser := h.userRepo.GetByID(c.Context(), uid)
+		if errUser == nil && user.NotifyReportDone && h.emailService != nil {
+			go h.emailService.SendReportDoneEmail(user.Email, user.Name, req.ProjectName, res.Status)
 		}
 	}
 
