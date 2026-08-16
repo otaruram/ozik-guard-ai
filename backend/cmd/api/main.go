@@ -99,6 +99,7 @@ func main() {
 	admin.Get("/users", adminHandler.GetAllUsers)
 	admin.Put("/users/:id/credits", adminHandler.UpdateUserCredits)
 	admin.Put("/users/:id/ban", adminHandler.ToggleBanUser)
+	admin.Put("/users/:id/role", adminHandler.UpdateUserRole)
 	admin.Get("/users/:id/history", adminHandler.GetUserHistory)
 
 	// Reviewer Routes

@@ -1203,6 +1203,8 @@ function AdminPanel() {
   const [activeTab, setActiveTab] = useState<'users' | 'models'>('users');
   const [editingCredits, setEditingCredits] = useState<{ id: string, name: string, current: number } | null>(null);
   const [newCredits, setNewCredits] = useState<number>(0);
+  const [editingRole, setEditingRole] = useState<{id: string, name: string, currentRole: string} | null>(null);
+  const [newRole, setNewRole] = useState("USER");
   const [viewingHistory, setViewingHistory] = useState<{ id: string, name: string } | null>(null);
   const [userHistory, setUserHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
@@ -1232,6 +1234,18 @@ function AdminPanel() {
       fetchUsers();
     } catch (err) {
       toast.error("Gagal memperbarui kredit");
+    }
+  };
+
+  const handleUpdateRole = async () => {
+    if (!editingRole) return;
+    try {
+      await api.adminUpdateRole(editingRole.id, newRole);
+      toast.success("Role berhasil diperbarui");
+      setEditingRole(null);
+      fetchUsers();
+    } catch (err) {
+      toast.error("Gagal memperbarui role");
     }
   };
 
@@ -1336,6 +1350,12 @@ function AdminPanel() {
                             }}>
                               Ubah Kredit
                             </DropdownMenuItem>
+                            <DropdownMenuItem className="font-bold cursor-pointer" onClick={() => {
+                              setEditingRole({ id: u.id, name: u.name, currentRole: u.role });
+                              setNewRole(u.role);
+                            }}>
+                              Ubah Role
+                            </DropdownMenuItem>
                             <DropdownMenuItem className="font-bold cursor-pointer" onClick={() => handleViewHistory(u)}>
                               Lihat Histori
                             </DropdownMenuItem>
@@ -1390,6 +1410,42 @@ function AdminPanel() {
             <Button variant="outline" className="border-2 border-emerald-950 rounded-none font-bold uppercase" onClick={() => setEditingCredits(null)}>Batal</Button>
             <Button className="bg-emerald-950 text-white rounded-none font-bold uppercase" onClick={handleUpdateCredits}>Simpan Perubahan</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Change Role */}
+      <Dialog open={!!editingRole} onOpenChange={(open) => !open && setEditingRole(null)}>
+        <DialogContent className="border-4 border-emerald-950 rounded-none shadow-[8px_8px_0_rgba(2,44,34,1)] p-0">
+          <div className="p-6 bg-emerald-50 border-b-4 border-emerald-950">
+            <DialogHeader>
+              <DialogTitle className="font-black uppercase text-xl text-emerald-950">Ubah Role Pengguna</DialogTitle>
+              <DialogDescription className="font-bold text-emerald-950/70">
+                Tentukan hak akses untuk {editingRole?.name}
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+          <div className="p-6 bg-white space-y-4">
+            <div className="space-y-2">
+              <Label className="font-black uppercase text-xs text-emerald-950">Pilih Role</Label>
+              <select
+                className="flex h-10 w-full rounded-md border-2 border-emerald-950 bg-background px-3 py-2 text-sm ring-offset-background font-bold text-emerald-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={newRole}
+                onChange={(e) => setNewRole(e.target.value)}
+              >
+                <option value="USER">USER</option>
+                <option value="REVIEWER">REVIEWER</option>
+                <option value="ADMIN">ADMIN</option>
+              </select>
+            </div>
+          </div>
+          <div className="p-4 bg-emerald-50 border-t-4 border-emerald-950 flex justify-end gap-2">
+            <Button variant="outline" className="border-2 border-emerald-950 rounded-none font-bold uppercase hover:bg-emerald-100" onClick={() => setEditingRole(null)}>
+              Batal
+            </Button>
+            <Button className="border-2 border-emerald-950 rounded-none font-bold uppercase bg-emerald-600 hover:bg-emerald-700 text-white" onClick={handleUpdateRole}>
+              Simpan Role
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 

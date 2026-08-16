@@ -69,5 +69,7 @@ export const api = {
     apiFetch<any>(`/admin/users/${id}/credits`, { method: "PUT", body: JSON.stringify({ credits }) }),
   adminToggleBan: (id: string, isBanned: boolean) =>
     apiFetch<any>(`/admin/users/${id}/ban`, { method: "PUT", body: JSON.stringify({ isBanned }) }),
+  adminUpdateRole: (id: string, role: string) =>
+    apiFetch<any>(`/admin/users/${id}/role`, { method: "PUT", body: JSON.stringify({ role }) }),
   adminGetUserHistory: (id: string) => apiFetch<{ history: any[] }>(`/admin/users/${id}/history`),
 };
