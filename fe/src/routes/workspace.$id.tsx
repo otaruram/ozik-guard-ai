@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { AuditWorkspace } from "@/components/AuditWorkspace";
-import { Loader2, ArrowLeft, Leaf } from "lucide-react";
+import { Loader2, ArrowLeft, Leaf, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { useAuth } from "@/lib/auth-context";
@@ -88,13 +88,32 @@ function WorkspacePage() {
 
       <main className="flex-1 p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
-          <AuditWorkspace 
-            isFreemium={false} 
-            initialResult={data} 
-            initialStatus="result" 
-            userName={data.authorName || user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User"}
-            userEmail={data.authorEmail || user?.email || "user@example.com"}
-          />
+          {data.reviewStatus === "PENDING_REVIEW" ? (
+            <div className="bg-white border-4 border-emerald-950 p-12 text-center max-w-2xl mx-auto mt-12 shadow-[8px_8px_0_rgba(2,44,34,1)]">
+              <div className="bg-yellow-100 p-4 inline-block mb-6 border-2 border-yellow-500">
+                <ShieldCheck className="h-12 w-12 text-yellow-600 mx-auto" />
+              </div>
+              <h2 className="text-2xl font-black text-emerald-950 uppercase tracking-widest mb-4">Menunggu Tinjauan Reviewer</h2>
+              <p className="text-gray-600 font-bold leading-relaxed mb-8">
+                Dokumen Anda telah dianalisis oleh AI dan saat ini sedang dalam tahap kalibrasi oleh <strong>Ahli Hukum OzikSustain (Human-in-the-Loop)</strong> untuk memastikan akurasi rekomendasi. 
+                <br /><br />
+                Setelah tinjauan selesai (Disetujui/Revisi/Ditolak), Anda akan menerima pemberitahuan via email dan Anda akan mendapatkan akses penuh ke laporan ini beserta SHA-256 QR Badge (jika lulus).
+              </p>
+              <Link to="/dashboard">
+                <Button className="bg-emerald-950 hover:bg-emerald-900 text-white rounded-none border-2 border-emerald-950 font-black tracking-widest uppercase px-8 h-12">
+                  Kembali ke Dashboard
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <AuditWorkspace 
+              isFreemium={false} 
+              initialResult={data} 
+              initialStatus="result" 
+              userName={data.authorName || user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User"}
+              userEmail={data.authorEmail || user?.email || "user@example.com"}
+            />
+          )}
         </div>
       </main>
     </div>
