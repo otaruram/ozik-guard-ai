@@ -413,9 +413,7 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 	parsedDocumentJson := string(parsedJsonBytes)
 
 	badgeStatus := domain.BadgeInvalid
-	if score >= 80 {
-		badgeStatus = domain.BadgeActive
-	} else {
+	if score < 80 {
 		// Provide a fallback unique hash so the DB constraint doesn't fail on empty string
 		hash = "no_badge_" + uuid.New().String()
 	}

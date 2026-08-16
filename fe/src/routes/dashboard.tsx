@@ -428,8 +428,9 @@ function HistoriAudit({ history, loading, refreshHistory }: { history: any[], lo
     name: item.projectName,
     date: new Date(item.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
     score: item.feasibilityScore,
-    status: item.feasibilityScore >= 80 ? 'Compliant' : (item.feasibilityScore >= 60 ? 'Needs Revision' : 'High Violation'),
-    color: item.feasibilityScore >= 80 ? 'emerald' : (item.feasibilityScore >= 60 ? 'yellow' : 'red'),
+    status: item.reviewStatus === 'APPROVED' ? 'Verified Compliant' : (item.reviewStatus === 'REJECTED' ? 'Rejected' : (item.reviewStatus === 'NEEDS_REVISION' ? 'Needs Revision (Reviewer)' : (item.feasibilityScore >= 80 ? 'Pending Review' : (item.feasibilityScore >= 60 ? 'Pending Review (Medium Risk)' : 'Pending Review (High Risk)')))),
+    color: item.reviewStatus === 'APPROVED' ? 'emerald' : (item.feasibilityScore >= 80 ? 'emerald' : (item.feasibilityScore >= 60 ? 'yellow' : 'red')),
+    reviewStatus: item.reviewStatus,
     code: `OZK-${item.id.substring(0, 8).toUpperCase()}`,
   }));
 
@@ -498,11 +499,11 @@ function HistoriAudit({ history, loading, refreshHistory }: { history: any[], lo
                     <Link to="/workspace/$id" params={{ id: row.id }}>
                       <Button size="sm" className="rounded-none bg-emerald-950 hover:bg-emerald-900 text-white font-black text-[10px] uppercase border-2 border-emerald-950">Laporan</Button>
                     </Link>
-                    {row.color === 'emerald' && (
+                    {row.reviewStatus === 'APPROVED' && (
                       <Button size="sm" variant="outline" onClick={() => { setSelectedProject(row); setBadgeOpen(true); }} className="rounded-none font-black text-[10px] uppercase border-2 border-emerald-950 hover:bg-emerald-50">Badge</Button>
                     )}
-                    {row.color !== 'emerald' && (
-                      <Button size="sm" variant="outline" className="rounded-none font-black text-[10px] uppercase border-2 border-emerald-950 hover:bg-emerald-50">Re-Audit</Button>
+                    {row.reviewStatus !== 'APPROVED' && (
+                      <Button size="sm" variant="outline" className="rounded-none font-black text-[10px] uppercase border-2 border-emerald-950 hover:bg-emerald-50 text-emerald-950/50 cursor-not-allowed">Pending Badge</Button>
                     )}
                     <Button size="icon" variant="destructive" onClick={() => { setSelectedProject(row); setDeleteOpen(true); }} className="h-8 w-8 rounded-none bg-red-50 text-red-600 border-2 border-red-600 hover:bg-red-600 hover:text-white transition-all shadow-[2px_2px_0_rgba(220,38,38,0.2)] hover:shadow-none">
                       <Trash2 className="h-4 w-4" />
