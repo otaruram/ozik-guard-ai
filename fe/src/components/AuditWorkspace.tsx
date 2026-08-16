@@ -125,11 +125,20 @@ export function AuditWorkspace({
     if (result?.clauses && Array.isArray(result.clauses)) return result.clauses;
     if (result?.parsedDocumentJson) {
       try {
-        const parsed = JSON.parse(result.parsedDocumentJson);
-        if (parsed.pages) {
-          return parsed.pages.flatMap((p: any) => p.chunks || []);
+        let parsed = typeof result.parsedDocumentJson === 'string' 
+          ? JSON.parse(result.parsedDocumentJson) 
+          : result.parsedDocumentJson;
+          
+        if (typeof parsed === 'string') {
+          parsed = JSON.parse(parsed); // Handle double-encoded JSON
         }
-      } catch (e) {}
+          
+        if (parsed?.pages) {
+          return parsed.pages.flatMap((p: any) => p.chunks || p.Chunks || []);
+        }
+      } catch (e) {
+        console.error("Failed to parse document JSON:", e);
+      }
     }
     return [];
   };
@@ -649,9 +658,9 @@ export function AuditWorkspace({
                       )}
                       
                       {isHeading ? (
-                        <h4 className="font-black text-lg text-[#0F382C] mt-4 mb-2">{p.text}</h4>
+                        <h4 className="font-black text-lg text-[#0F382C] mt-4 mb-2">{p.text || p.Text}</h4>
                       ) : (
-                        <p className="leading-[1.9] text-gray-900">{p.text}</p>
+                        <p className="leading-[1.9] text-gray-900">{p.text || p.Text}</p>
                       )}
                     </div>
                   );
