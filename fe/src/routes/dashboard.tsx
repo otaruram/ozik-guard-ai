@@ -818,11 +818,11 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
           </div>
         </TabsContent>
 
-        <TabsContent value="api" className="bg-white p-8 rounded-2xl shadow-sm border border-emerald-100">
-          <h3 className="text-xl font-bold text-emerald-950 mb-6">Manajemen Kunci API</h3>
-          <div className="bg-emerald-50/50 rounded-xl border border-emerald-100 p-6 mb-8 relative">
+        <TabsContent value="api" className="bg-white p-4 sm:p-8 rounded-2xl shadow-sm border border-emerald-100">
+          <h3 className="text-lg sm:text-xl font-bold text-emerald-950 mb-4 sm:mb-6">Manajemen Kunci API</h3>
+          <div className="bg-emerald-50/50 rounded-xl border border-emerald-100 p-4 sm:p-6 mb-6 sm:mb-8 relative overflow-hidden">
             <Label className="text-sm font-semibold text-emerald-900 mb-3 block">Live API Key</Label>
-            <div className="flex gap-3">
+            <div className="flex flex-row gap-2 sm:gap-3">
               <Input type="password" readOnly value={dbUser?.apiKey || ""} placeholder="Belum ada kunci API. Silakan buat (Regenerate)." className="h-12 border-emerald-200 rounded-lg font-medium bg-white text-emerald-950 font-mono focus-visible:ring-emerald-500" />
               <Button size="icon" variant="outline" onClick={() => {
                 if (dbUser?.apiKey) {
@@ -833,8 +833,8 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
                 <Copy className="h-5 w-5" />
               </Button>
             </div>
-            <div className="mt-5 flex gap-4">
-              <Button size="sm" disabled={loadingKey} onClick={() => setConfirmKeyOpen(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold h-10 px-4 shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all border-2 border-emerald-950">
+            <div className="mt-4 sm:mt-5 flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Button size="sm" disabled={loadingKey} onClick={() => setConfirmKeyOpen(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold h-10 px-4 w-full sm:w-auto shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all border-2 border-emerald-950">
                 {loadingKey ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Zap className="h-4 w-4 mr-2" />} 
                 {loadingKey ? "Memproses..." : "Generate Key Baru"}
               </Button>

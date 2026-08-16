@@ -51,6 +51,7 @@ function Index() {
     <div className="bg-emerald-50/30 min-h-screen text-emerald-950 font-sans selection:bg-emerald-900 selection:text-white overflow-hidden">
       <div className="relative z-10">
         <Hero />
+        <AboutPlatform />
         <Features />
         <VerificationChecker />
         <HowItWorks />
@@ -92,6 +93,49 @@ function Hero() {
               <Code2 className="mr-2 h-5 w-5" /> Dokumentasi API
             </Button>
           </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AboutPlatform() {
+  return (
+    <section className="py-24 bg-white relative border-b-4 border-emerald-950 overflow-hidden">
+      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 opacity-50" />
+      <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
+        <div className="flex flex-col lg:flex-row gap-16 items-center">
+          <div className="lg:w-1/2">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-950 font-black uppercase tracking-widest text-xs mb-6 border-2 border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,1)]">
+              <Cpu className="h-4 w-4" /> Enterprise B2B SaaS
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black uppercase text-emerald-950 tracking-tight mb-6">
+              Tata Kelola Pengadaan & Kepatuhan ESG
+            </h2>
+            <p className="text-lg font-bold text-emerald-950/70 leading-relaxed mb-8 text-justify">
+              OzikSustain adalah platform B2B Software-as-a-Service (SaaS) penunjang tata kelola pengadaan (procurement) dan kepatuhan ESG korporat. Kombinasi kecepatan AI, kontrol pakar manusia, dan keamanan Web3 ini secara signifikan memangkas biaya operasional, mempercepat verifikasi mitra, serta memitigasi risiko hukum perusahaan.
+            </p>
+          </div>
+          
+          <div className="lg:w-1/2 flex flex-col gap-6 w-full">
+            <div className="p-6 bg-white border-4 border-emerald-950 shadow-[8px_8px_0_rgba(2,44,34,1)] relative transition-transform hover:-translate-y-1">
+              <div className="absolute -top-5 -left-5 w-10 h-10 bg-[#FACC15] text-emerald-950 flex items-center justify-center font-black text-xl border-4 border-emerald-950 shadow-sm">1</div>
+              <h3 className="text-xl font-black uppercase text-emerald-950 mb-3 flex items-center gap-3"><Zap className="h-6 w-6 text-emerald-600" /> AI Automation</h3>
+              <p className="text-emerald-950/70 font-bold text-sm leading-relaxed text-justify">Mengotomatisasi tahap awal audit dokumen vendor menggunakan AI untuk mengidentifikasi risiko lingkungan dan regulasi secara cepat.</p>
+            </div>
+            
+            <div className="p-6 bg-white border-4 border-emerald-950 shadow-[8px_8px_0_rgba(2,44,34,1)] relative ml-0 md:ml-8 transition-transform hover:-translate-y-1">
+              <div className="absolute -top-5 -left-5 w-10 h-10 bg-emerald-400 text-emerald-950 flex items-center justify-center font-black text-xl border-4 border-emerald-950 shadow-sm">2</div>
+              <h3 className="text-xl font-black uppercase text-emerald-950 mb-3 flex items-center gap-3"><CheckCircle2 className="h-6 w-6 text-emerald-600" /> Human-in-the-Loop (HITL)</h3>
+              <p className="text-emerald-950/70 font-bold text-sm leading-relaxed text-justify">Menjamin akuntabilitas tingkat enterprise dengan memberikan kontrol penuh bagi auditor internal perusahaan untuk meninjau dan memvalidasi anotasi AI.</p>
+            </div>
+            
+            <div className="p-6 bg-white border-4 border-emerald-950 shadow-[8px_8px_0_rgba(2,44,34,1)] relative ml-0 md:ml-16 transition-transform hover:-translate-y-1">
+              <div className="absolute -top-5 -left-5 w-10 h-10 bg-emerald-950 text-white flex items-center justify-center font-black text-xl border-4 border-emerald-950 shadow-sm">3</div>
+              <h3 className="text-xl font-black uppercase text-emerald-950 mb-3 flex items-center gap-3"><ShieldCheck className="h-6 w-6 text-emerald-600" /> Web3 Cryptographic Seal</h3>
+              <p className="text-emerald-950/70 font-bold text-sm leading-relaxed text-justify">Setelah disahkan oleh pakar, hasil evaluasi disegel secara kriptografis menggunakan blockchain (Ethereum Attestation Service) agar anti-manipulasi (tamper-proof).</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
