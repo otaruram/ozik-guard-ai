@@ -122,7 +122,7 @@ export function AuditWorkspace({
 
 
   const getFlatClauses = () => {
-    if (result?.clauses && Array.isArray(result.clauses)) return result.clauses;
+    if (result?.clauses && Array.isArray(result.clauses) && result.clauses.length > 0) return result.clauses;
     if (result?.parsedDocumentJson) {
       try {
         let parsed = typeof result.parsedDocumentJson === 'string' 
