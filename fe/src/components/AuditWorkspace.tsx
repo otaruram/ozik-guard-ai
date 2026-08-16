@@ -139,9 +139,9 @@ export function AuditWorkspace({
 
   // Stats
   const totalClauses = flatClauses.length || 0;
-  const highCount = flatClauses.filter((c: any) => c.status === "high" || c.status === "HIGH_RISK").length || 0;
-  const mediumCount = flatClauses.filter((c: any) => c.status === "medium" || c.status === "MEDIUM_RISK").length || 0;
-  const compliantCount = flatClauses.filter((c: any) => c.status === "compliant" || c.status === "COMPLIANT").length || 0;
+  const highCount = flatClauses.filter((c: any) => { const l = (c.status || "").toLowerCase(); return l.includes("high"); }).length || 0;
+  const mediumCount = flatClauses.filter((c: any) => { const l = (c.status || "").toLowerCase(); return l.includes("medium"); }).length || 0;
+  const compliantCount = flatClauses.filter((c: any) => { const l = (c.status || "").toLowerCase(); return !l.includes("high") && !l.includes("medium"); }).length || 0;
   const totalWords = result?.totalWords || (flatClauses.reduce((acc: number, c: any) => acc + (c.text?.split(/\s+/).length || 0), 0) || 0);
   const totalSentences = result?.totalSentences || (flatClauses.reduce((acc: number, c: any) => acc + (c.text?.split(/[.!?]+/).filter(Boolean).length || 0), 0) || 0);
 
@@ -283,8 +283,13 @@ export function AuditWorkspace({
     } catch (e) { console.error("PDF export failed:", e); alert("Gagal mengekspor PDF."); }
   };
 
-  const getBg = (s: string) => s === "high" ? "#FEE2E2" : s === "medium" ? "#FEF3C7" : "#D1FAE5";
-  const getBorder = (s: string) => s === "high" ? "#EF4444" : s === "medium" ? "#F59E0B" : "#10B981";
+  // Normalize status: backend returns "high"/"medium"/"compliant" (guest) OR "HIGH_RISK"/"MEDIUM_RISK"/"COMPLIANT" (pro)
+  const norm = (s: string) => { const l = s?.toLowerCase() || ""; return l.includes("high") ? "high" : l.includes("medium") ? "medium" : "compliant"; };
+  const getBg = (s: string) => { const n = norm(s); return n === "high" ? "#FEE2E2" : n === "medium" ? "#FEF3C7" : "#D1FAE5"; };
+  const getBorder = (s: string) => { const n = norm(s); return n === "high" ? "#EF4444" : n === "medium" ? "#F59E0B" : "#10B981"; };
+  const isHigh = (s: string) => norm(s) === "high";
+  const isMedium = (s: string) => norm(s) === "medium";
+  const isCompliant = (s: string) => norm(s) === "compliant";
 
   // ─── IDLE ───
   if (status === "idle") {
@@ -601,8 +606,8 @@ export function AuditWorkspace({
                     >
                       {!isHeading && (
                         <div className="absolute -top-3 right-2 z-10 opacity-90 hover:opacity-100">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[8px] font-black uppercase tracking-wider rounded-sm shadow-sm cursor-pointer" style={{ backgroundColor: p.status === "high" ? "#EF4444" : p.status === "medium" ? "#F59E0B" : "#10B981", color: p.status === "medium" ? "#78350F" : "#FFF" }}>
-                            {p.status === "high" ? "🔴 HIGH RISK - KLIK UTK SOLUSI" : p.status === "medium" ? "🟡 MEDIUM RISK - KLIK UTK SOLUSI" : "🟢 COMPLIANT"}
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[8px] font-black uppercase tracking-wider rounded-sm shadow-sm cursor-pointer" style={{ backgroundColor: isHigh(p.status) ? "#EF4444" : isMedium(p.status) ? "#F59E0B" : "#10B981", color: isMedium(p.status) ? "#78350F" : "#FFF" }}>
+                            {isHigh(p.status) ? "🔴 HIGH RISK - KLIK UTK SOLUSI" : isMedium(p.status) ? "🟡 MEDIUM RISK - KLIK UTK SOLUSI" : "🟢 COMPLIANT"}
                           </span>
                         </div>
                       )}
@@ -618,20 +623,20 @@ export function AuditWorkspace({
               </div>
               
               {/* Saran Halaman Ini */}
-              {visibleClauses.some((p: any) => p.issue && p.status !== 'compliant' && p.issue.suggestedRevision) && (
+              {visibleClauses.some((p: any) => p.issue && !isCompliant(p.status) && p.issue.suggestedRevision) && (
                 <div className="mt-8 border-4 border-emerald-950 bg-emerald-50 p-6 shadow-[6px_6px_0_rgba(2,44,34,1)]">
                   <h4 className="font-black text-emerald-950 uppercase tracking-widest text-sm mb-4 border-b-2 border-emerald-950/20 pb-2 flex items-center gap-2">
                     <Wand2 className="h-5 w-5" /> Rekomendasi & Saran Halaman Ini
                   </h4>
                   <ul className="space-y-4">
                     {visibleClauses
-                      .filter((p: any) => p.issue && p.status !== 'compliant' && p.issue.suggestedRevision)
+                      .filter((p: any) => p.issue && !isCompliant(p.status) && p.issue.suggestedRevision)
                       .map((p: any, idx: number) => (
                         <li key={idx} className="text-sm font-bold text-emerald-950/80 leading-relaxed flex items-start gap-3">
                            <div className="w-1.5 h-1.5 rounded-none bg-emerald-950 mt-1.5 shrink-0" />
                            <div>
                              <span className="bg-emerald-950 text-white px-1.5 py-0.5 text-[10px] uppercase font-black mr-2">
-                               {p.status === "high" ? "High Risk" : "Medium Risk"}
+                               {isHigh(p.status) ? "High Risk" : "Medium Risk"}
                              </span>
                              {p.issue.suggestedRevision}
                            </div>
@@ -692,11 +697,11 @@ export function AuditWorkspace({
                   const isLockedCard = isFreemium && flatClauses.findIndex((c: any) => c.id === activeClauseId) > 0;
                   return (
                     <div key={clause.id} data-clause-id={clause.id} className="border-2 border-emerald-500 shadow-[0_4px_12px_rgba(0,0,0,0.08)] bg-white">
-                      <div className="px-3 py-1.5 flex items-center justify-between" style={{ backgroundColor: (clause.status === "high" || clause.status === "HIGH_RISK") ? "#EF4444" : (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "#F59E0B" : "#10B981" }}>
-                        <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "#78350F" : "#FFF" }}>
-                          {(clause.status === "high" || clause.status === "HIGH_RISK") ? "🔴 HIGH RISK" : (clause.status === "medium" || clause.status === "MEDIUM_RISK") ? "🟡 MEDIUM RISK" : "🟢 COMPLIANT"}
+                      <div className="px-3 py-1.5 flex items-center justify-between" style={{ backgroundColor: isHigh(clause.status) ? "#EF4444" : isMedium(clause.status) ? "#F59E0B" : "#10B981" }}>
+                        <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: isMedium(clause.status) ? "#78350F" : "#FFF" }}>
+                          {isHigh(clause.status) ? "🔴 HIGH RISK" : isMedium(clause.status) ? "🟡 MEDIUM RISK" : "🟢 COMPLIANT"}
                         </span>
-                        <span className="text-[8px] font-bold uppercase tracking-wider" style={{ color: clause.status === "medium" ? "#78350F" : "rgba(255,255,255,0.8)" }}>{clause.clause}</span>
+                        <span className="text-[8px] font-bold uppercase tracking-wider" style={{ color: isMedium(clause.status) ? "#78350F" : "rgba(255,255,255,0.8)" }}>{clause.clause}</span>
                       </div>
                       
                       {isLockedCard ? (
@@ -705,7 +710,7 @@ export function AuditWorkspace({
                           <p className="text-[9px] font-bold uppercase text-gray-400 mb-2">🔒 Upgrade untuk Buka</p>
                           <Button onClick={handleRegister} size="sm" className="bg-[#FACC15] hover:bg-yellow-500 text-[#0F382C] rounded-none border-2 border-[#0F382C] font-black text-[8px] uppercase h-6">Upgrade (3 Kredit)</Button>
                         </div>
-                      ) : clause.status === "compliant" || clause.status === "COMPLIANT" ? (
+                      ) : isCompliant(clause.status) ? (
                         <div className="p-4 bg-emerald-50/50">
                           <div className="flex items-center gap-1.5 mb-2"><CheckCircle2 className="h-4 w-4 text-emerald-600" /><span className="text-xs font-black text-emerald-800 uppercase">Klausul Aman</span></div>
                           <p className="text-xs text-gray-600 leading-relaxed font-serif italic border-l-2 border-emerald-300 pl-3">"{clause.text}"</p>
@@ -717,7 +722,7 @@ export function AuditWorkspace({
                             <p className="text-xs text-gray-600 leading-relaxed font-serif italic border-l-2 border-gray-300 pl-3">"{clause.text}"</p>
                           </div>
                           <div className="p-4">
-                            <div className="flex items-center gap-2 mb-2"><AlertTriangle className={`h-4 w-4 ${clause.status === "high" || clause.status === "HIGH_RISK" ? "text-red-600" : "text-yellow-600"}`} /><span className="text-[10px] font-black uppercase tracking-wider text-[#0F382C]">Problem Analysis</span></div>
+                            <div className="flex items-center gap-2 mb-2"><AlertTriangle className={`h-4 w-4 ${isHigh(clause.status) ? "text-red-600" : "text-yellow-600"}`} /><span className="text-[10px] font-black uppercase tracking-wider text-[#0F382C]">Problem Analysis</span></div>
                             <p className="text-sm text-gray-800 leading-relaxed font-medium bg-red-50/50 p-3 rounded-sm border border-red-100">{clause.issue?.clauseText || clause.issue?.explanation || "Risiko terdeteksi oleh mesin analisis."}</p>
                           </div>
                           {clause.issue?.matchedLaw && (
