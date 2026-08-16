@@ -457,7 +457,7 @@ export function AuditWorkspace({
                   </div>
                 </div>
               </div>
-              {result?.sha256Hash && (
+              {result?.reviewStatus === "APPROVED" && result?.sha256Hash && (
                 <div className="flex items-center gap-4">
                   <Badge className="bg-emerald-600 text-white border-2 border-emerald-400 rounded-none font-black text-[9px] uppercase px-3 py-1">
                     <Fingerprint className="h-3 w-3 mr-1" /> SHA-256 Verified
