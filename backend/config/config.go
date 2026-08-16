@@ -16,6 +16,12 @@ type Config struct {
 	SupabaseAnonKey   string
 	SupabaseJWTSecret string
 	AdminEmails       []string
+	SMTPHost          string
+	SMTPPort          string
+	SMTPUser          string
+	SMTPPass          string
+	SMTPSSL           string
+	SMTPFromEmail     string
 }
 
 func LoadConfig() *Config {
@@ -32,6 +38,12 @@ func LoadConfig() *Config {
 		SupabaseAnonKey:   getEnv("SUPABASE_ANON_KEY", "mock-anon-key"),
 		SupabaseJWTSecret: getEnv("SUPABASE_JWT_SECRET", "mock-jwt-secret"),
 		AdminEmails:       strings.Split(getEnv("ADMIN_EMAILS", ""), ","),
+		SMTPHost:          getEnv("SMTP_HOST", ""),
+		SMTPPort:          getEnv("SMTP_PORT", ""),
+		SMTPUser:          getEnv("SMTP_USER", ""),
+		SMTPPass:          getEnv("SMTP_PASS", ""),
+		SMTPSSL:           getEnv("SMTP_SSL", "False"),
+		SMTPFromEmail:     getEnv("SMTP_FROM_EMAIL", ""),
 	}
 }
 
