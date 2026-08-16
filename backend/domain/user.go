@@ -15,6 +15,8 @@ type User struct {
 	UpdatedAt          time.Time `json:"updatedAt"`
 	NotifyReportDone   bool      `json:"notifyReportDone"`
 	NotifyRegulation   bool      `json:"notifyRegulation"`
+	Role             string    `json:"role"`
+	IsBanned         bool      `json:"isBanned"`
 }
 
 type UpdateProfileRequest struct {

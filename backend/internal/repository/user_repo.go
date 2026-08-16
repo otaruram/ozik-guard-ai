@@ -16,6 +16,8 @@ type UserRepository interface {
 	FindByAPIKey(ctx context.Context, apiKey string) (*domain.User, error)
 	UpdateAPIKey(ctx context.Context, id string, apiKey string) error
 	UpdateNotifications(ctx context.Context, id string, req *domain.UpdateNotificationRequest) error
+	GetAllUsers(ctx context.Context) ([]domain.User, error)
+	UpdateUserStatus(ctx context.Context, id string, credits int, isBanned bool, role string) error
 }
 
 type userRepository struct {
@@ -54,6 +56,8 @@ func (r *userRepository) GetByID(ctx context.Context, id string) (*domain.User, 
 		APIKey:         apiKeyPtr,
 		NotifyReportDone: record.NotifyReportDone,
 		NotifyRegulation: record.NotifyRegulation,
+		Role:             record.Role,
+		IsBanned:         record.IsBanned,
 	}, nil
 }
 
@@ -85,6 +89,8 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*domain.
 		APIKey:         apiKeyPtr,
 		NotifyReportDone: record.NotifyReportDone,
 		NotifyRegulation: record.NotifyRegulation,
+		Role:             record.Role,
+		IsBanned:         record.IsBanned,
 	}, nil
 }
 
@@ -111,6 +117,8 @@ func (r *userRepository) UpsertFromGoogle(ctx context.Context, user *domain.User
 	user.CreditsBalance = record.CreditsBalance
 	user.NotifyReportDone = record.NotifyReportDone
 	user.NotifyRegulation = record.NotifyRegulation
+	user.Role = record.Role
+	user.IsBanned = record.IsBanned
 	return user, isNew, nil
 }
 
@@ -184,6 +192,8 @@ func (r *userRepository) FindByAPIKey(ctx context.Context, apiKey string) (*doma
 		APIKey:         apik,
 		NotifyReportDone: record.NotifyReportDone,
 		NotifyRegulation: record.NotifyRegulation,
+		Role:             record.Role,
+		IsBanned:         record.IsBanned,
 	}, nil
 }
 
@@ -205,3 +215,39 @@ func (r *userRepository) UpdateNotifications(ctx context.Context, id string, req
 	).Exec(ctx)
 	return err
 }
+
+func (r *userRepository) GetAllUsers(ctx context.Context) ([]domain.User, error) {
+	records, err := r.client.User.FindMany().Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+	var users []domain.User
+	for _, rec := range records {
+		users = append(users, domain.User{
+			ID:               rec.ID,
+			Email:            rec.Email,
+			Name:             rec.Name,
+			Provider:         rec.Provider,
+			CreditsBalance:   rec.CreditsBalance,
+			NotifyReportDone: rec.NotifyReportDone,
+			NotifyRegulation: rec.NotifyRegulation,
+			Role:             rec.Role,
+			IsBanned:         rec.IsBanned,
+			CreatedAt:        rec.CreatedAt,
+			UpdatedAt:        rec.UpdatedAt,
+		})
+	}
+	return users, nil
+}
+
+func (r *userRepository) UpdateUserStatus(ctx context.Context, id string, credits int, isBanned bool, role string) error {
+	_, err := r.client.User.FindUnique(
+		db.User.ID.Equals(id),
+	).Update(
+		db.User.CreditsBalance.Set(credits),
+		db.User.IsBanned.Set(isBanned),
+		db.User.Role.Set(role),
+	).Exec(ctx)
+	return err
+}
+

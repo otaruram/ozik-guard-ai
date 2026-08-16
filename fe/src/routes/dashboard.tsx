@@ -1194,6 +1194,66 @@ function ProfilPengguna({ dbUser, onProfileUpdate }: { dbUser: any, onProfileUpd
 // 6. ADMIN PANEL
 // ----------------------------------------------------------------------
 function AdminPanel() {
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'users' | 'models'>('users');
+  const [editingCredits, setEditingCredits] = useState<{ id: string, name: string, current: number } | null>(null);
+  const [newCredits, setNewCredits] = useState<number>(0);
+  const [viewingHistory, setViewingHistory] = useState<{ id: string, name: string } | null>(null);
+  const [userHistory, setUserHistory] = useState<any[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const res = await api.adminGetAllUsers();
+      setUsers(res.users || []);
+    } catch (err) {
+      toast.error("Gagal mengambil data user");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateCredits = async () => {
+    if (!editingCredits) return;
+    try {
+      await api.adminUpdateCredits(editingCredits.id, newCredits);
+      toast.success("Kredit berhasil diperbarui");
+      setEditingCredits(null);
+      fetchUsers();
+    } catch (err) {
+      toast.error("Gagal memperbarui kredit");
+    }
+  };
+
+  const handleToggleBan = async (id: string, currentStatus: boolean) => {
+    try {
+      await api.adminToggleBan(id, !currentStatus);
+      toast.success(currentStatus ? "User berhasil di-unban" : "User berhasil di-ban");
+      fetchUsers();
+    } catch (err) {
+      toast.error("Gagal mengubah status ban");
+    }
+  };
+
+  const handleViewHistory = async (user: any) => {
+    setViewingHistory({ id: user.id, name: user.name });
+    setLoadingHistory(true);
+    try {
+      const res = await api.adminGetUserHistory(user.id);
+      setUserHistory(res.history || []);
+    } catch (err) {
+      toast.error("Gagal mengambil histori user");
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="border-4 border-emerald-950 bg-emerald-950 p-8 shadow-[8px_8px_0_rgba(2,44,34,0.3)] text-white">
@@ -1203,19 +1263,168 @@ function AdminPanel() {
         </h2>
         <p className="mt-2 text-white/70 font-bold text-sm">Akses sistem administratif untuk kelola konfigurasi aplikasi.</p>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="border-4 border-emerald-950 bg-white p-6 shadow-[6px_6px_0_rgba(2,44,34,1)]">
-           <h3 className="font-black uppercase text-emerald-950 tracking-widest mb-4 border-b-4 border-emerald-950 pb-2">Manajemen User</h3>
-           <p className="text-sm font-bold text-emerald-950/70 mb-4">Fitur ini memungkinkan admin untuk mengelola sisa kredit pengguna dan akun-akun institusi.</p>
-           <Button variant="outline" className="rounded-none border-4 border-emerald-950 text-xs font-black uppercase">Segera Hadir</Button>
-        </div>
-        <div className="border-4 border-emerald-950 bg-white p-6 shadow-[6px_6px_0_rgba(2,44,34,1)]">
-           <h3 className="font-black uppercase text-emerald-950 tracking-widest mb-4 border-b-4 border-emerald-950 pb-2">Konfigurasi Model</h3>
-           <p className="text-sm font-bold text-emerald-950/70 mb-4">Pengaturan parameter LLM, instruksi sistem, dan threshold risiko compliance.</p>
-           <Button variant="outline" className="rounded-none border-4 border-emerald-950 text-xs font-black uppercase">Segera Hadir</Button>
-        </div>
-      </div>
+
+      <Tabs value={activeTab} onValueChange={(v: any) => setActiveTab(v)}>
+        <TabsList className="bg-white border-4 border-emerald-950 rounded-none h-14 p-1 mb-6 flex gap-2">
+          <TabsTrigger value="users" className="rounded-none h-full data-[state=active]:bg-emerald-950 data-[state=active]:text-white font-black uppercase tracking-wider text-xs px-6">Manajemen User</TabsTrigger>
+          <TabsTrigger value="models" className="rounded-none h-full data-[state=active]:bg-emerald-950 data-[state=active]:text-white font-black uppercase tracking-wider text-xs px-6">Konfigurasi Model</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="users" className="border-4 border-emerald-950 bg-white p-6 shadow-[8px_8px_0_rgba(2,44,34,1)]">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-black uppercase text-emerald-950 tracking-widest text-xl">Daftar Pengguna</h3>
+            <Button variant="outline" className="border-2 border-emerald-950 rounded-none font-bold text-xs uppercase" onClick={fetchUsers}>
+              Refresh Data
+            </Button>
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center p-12"><Loader2 className="h-8 w-8 animate-spin text-emerald-950" /></div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b-4 border-emerald-950 text-left bg-emerald-50">
+                    <th className="p-4 font-black uppercase text-emerald-950 text-xs">Nama / Email</th>
+                    <th className="p-4 font-black uppercase text-emerald-950 text-xs">Perusahaan</th>
+                    <th className="p-4 font-black uppercase text-emerald-950 text-xs">Role</th>
+                    <th className="p-4 font-black uppercase text-emerald-950 text-xs text-center">Kredit</th>
+                    <th className="p-4 font-black uppercase text-emerald-950 text-xs text-center">Status</th>
+                    <th className="p-4 font-black uppercase text-emerald-950 text-xs text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y-2 divide-emerald-100">
+                  {users.map(u => (
+                    <tr key={u.id} className="hover:bg-emerald-50/50 transition-colors">
+                      <td className="p-4">
+                        <div className="font-bold text-emerald-950">{u.name}</div>
+                        <div className="text-xs text-emerald-950/60 font-mono mt-1">{u.email}</div>
+                      </td>
+                      <td className="p-4">
+                        <div className="text-sm font-medium text-emerald-900">{u.company || '-'}</div>
+                      </td>
+                      <td className="p-4">
+                        <Badge variant="outline" className={cn("rounded-none font-bold uppercase text-[10px]", u.role === 'ADMIN' ? 'border-amber-500 text-amber-600' : 'border-emerald-950 text-emerald-950')}>
+                          {u.role}
+                        </Badge>
+                      </td>
+                      <td className="p-4 text-center">
+                        <div className="inline-flex items-center justify-center bg-emerald-100 text-emerald-950 font-black h-8 px-3 rounded-md">
+                          {u.creditsBalance}
+                        </div>
+                      </td>
+                      <td className="p-4 text-center">
+                        <Badge className={cn("rounded-none font-bold uppercase text-[10px]", u.isBanned ? 'bg-red-500 hover:bg-red-600' : 'bg-emerald-500 hover:bg-emerald-600')}>
+                          {u.isBanned ? 'Banned' : 'Active'}
+                        </Badge>
+                      </td>
+                      <td className="p-4 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="h-8 w-8 p-0 rounded-none border-2 border-emerald-950">
+                              <MoreHorizontal className="h-4 w-4 text-emerald-950" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="rounded-none border-2 border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,1)]">
+                            <DropdownMenuItem className="font-bold cursor-pointer" onClick={() => {
+                              setEditingCredits({ id: u.id, name: u.name, current: u.creditsBalance });
+                              setNewCredits(u.creditsBalance);
+                            }}>
+                              Ubah Kredit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="font-bold cursor-pointer" onClick={() => handleViewHistory(u)}>
+                              Lihat Histori
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator className="bg-emerald-200" />
+                            <DropdownMenuItem className={cn("font-bold cursor-pointer", u.isBanned ? "text-emerald-600" : "text-red-600")} onClick={() => handleToggleBan(u.id, u.isBanned)}>
+                              {u.isBanned ? 'Unban User' : 'Ban User'}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
+                    </tr>
+                  ))}
+                  {users.length === 0 && !loading && (
+                    <tr>
+                      <td colSpan={6} className="p-8 text-center text-emerald-950/50 font-bold">Belum ada pengguna terdaftar</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="models" className="border-4 border-emerald-950 bg-white p-6 shadow-[8px_8px_0_rgba(2,44,34,1)]">
+          <h3 className="font-black uppercase text-emerald-950 tracking-widest mb-4 border-b-4 border-emerald-950 pb-2">Konfigurasi Model (LLM)</h3>
+          <p className="text-sm font-bold text-emerald-950/70 mb-4">Pengaturan parameter LLM, instruksi sistem, dan threshold risiko compliance.</p>
+          <div className="bg-amber-50 border-l-4 border-amber-500 p-4">
+             <p className="font-bold text-amber-800 text-sm">Fitur kustomisasi prompt dan threshold akan tersedia pada rilis mayor berikutnya.</p>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* Modal Edit Credits */}
+      <Dialog open={!!editingCredits} onOpenChange={(o: boolean) => !o && setEditingCredits(null)}>
+        <DialogContent className="rounded-none border-4 border-emerald-950 shadow-[8px_8px_0_rgba(2,44,34,1)] sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle className="font-black uppercase tracking-widest text-emerald-950">Ubah Kredit Pengguna</DialogTitle>
+            <DialogDescription className="font-bold text-emerald-950/70">
+              Menyesuaikan saldo kredit untuk {editingCredits?.name}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-6">
+            <Label className="font-bold text-emerald-950 mb-2 block">Saldo Kredit Baru</Label>
+            <Input 
+              type="number" 
+              value={newCredits} 
+              onChange={(e) => setNewCredits(parseInt(e.target.value) || 0)}
+              className="h-14 border-2 border-emerald-950 rounded-none font-black text-xl text-center"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" className="border-2 border-emerald-950 rounded-none font-bold uppercase" onClick={() => setEditingCredits(null)}>Batal</Button>
+            <Button className="bg-emerald-950 text-white rounded-none font-bold uppercase" onClick={handleUpdateCredits}>Simpan Perubahan</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal View History */}
+      <Dialog open={!!viewingHistory} onOpenChange={(o: boolean) => !o && setViewingHistory(null)}>
+        <DialogContent className="rounded-none border-4 border-emerald-950 shadow-[8px_8px_0_rgba(2,44,34,1)] sm:max-w-[800px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-black uppercase tracking-widest text-emerald-950">Histori Audit Pengguna</DialogTitle>
+            <DialogDescription className="font-bold text-emerald-950/70">
+              Riwayat dokumen yang pernah dianalisis oleh {viewingHistory?.name}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            {loadingHistory ? (
+               <div className="flex justify-center p-8"><Loader2 className="h-8 w-8 animate-spin text-emerald-950" /></div>
+            ) : userHistory.length === 0 ? (
+               <div className="text-center p-8 bg-emerald-50 font-bold text-emerald-950/60 border-2 border-emerald-100">
+                 Pengguna ini belum pernah melakukan audit.
+               </div>
+            ) : (
+               <div className="space-y-4">
+                 {userHistory.map(h => (
+                   <div key={h.id} className="border-2 border-emerald-950 p-4 bg-white flex justify-between items-center">
+                     <div>
+                       <div className="font-black text-emerald-950 uppercase">{h.projectName}</div>
+                       <div className="text-xs font-bold text-emerald-950/60 mt-1">{new Date(h.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                     </div>
+                     <Badge className={cn("rounded-none font-bold uppercase text-[10px]", 
+                        h.status === 'ACTIVE' ? 'bg-emerald-500' : 'bg-red-500'
+                     )}>
+                       {h.status}
+                     </Badge>
+                   </div>
+                 ))}
+               </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

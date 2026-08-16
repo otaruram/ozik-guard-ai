@@ -46,6 +46,7 @@ func main() {
 	// 4. Handlers (DI)
 	auditHandler := handler.NewAuditHandler(auditService, auditRepo, userRepo, documentParser, emailService)
 	verifyHandler := handler.NewVerifyHandler(auditRepo, scoringEngine)
+	adminHandler := handler.NewAdminHandler(userRepo, auditRepo)
 	userHandler := handler.NewUserHandler(userRepo, cfg)
 	regulasiHandler := handler.NewRegulasiHandler(regulasiService)
 	freeAuditHandler := handler.NewFreeAuditHandler(piiMasker, pasalID, llmFactory, scoringEngine)
@@ -91,6 +92,13 @@ func main() {
 	protected.Get("/audit/history", auditHandler.GetHistory)
 	protected.Get("/audit/:id", auditHandler.GetAuditDetail)
 	protected.Delete("/audit/:id", auditHandler.DeleteAudit)
+
+	// Admin Routes
+	admin := v1.Group("/admin", middleware.SupabaseAuthMiddleware(cfg, userRepo, emailService), middleware.AdminMiddleware(cfg, userRepo))
+	admin.Get("/users", adminHandler.GetAllUsers)
+	admin.Put("/users/:id/credits", adminHandler.UpdateUserCredits)
+	admin.Put("/users/:id/ban", adminHandler.ToggleBanUser)
+	admin.Get("/users/:id/history", adminHandler.GetUserHistory)
 
 	// 8. Health Check
 	app.Get("/health", func(c *fiber.Ctx) error {
