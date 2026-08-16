@@ -15,6 +15,7 @@ type UserRepository interface {
 	GetCreditsBalance(ctx context.Context, id string) (int, error)
 	FindByAPIKey(ctx context.Context, apiKey string) (*domain.User, error)
 	UpdateAPIKey(ctx context.Context, id string, apiKey string) error
+	UpdateNotifications(ctx context.Context, id string, req *domain.UpdateNotificationRequest) error
 }
 
 type userRepository struct {
@@ -51,6 +52,8 @@ func (r *userRepository) GetByID(ctx context.Context, id string) (*domain.User, 
 		Provider:       record.Provider,
 		CreditsBalance: record.CreditsBalance,
 		APIKey:         apiKeyPtr,
+		NotifyReportDone: record.NotifyReportDone,
+		NotifyRegulation: record.NotifyRegulation,
 	}, nil
 }
 
@@ -80,6 +83,8 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*domain.
 		Provider:       record.Provider,
 		CreditsBalance: record.CreditsBalance,
 		APIKey:         apiKeyPtr,
+		NotifyReportDone: record.NotifyReportDone,
+		NotifyRegulation: record.NotifyRegulation,
 	}, nil
 }
 
@@ -104,6 +109,8 @@ func (r *userRepository) UpsertFromGoogle(ctx context.Context, user *domain.User
 
 	user.ID = record.ID
 	user.CreditsBalance = record.CreditsBalance
+	user.NotifyReportDone = record.NotifyReportDone
+	user.NotifyRegulation = record.NotifyRegulation
 	return user, isNew, nil
 }
 
@@ -175,6 +182,8 @@ func (r *userRepository) FindByAPIKey(ctx context.Context, apiKey string) (*doma
 		Provider:       record.Provider,
 		CreditsBalance: record.CreditsBalance,
 		APIKey:         apik,
+		NotifyReportDone: record.NotifyReportDone,
+		NotifyRegulation: record.NotifyRegulation,
 	}, nil
 }
 
@@ -183,6 +192,16 @@ func (r *userRepository) UpdateAPIKey(ctx context.Context, id string, apiKey str
 		db.User.ID.Equals(id),
 	).Update(
 		db.User.APIKey.Set(apiKey),
+	).Exec(ctx)
+	return err
+}
+
+func (r *userRepository) UpdateNotifications(ctx context.Context, id string, req *domain.UpdateNotificationRequest) error {
+	_, err := r.client.User.FindUnique(
+		db.User.ID.Equals(id),
+	).Update(
+		db.User.NotifyReportDone.Set(req.NotifyReportDone),
+		db.User.NotifyRegulation.Set(req.NotifyRegulation),
 	).Exec(ctx)
 	return err
 }

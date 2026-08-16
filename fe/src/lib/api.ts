@@ -41,6 +41,8 @@ export const api = {
   getMe: () => apiFetch<any>("/user/me"),
   updateMe: (data: { name: string; company?: string }) =>
     apiFetch<any>("/user/me", { method: "PUT", body: JSON.stringify(data) }),
+  updateNotifications: (data: { notifyReportDone: boolean; notifyRegulation: boolean }) =>
+    apiFetch<any>("/user/me/notifications", { method: "PUT", body: JSON.stringify(data) }),
   regenerateApiKey: () => apiFetch<any>("/user/api-key/regenerate", { method: "POST" }),
 
   // Audit

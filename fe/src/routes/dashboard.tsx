@@ -101,7 +101,9 @@ function Dashboard() {
     setLoadingHistory(true);
     Promise.all([
       api.getHistory().then(res => setHistoryData(res.audits || [])).catch(console.error),
-      api.getMe().then(res => setDbUser(res)).catch(console.error)
+      api.getMe().then(res => {
+        setDbUser(res);
+      }).catch(console.error)
     ]).finally(() => setLoadingHistory(false));
   };
 
@@ -670,9 +672,25 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
   const [copied, setCopied] = useState(false);
   const [apiTab, setApiTab] = useState<'playground' | 'docs'>('playground');
   const [confirmKeyOpen, setConfirmKeyOpen] = useState(false);
+  const [notifyReportDone, setNotifyReportDone] = useState(dbUser?.notifyReportDone ?? true);
+  const [notifyRegulation, setNotifyRegulation] = useState(dbUser?.notifyRegulation ?? true);
+  const [isSavingPrefs, setIsSavingPrefs] = useState(false);
 
   const userEmail = user?.email || "";
   const userAvatar = user?.user_metadata?.avatar_url;
+
+  const handleSavePreferences = async () => {
+    setIsSavingPrefs(true);
+    try {
+      await api.updateNotifications({ notifyReportDone, notifyRegulation });
+      toast.success("Preferensi notifikasi berhasil disimpan!");
+      refreshUser();
+    } catch (err: any) {
+      toast.error(err.message || "Gagal menyimpan preferensi");
+    } finally {
+      setIsSavingPrefs(false);
+    }
+  };
 
   const handleTestAPI = async () => {
     if (!dbUser?.apiKey) {
@@ -767,20 +785,36 @@ function Pengaturan({ dbUser, refreshUser }: { dbUser: any, refreshUser: () => v
           <h3 className="text-xl font-black uppercase text-emerald-950 mb-6">Preferensi Notifikasi</h3>
           <div className="space-y-6">
             <label className="flex items-start gap-4 cursor-pointer group">
-              <Checkbox className="mt-1 border-4 border-emerald-950 rounded-none h-6 w-6 data-[state=checked]:bg-emerald-950 data-[state=checked]:text-white" defaultChecked />
+              <Checkbox 
+                className="mt-1 border-4 border-emerald-950 rounded-none h-6 w-6 data-[state=checked]:bg-emerald-950 data-[state=checked]:text-white" 
+                checked={notifyReportDone}
+                onCheckedChange={(c) => setNotifyReportDone(c as boolean)}
+              />
               <div>
                 <div className="font-black text-emerald-950 uppercase text-sm">Email Laporan Selesai</div>
                 <div className="text-xs font-bold text-emerald-950/60 mt-1">Kirim email setiap kali dual-track audit PDD selesai.</div>
               </div>
             </label>
             <label className="flex items-start gap-4 cursor-pointer group">
-              <Checkbox className="mt-1 border-4 border-emerald-950 rounded-none h-6 w-6 data-[state=checked]:bg-emerald-950 data-[state=checked]:text-white" defaultChecked />
+              <Checkbox 
+                className="mt-1 border-4 border-emerald-950 rounded-none h-6 w-6 data-[state=checked]:bg-emerald-950 data-[state=checked]:text-white" 
+                checked={notifyRegulation}
+                onCheckedChange={(c) => setNotifyRegulation(c as boolean)}
+              />
               <div>
                 <div className="font-black text-emerald-950 uppercase text-sm">Peringatan Regulasi ESDM</div>
                 <div className="text-xs font-bold text-emerald-950/60 mt-1">Kirim pemberitahuan jika ada perubahan aturan di Pasal.id.</div>
               </div>
             </label>
-            <Button className="h-12 bg-emerald-950 text-white rounded-none border-2 border-emerald-950 font-black uppercase mt-4">Simpan Preferensi</Button>
+            <Button 
+              className="h-12 bg-emerald-950 text-white rounded-none border-2 border-emerald-950 font-black uppercase mt-4"
+              onClick={handleSavePreferences}
+              disabled={isSavingPrefs}
+            >
+              {isSavingPrefs ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Menyimpan...</>
+              ) : "Simpan Preferensi"}
+            </Button>
           </div>
         </TabsContent>
 
