@@ -25,7 +25,12 @@ function WorkspacePage() {
         let clauses = [];
         if (res.parsedDocumentJson) {
           try {
-            clauses = JSON.parse(res.parsedDocumentJson);
+            let parsed = typeof res.parsedDocumentJson === 'string' ? JSON.parse(res.parsedDocumentJson) : res.parsedDocumentJson;
+            if (typeof parsed === 'string') parsed = JSON.parse(parsed); // Double-encoded handler
+            
+            if (parsed && parsed.pages) {
+              clauses = parsed.pages.flatMap((p: any) => p.chunks || p.Chunks || []);
+            }
           } catch (e) {
             console.error("Failed to parse document JSON:", e);
           }

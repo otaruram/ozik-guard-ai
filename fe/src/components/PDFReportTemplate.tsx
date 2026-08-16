@@ -167,7 +167,16 @@ export const PDFReportTemplate = ({ data, userName, userEmail }: PDFReportTempla
   if (!data) return null;
 
   // Parse document JSON strictly mapping over the new Pages -> Chunks structure
-  const parsedDoc = data.parsedDocumentJson ? JSON.parse(data.parsedDocumentJson) : { pages: [] };
+  let parsedDoc = { pages: [] };
+  if (data.parsedDocumentJson) {
+    try {
+      let parsed = typeof data.parsedDocumentJson === 'string' ? JSON.parse(data.parsedDocumentJson) : data.parsedDocumentJson;
+      if (typeof parsed === 'string') parsed = JSON.parse(parsed);
+      if (parsed) parsedDoc = parsed;
+    } catch (e) {
+      console.error("Failed to parse document JSON:", e);
+    }
+  }
   const pages = parsedDoc.pages || [];
 
   // Calculate statistics
