@@ -61,6 +61,33 @@ export function AuditWorkspace({
     if (session?.user) {
       api.getMe().then((res: any) => setCreditsBalance(res.creditsBalance)).catch(console.error);
     }
+    
+    // Restore state from IndexedDB if exists
+    const request = indexedDB.open("OzikDB", 1);
+    request.onupgradeneeded = (e: any) => {
+      e.target.result.createObjectStore("auditState");
+    };
+    request.onsuccess = (e: any) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains("auditState")) return;
+      const tx = db.transaction("auditState", "readonly");
+      const getReq = tx.objectStore("auditState").get("savedAudit");
+      getReq.onsuccess = () => {
+        if (getReq.result && session?.user) {
+          const data = getReq.result;
+          setFile(data.file);
+          setFileName(data.fileName);
+          setFileSize(data.fileSize);
+          setResult(data.result);
+          setStatus(data.status);
+          setPageScope(data.pageScope);
+          // Clear after restoring
+          const delTx = db.transaction("auditState", "readwrite");
+          delTx.objectStore("auditState").delete("savedAudit");
+          toast.success("Workspace Dipulihkan", { description: "Melanjutkan sesi Anda sebelumnya." });
+        }
+      };
+    };
   }, [session]);
 
   const isGuest = !session?.user;
@@ -220,7 +247,25 @@ export function AuditWorkspace({
       });
     }
   };
-  const handleRegister = () => navigate({ to: "/auth" });
+  const handleRegister = () => {
+    // Save state to IndexedDB before redirect
+    const request = indexedDB.open("OzikDB", 1);
+    request.onupgradeneeded = (e: any) => {
+      e.target.result.createObjectStore("auditState");
+    };
+    request.onsuccess = (e: any) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains("auditState")) {
+        navigate({ to: "/auth" });
+        return;
+      }
+      const tx = db.transaction("auditState", "readwrite");
+      tx.objectStore("auditState").put({ file, fileName, fileSize, result, status, pageScope }, "savedAudit");
+      tx.oncomplete = () => {
+        navigate({ to: "/auth" });
+      };
+    };
+  };
 
   const handleDownloadPDF = async () => {
     if (!reportRef.current) return;
