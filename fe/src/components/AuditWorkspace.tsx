@@ -182,8 +182,20 @@ export function AuditWorkspace({
     
     setIsAuditing(true);
     setStatus("parsing");
+
+    // Simulate progress animation since API might take 10-20 seconds
+    const steps = ["parsing", "masking", "spatial", "law"];
+    let currentStep = 0;
+    const interval = setInterval(() => {
+      if (currentStep < steps.length - 1) {
+        currentStep++;
+        setStatus(steps[currentStep] as any);
+      }
+    }, 2000);
+
     try {
       const res = effectiveFreemium ? await api.guestTeaser(formData) : await api.processFullAudit(formData);
+      clearInterval(interval);
       
       setIsAuditing(false);
       onAuditComplete?.();
@@ -199,6 +211,7 @@ export function AuditWorkspace({
       setStatus("result");
       setCurrentPage(1);
     } catch (e: any) {
+      clearInterval(interval);
       console.error(e);
       setIsAuditing(false);
       setStatus("idle");

@@ -347,7 +347,7 @@ export const PDFReportTemplate = ({ data, userName, userEmail }: PDFReportTempla
                 </View>
 
                 {/* 2. AI SOLUTION BOX (RENDER IF NOT COMPLIANT) */}
-                {!isCompliant && (
+                {!isCompliant ? (
                   <View style={styles.aiAnalysisBox}>
                     <Text style={styles.analysisTitle}>⚠️ HASIL ANALISIS & SOLUSI AI:</Text>
                     <Text style={styles.analysisText}><Text style={styles.boldText}>Masalah: </Text>{chunk.explanation || chunk.issue?.explanation || "Tidak ada detail masalah."}</Text>
@@ -355,6 +355,11 @@ export const PDFReportTemplate = ({ data, userName, userEmail }: PDFReportTempla
                     {(chunk.suggested_revision || chunk.issue?.suggestedRevision || chunk.issue?.SuggestedRevision) && (
                       <Text style={styles.analysisText}><Text style={styles.boldText}>Draf Perbaikan: </Text>{chunk.suggested_revision || chunk.issue?.suggestedRevision || chunk.issue?.SuggestedRevision}</Text>
                     )}
+                  </View>
+                ) : (
+                  <View style={[styles.aiAnalysisBox, { backgroundColor: '#ecfdf5', borderColor: '#10b981' }]}>
+                    <Text style={[styles.analysisTitle, { color: '#047857' }]}>✅ KLAUSUL AMAN:</Text>
+                    <Text style={styles.analysisText}>Tidak ada pelanggaran terdeteksi pada klausul ini. Kalimat telah mematuhi standar hukum yang berlaku.</Text>
                   </View>
                 )}
               </View>
