@@ -94,60 +94,60 @@ func (s *emailService) SendWelcomeEmail(toEmail, toName string) {
 	auth := smtp.PlainAuth("", user, pass, host)
 
 	addr := host + ":" + port
-	
+
 	var err error
 	if port == "465" {
 		tlsconfig := &tls.Config{
 			InsecureSkipVerify: true,
-			ServerName: host,
+			ServerName:         host,
 		}
-		
+
 		conn, errConn := tls.Dial("tcp", addr, tlsconfig)
 		if errConn != nil {
 			log.Printf("EmailService: Failed to connect to %s: %v\n", addr, errConn)
 			return
 		}
-		
+
 		client, errClient := smtp.NewClient(conn, host)
 		if errClient != nil {
 			log.Printf("EmailService: Failed to create SMTP client: %v\n", errClient)
 			return
 		}
 		defer client.Close()
-		
+
 		if err = client.Auth(auth); err != nil {
 			log.Printf("EmailService: SMTP Auth failed: %v\n", err)
 			return
 		}
-		
+
 		if err = client.Mail(from); err != nil {
 			log.Printf("EmailService: SMTP Mail from failed: %v\n", err)
 			return
 		}
-		
+
 		if err = client.Rcpt(toEmail); err != nil {
 			log.Printf("EmailService: SMTP Rcpt to failed: %v\n", err)
 			return
 		}
-		
+
 		w, errData := client.Data()
 		if errData != nil {
 			log.Printf("EmailService: SMTP Data failed: %v\n", errData)
 			return
 		}
-		
+
 		_, err = w.Write([]byte(message))
 		if err != nil {
 			log.Printf("EmailService: Failed to write body: %v\n", err)
 			return
 		}
-		
+
 		err = w.Close()
 		if err != nil {
 			log.Printf("EmailService: Failed to close writer: %v\n", err)
 			return
 		}
-		
+
 		client.Quit()
 	} else {
 		err = smtp.SendMail(addr, auth, from, []string{toEmail}, []byte(message))
@@ -233,27 +233,39 @@ func (s *emailService) SendReportDoneEmail(toEmail, toName, projectName, status 
 
 	auth := smtp.PlainAuth("", user, pass, host)
 	addr := host + ":" + port
-	
+
 	var err error
 	if port == "465" {
 		tlsconfig := &tls.Config{InsecureSkipVerify: true, ServerName: host}
 		conn, errConn := tls.Dial("tcp", addr, tlsconfig)
-		if errConn != nil { return }
+		if errConn != nil {
+			return
+		}
 		client, errClient := smtp.NewClient(conn, host)
-		if errClient != nil { return }
+		if errClient != nil {
+			return
+		}
 		defer client.Close()
-		if err = client.Auth(auth); err != nil { return }
-		if err = client.Mail(from); err != nil { return }
-		if err = client.Rcpt(toEmail); err != nil { return }
+		if err = client.Auth(auth); err != nil {
+			return
+		}
+		if err = client.Mail(from); err != nil {
+			return
+		}
+		if err = client.Rcpt(toEmail); err != nil {
+			return
+		}
 		w, errData := client.Data()
-		if errData != nil { return }
+		if errData != nil {
+			return
+		}
 		_, _ = w.Write([]byte(message))
 		_ = w.Close()
 		client.Quit()
 	} else {
 		err = smtp.SendMail(addr, auth, from, []string{toEmail}, []byte(message))
 	}
-	
+
 	if err != nil {
 		log.Printf("EmailService: Failed to send report email to %s: %v\n", toEmail, err)
 	} else {

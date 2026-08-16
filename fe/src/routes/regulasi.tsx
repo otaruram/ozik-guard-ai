@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Search, Loader2, Leaf, ArrowRight, Circle, FileText, ExternalLink } from "lucide-react";
 import { apiFetch } from "@/lib/api";
+import { useAuth } from "@/lib/auth-context";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import ReactMarkdown from 'react-markdown';
@@ -138,9 +139,12 @@ function RegulasiHijau() {
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [recommendations, setRecommendations] = useState<any[]>(DEFAULT_RECOMMENDATIONS);
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
   // Fetch dynamic personalized recommendations on mount
   useEffect(() => {
+    if (!user) return; // Do not fetch if not logged in
+
     const fetchRecs = async () => {
       try {
         const data = await apiFetch<any[]>('/regulasi/recommendations');

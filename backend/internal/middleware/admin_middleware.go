@@ -16,7 +16,7 @@ func AdminMiddleware(cfg *config.Config, userRepo repository.UserRepository) fib
 				"error": "Unauthorized: Missing user ID",
 			})
 		}
-		
+
 		userEmail, ok := c.Locals("userEmail").(string)
 		if !ok {
 			userEmail = ""

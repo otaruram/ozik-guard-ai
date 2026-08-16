@@ -335,7 +335,27 @@ export const PDFReportTemplate = ({ data, userName, userEmail }: PDFReportTempla
         <Page key={`page-${pageIndex}`} size="A4" style={[styles.page, { padding: 40 }]}>
           <Text style={styles.pageHeader}>DOCUMENT ANALYSIS - Page {page.page_number}</Text>
           
-          {page.chunks?.map((chunk: any, chunkIndex: number) => {
+          {page.chunks?.map((rawChunk: any, chunkIndex: number) => {
+            
+            // Map the issue if it exists
+            let chunk = { ...rawChunk };
+            const matchedIssue = data.issues?.find((i: any) => 
+              i.chunkIndex === chunk.id || 
+              (i.clauseText && chunk.text && i.clauseText.substring(0, 20) === chunk.text.substring(0, 20)) ||
+              (i.pageNumber === page.page_number && i.chunkIndex === chunk.id)
+            );
+
+            if (matchedIssue) {
+              chunk.severity = matchedIssue.severity;
+              chunk.status = matchedIssue.severity;
+              chunk.explanation = matchedIssue.explanation || matchedIssue.issue || "Terdapat pelanggaran atau risiko pada klausul ini.";
+              chunk.matched_law = matchedIssue.matchedLaw || matchedIssue.originalLawText;
+              chunk.suggested_revision = matchedIssue.suggestedRevision;
+            } else {
+              chunk.severity = 'COMPLIANT';
+              chunk.status = 'COMPLIANT';
+            }
+
             const severity = (chunk.severity || chunk.status || '').toUpperCase();
             const isCompliant = severity !== 'HIGH_RISK' && severity !== 'HIGH' && severity !== 'MEDIUM_RISK' && severity !== 'MEDIUM';
             

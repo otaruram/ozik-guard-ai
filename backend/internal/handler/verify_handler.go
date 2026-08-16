@@ -47,10 +47,10 @@ func (h *VerifyHandler) GetVerification(c *fiber.Ctx) error {
 	if audit.SHA256Hash != recalculatedHash {
 		// DATA TAMPERED! Revoke instantly.
 		h.auditRepo.UpdateAuditStatus(c.Context(), audit.ID, "INVALID")
-		
+
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"valid": false,
-			"error": "DATA_TAMPERED",
+			"valid":   false,
+			"error":   "DATA_TAMPERED",
 			"message": "Data audit ini telah dimanipulasi. Verifikasi dicabut secara permanen.",
 		})
 	}

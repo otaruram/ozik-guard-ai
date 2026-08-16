@@ -21,6 +21,13 @@ enum BadgeStatus {
   REVOKED
 }
 
+enum ReviewStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  NEEDS_REVISION
+}
+
 model User {
   // Gunakan ID dari Supabase auth.users secara langsung, jangan auto-generate
   id             String         @id 
@@ -38,6 +45,7 @@ model User {
   role             String         @default("USER")
   isBanned         Boolean        @default(false)
   audits           ProjectAudit[]
+  reviewedAudits   ProjectAudit[] @relation("Reviewer")
 
   @@map("users")
 }
@@ -64,6 +72,12 @@ model ProjectAudit {
   scoreTransparency Float             @default(0)
   sha256Hash        String            @unique
   status            BadgeStatus       @default(ACTIVE)
+  
+  // REVIEW SYSTEM
+  reviewStatus      ReviewStatus      @default(PENDING_REVIEW)
+  reviewerId        String?
+  reviewer          User?             @relation("Reviewer", fields: [reviewerId], references: [id])
+  reviewFeedback    String?           @db.Text
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   issues            AuditIssue[]

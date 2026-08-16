@@ -23,15 +23,27 @@ func NewScoringEngineService() ScoringEngineService {
 }
 
 func (s *scoringEngineService) CalculateFeasibility(legal float64, tech float64, social float64, trans float64) (float64, string) {
-	if legal > 40 { legal = 40 }
-	if tech > 30 { tech = 30 }
-	if social > 15 { social = 15 }
-	if trans > 15 { trans = 15 }
+	if legal > 40 {
+		legal = 40
+	}
+	if tech > 30 {
+		tech = 30
+	}
+	if social > 15 {
+		social = 15
+	}
+	if trans > 15 {
+		trans = 15
+	}
 
 	total := legal + tech + social + trans
-	if total > 100 { total = 100 }
-	if total < 0 { total = 0 }
-	
+	if total > 100 {
+		total = 100
+	}
+	if total < 0 {
+		total = 0
+	}
+
 	status := "COMPLIANT"
 	if total < 80 && total >= 60 {
 		status = "MEDIUM_RISK"

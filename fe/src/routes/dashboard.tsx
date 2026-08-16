@@ -67,6 +67,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { api } from "@/lib/api";
+import { ReviewerQueueTab } from "@/components/dashboard/ReviewerQueueTab";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -189,6 +190,8 @@ function Dashboard() {
               items: [
                 ...(user && ["okitr52@gmail.com", "okitarunaramadhan@gmail.com"].includes(user?.email || "") 
                   ? [{ key: "admin", label: "Admin Panel", icon: ShieldCheck }] : []),
+                ...(dbUser?.role === "ADMIN" || dbUser?.role === "REVIEWER" || (user && ["okitr52@gmail.com", "okitarunaramadhan@gmail.com"].includes(user?.email || ""))
+                  ? [{ key: "reviewer", label: "Reviewer Queue", icon: EyeOff }] : []),
                 { key: "settings", label: "Pengaturan", icon: Settings },
               ]
             }
@@ -283,6 +286,7 @@ function Dashboard() {
           {active === "history" && <HistoriAudit history={historyData} loading={loadingHistory} refreshHistory={refreshHistory} />}
           {active === "profile" && <ProfilPengguna dbUser={dbUser} onProfileUpdate={refreshHistory} />}
           {active === "admin" && <AdminPanel />}
+          {active === "reviewer" && <ReviewerQueueTab />}
           {active === "settings" && <Pengaturan dbUser={dbUser} refreshUser={refreshHistory} />}
           {active === "billing" && <PaketPricing />}
         </main>

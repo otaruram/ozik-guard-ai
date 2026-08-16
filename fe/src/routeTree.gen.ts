@@ -17,6 +17,7 @@ import { Route as PlaygroundRouteImport } from './routes/playground'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as RegulasiRouteImport } from './routes/regulasi'
 import { Route as PageIdRouteImport } from './routes/page.$id'
+import { Route as ReviewIdRouteImport } from './routes/review.$id'
 import { Route as VerifyIdRouteImport } from './routes/verify.$id'
 import { Route as WorkspaceIdRouteImport } from './routes/workspace.$id'
 
@@ -60,6 +61,11 @@ const PageIdRoute = PageIdRouteImport.update({
   path: '/page/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReviewIdRoute = ReviewIdRouteImport.update({
+  id: '/review/$id',
+  path: '/review/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerifyIdRoute = VerifyIdRouteImport.update({
   id: '/verify/$id',
   path: '/verify/$id',
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/regulasi': typeof RegulasiRoute
   '/page/$id': typeof PageIdRoute
+  '/review/$id': typeof ReviewIdRoute
   '/verify/$id': typeof VerifyIdRoute
   '/workspace/$id': typeof WorkspaceIdRoute
 }
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/regulasi': typeof RegulasiRoute
   '/page/$id': typeof PageIdRoute
+  '/review/$id': typeof ReviewIdRoute
   '/verify/$id': typeof VerifyIdRoute
   '/workspace/$id': typeof WorkspaceIdRoute
 }
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/regulasi': typeof RegulasiRoute
   '/page/$id': typeof PageIdRoute
+  '/review/$id': typeof ReviewIdRoute
   '/verify/$id': typeof VerifyIdRoute
   '/workspace/$id': typeof WorkspaceIdRoute
 }
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/regulasi'
     | '/page/$id'
+    | '/review/$id'
     | '/verify/$id'
     | '/workspace/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/regulasi'
     | '/page/$id'
+    | '/review/$id'
     | '/verify/$id'
     | '/workspace/$id'
   id:
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/regulasi'
     | '/page/$id'
+    | '/review/$id'
     | '/verify/$id'
     | '/workspace/$id'
   fileRoutesById: FileRoutesById
@@ -156,6 +168,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   RegulasiRoute: typeof RegulasiRoute
   PageIdRoute: typeof PageIdRoute
+  ReviewIdRoute: typeof ReviewIdRoute
   VerifyIdRoute: typeof VerifyIdRoute
   WorkspaceIdRoute: typeof WorkspaceIdRoute
 }
@@ -218,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PageIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/review/$id': {
+      id: '/review/$id'
+      path: '/review/$id'
+      fullPath: '/review/$id'
+      preLoaderRoute: typeof ReviewIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verify/$id': {
       id: '/verify/$id'
       path: '/verify/$id'
@@ -244,6 +264,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   RegulasiRoute: RegulasiRoute,
   PageIdRoute: PageIdRoute,
+  ReviewIdRoute: ReviewIdRoute,
   VerifyIdRoute: VerifyIdRoute,
   WorkspaceIdRoute: WorkspaceIdRoute,
 }

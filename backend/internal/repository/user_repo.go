@@ -47,13 +47,13 @@ func (r *userRepository) GetByID(ctx context.Context, id string) (*domain.User, 
 	}
 
 	return &domain.User{
-		ID:             record.ID,
-		Email:          record.Email,
-		Name:           record.Name,
-		Company:        compPtr,
-		Provider:       record.Provider,
-		CreditsBalance: record.CreditsBalance,
-		APIKey:         apiKeyPtr,
+		ID:               record.ID,
+		Email:            record.Email,
+		Name:             record.Name,
+		Company:          compPtr,
+		Provider:         record.Provider,
+		CreditsBalance:   record.CreditsBalance,
+		APIKey:           apiKeyPtr,
 		NotifyReportDone: record.NotifyReportDone,
 		NotifyRegulation: record.NotifyRegulation,
 		Role:             record.Role,
@@ -80,13 +80,13 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*domain.
 	}
 
 	return &domain.User{
-		ID:             record.ID,
-		Email:          record.Email,
-		Name:           record.Name,
-		Company:        compPtr,
-		Provider:       record.Provider,
-		CreditsBalance: record.CreditsBalance,
-		APIKey:         apiKeyPtr,
+		ID:               record.ID,
+		Email:            record.Email,
+		Name:             record.Name,
+		Company:          compPtr,
+		Provider:         record.Provider,
+		CreditsBalance:   record.CreditsBalance,
+		APIKey:           apiKeyPtr,
 		NotifyReportDone: record.NotifyReportDone,
 		NotifyRegulation: record.NotifyRegulation,
 		Role:             record.Role,
@@ -176,20 +176,20 @@ func (r *userRepository) FindByAPIKey(ctx context.Context, apiKey string) (*doma
 	if err != nil {
 		return nil, err
 	}
-	
+
 	var apik *string
 	v, ok := record.APIKey()
 	if ok {
 		apik = &v
 	}
-	
+
 	return &domain.User{
-		ID:             record.ID,
-		Email:          record.Email,
-		Name:           record.Name,
-		Provider:       record.Provider,
-		CreditsBalance: record.CreditsBalance,
-		APIKey:         apik,
+		ID:               record.ID,
+		Email:            record.Email,
+		Name:             record.Name,
+		Provider:         record.Provider,
+		CreditsBalance:   record.CreditsBalance,
+		APIKey:           apik,
 		NotifyReportDone: record.NotifyReportDone,
 		NotifyRegulation: record.NotifyRegulation,
 		Role:             record.Role,
@@ -250,4 +250,3 @@ func (r *userRepository) UpdateUserStatus(ctx context.Context, id string, credit
 	).Exec(ctx)
 	return err
 }
-

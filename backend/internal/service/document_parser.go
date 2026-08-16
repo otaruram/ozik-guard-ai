@@ -100,14 +100,14 @@ func (s *documentParserService) ExtractTargetPages(filePath string, pageMode str
 		if p.V.IsNull() {
 			continue
 		}
-		
+
 		content, err := p.GetPlainText(nil)
 		if err == nil {
 			extractedText.WriteString(fmt.Sprintf("\n--- PAGE %d ---\n", pageNum))
 			extractedText.WriteString(content)
 		}
 	}
-	
+
 	if extractedText.Len() == 0 {
 		// Fallback to reading the entire document
 		var buf bytes.Buffer

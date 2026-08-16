@@ -44,7 +44,7 @@ func SupabaseAuthMiddleware(cfg *config.Config, userRepo repository.UserReposito
 			return c.Next()
 		}
 
-		// In a real application, you would use a JWT library (e.g., golang-jwt) 
+		// In a real application, you would use a JWT library (e.g., golang-jwt)
 		// to parse and verify the token signature using cfg.SupabaseJWTSecret.
 		// For MVP, we simply check if the token is present.
 		if token == "" {
@@ -73,7 +73,7 @@ func SupabaseAuthMiddleware(cfg *config.Config, userRepo repository.UserReposito
 								name = fn
 							}
 						}
-						
+
 						userRec, isNew, _ := userRepo.UpsertFromGoogle(c.Context(), &domain.User{
 							ID:       sub,
 							Email:    email,
