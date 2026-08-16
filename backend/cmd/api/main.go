@@ -34,6 +34,7 @@ func main() {
 	userRepo := repository.NewUserRepository(client)
 
 	// 3. Services (DI)
+	emailService := service.NewEmailService(cfg)
 	piiMasker := service.NewPIIMaskerService()
 	pasalID := service.NewPasalIdService()
 	llmFactory := service.NewLLMFactoryService(cfg.SumopodURL, cfg.SumopodKey)
@@ -72,7 +73,7 @@ func main() {
 	v1.Get("/regulasi/search", regulasiHandler.SearchRegulasi)
 
 	// === Protected Routes (Supabase JWT) ===
-	protected := v1.Group("", middleware.SupabaseAuthMiddleware(cfg, userRepo))
+	protected := v1.Group("", middleware.SupabaseAuthMiddleware(cfg, userRepo, emailService))
 
 	// Regulasi Personalization
 	protected.Get("/regulasi/recommendations", regulasiHandler.GetRecommendations)

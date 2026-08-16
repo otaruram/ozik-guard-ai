@@ -9,10 +9,11 @@ import (
 	"ozikcarbon-backend/config"
 	"ozikcarbon-backend/domain"
 	"ozikcarbon-backend/internal/repository"
+	"ozikcarbon-backend/internal/service"
 )
 
 // SupabaseAuthMiddleware verifies the JWT token from Supabase
-func SupabaseAuthMiddleware(cfg *config.Config, userRepo repository.UserRepository) fiber.Handler {
+func SupabaseAuthMiddleware(cfg *config.Config, userRepo repository.UserRepository, emailSvc service.EmailService) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		authHeader := c.Get("Authorization")
 		if authHeader == "" {
@@ -73,12 +74,17 @@ func SupabaseAuthMiddleware(cfg *config.Config, userRepo repository.UserReposito
 							}
 						}
 						
-						userRec, _ := userRepo.UpsertFromGoogle(c.Context(), &domain.User{
+						userRec, isNew, _ := userRepo.UpsertFromGoogle(c.Context(), &domain.User{
 							ID:       sub,
 							Email:    email,
 							Name:     name,
 							Provider: "supabase",
 						})
+
+						if isNew && emailSvc != nil {
+							go emailSvc.SendWelcomeEmail(email, name)
+						}
+
 						if userRec != nil {
 							c.Locals("userId", userRec.ID)
 						} else {

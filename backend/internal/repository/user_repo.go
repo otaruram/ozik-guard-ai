@@ -9,7 +9,7 @@ import (
 type UserRepository interface {
 	GetByID(ctx context.Context, id string) (*domain.User, error)
 	GetByEmail(ctx context.Context, email string) (*domain.User, error)
-	UpsertFromGoogle(ctx context.Context, user *domain.User) (*domain.User, error)
+	UpsertFromGoogle(ctx context.Context, user *domain.User) (*domain.User, bool, error)
 	UpdateProfile(ctx context.Context, id string, req *domain.UpdateProfileRequest) (*domain.User, error)
 	DeductCredit(ctx context.Context, id string) error
 	GetCreditsBalance(ctx context.Context, id string) (int, error)
@@ -83,7 +83,10 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*domain.
 	}, nil
 }
 
-func (r *userRepository) UpsertFromGoogle(ctx context.Context, user *domain.User) (*domain.User, error) {
+func (r *userRepository) UpsertFromGoogle(ctx context.Context, user *domain.User) (*domain.User, bool, error) {
+	_, errFind := r.client.User.FindUnique(db.User.Email.Equals(user.Email)).Exec(ctx)
+	isNew := errFind != nil
+
 	record, err := r.client.User.UpsertOne(
 		db.User.Email.Equals(user.Email),
 	).Create(
@@ -96,12 +99,12 @@ func (r *userRepository) UpsertFromGoogle(ctx context.Context, user *domain.User
 		db.User.Provider.Set(user.Provider),
 	).Exec(ctx)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	user.ID = record.ID
 	user.CreditsBalance = record.CreditsBalance
-	return user, nil
+	return user, isNew, nil
 }
 
 func (r *userRepository) UpdateProfile(ctx context.Context, id string, req *domain.UpdateProfileRequest) (*domain.User, error) {
