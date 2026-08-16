@@ -4,6 +4,7 @@ import (
 	"ozikcarbon-backend/domain"
 	"ozikcarbon-backend/internal/repository"
 	"ozikcarbon-backend/internal/service"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -38,13 +39,10 @@ func (h *VerifyHandler) GetVerification(c *fiber.Ctx) error {
 	// 1. INTEGRITY CHECK
 	// Recalculate score and hash using EXACT logic/salt
 	totalScore, _ := h.scoringEngine.CalculateFeasibility(audit.ScoreLegal, audit.ScoreTechnical, audit.ScoreSocial, audit.ScoreTransparency)
-	recalculatedHash := ""
-	if totalScore >= 80 {
-		recalculatedHash = h.scoringEngine.GenerateHMACBadge(audit.ID, totalScore)
-	}
+	recalculatedHash := h.scoringEngine.GenerateHMACBadge(audit.ID, totalScore)
 
 	// 2. Compare hashes
-	if audit.SHA256Hash != recalculatedHash {
+	if audit.SHA256Hash != recalculatedHash && !strings.HasPrefix(audit.SHA256Hash, "no_badge_") {
 		// DATA TAMPERED! Revoke instantly.
 		h.auditRepo.UpdateAuditStatus(c.Context(), audit.ID, "INVALID")
 
