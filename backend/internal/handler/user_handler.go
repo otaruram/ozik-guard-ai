@@ -39,7 +39,7 @@ func (h *UserHandler) GetMe(c *fiber.Ctx) error {
 	}
 
 	credits := user.CreditsBalance
-	
+
 	// Check Admin Bypass for unlimited credits
 	if userEmail := c.Locals("userEmail"); userEmail != nil {
 		emailStr := userEmail.(string)
@@ -52,14 +52,14 @@ func (h *UserHandler) GetMe(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(domain.UserMeResponse{
-		ID:             user.ID,
-		Email:          user.Email,
-		Name:           user.Name,
-		AvatarURL:      user.AvatarURL,
-		Company:        user.Company,
-		Provider:       user.Provider,
-		CreditsBalance: credits,
-		APIKey:         user.APIKey,
+		ID:               user.ID,
+		Email:            user.Email,
+		Name:             user.Name,
+		AvatarURL:        user.AvatarURL,
+		Company:          user.Company,
+		Provider:         user.Provider,
+		CreditsBalance:   credits,
+		APIKey:           user.APIKey,
 		NotifyReportDone: user.NotifyReportDone,
 		NotifyRegulation: user.NotifyRegulation,
 	})
@@ -110,9 +110,9 @@ func (h *UserHandler) RegenerateAPIKey(c *fiber.Ctx) error {
 			Error: "GENERATION_FAILED",
 		})
 	}
-	
+
 	newKey := "ozik_live_" + hex.EncodeToString(bytes)
-	
+
 	err := h.userRepo.UpdateAPIKey(c.Context(), uid, newKey)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(domain.ErrorResponse{

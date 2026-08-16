@@ -124,47 +124,69 @@ func (s *llmFactoryService) callSumopod(ctx context.Context, systemPrompt string
 		userPrompt = userPrompt[:15000] + "\n\n[...TRUNCATED FOR TOKEN LIMIT...]"
 	}
 
-	// Build OpenAI-compatible request payload
-	payload := map[string]interface{}{
-		"model": "claude-haiku-4-5-20250815",
-		"messages": []map[string]string{
-			{"role": "system", "content": systemPrompt},
-			{"role": "user", "content": userPrompt},
-		},
-		"temperature": 0.1,
-		"max_tokens":  4096,
-	}
-
-	jsonBody, err := json.Marshal(payload)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal LLM request: %w", err)
-	}
-
+	// We will try claude-haiku-4-5 first, then gemini/gemini-3.5-flash
+	modelsToTry := []string{"claude-haiku-4-5", "gemini/gemini-3.5-flash"}
 	endpoint := strings.TrimSuffix(s.sumopodURL, "/") + "/chat/completions"
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(jsonBody))
-	if err != nil {
-		return nil, fmt.Errorf("failed to create LLM request: %w", err)
+
+	var lastErr error
+	var responseBody []byte
+	var success bool
+
+	for _, modelName := range modelsToTry {
+		// Build OpenAI-compatible request payload
+		payload := map[string]interface{}{
+			"model": modelName,
+			"messages": []map[string]string{
+				{"role": "system", "content": systemPrompt},
+				{"role": "user", "content": userPrompt},
+			},
+			"temperature": 0.1,
+			"max_tokens":  4096,
+		}
+
+		jsonBody, err := json.Marshal(payload)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal LLM request: %w", err)
+		}
+
+		req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(jsonBody))
+		if err != nil {
+			return nil, fmt.Errorf("failed to create LLM request: %w", err)
+		}
+
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", "Bearer "+s.apiKey)
+
+		log.Printf("🤖 Calling Sumopod LLM with model %s ...", modelName)
+		resp, err := s.client.Do(req)
+		if err != nil {
+			log.Printf("⚠️ Sumopod API call failed for %s: %v", modelName, err)
+			lastErr = err
+			continue // try next model
+		}
+
+		body, err := io.ReadAll(resp.Body)
+		resp.Body.Close()
+
+		if err != nil {
+			log.Printf("⚠️ Failed to read Sumopod response for %s: %v", modelName, err)
+			lastErr = err
+			continue
+		}
+
+		if resp.StatusCode != http.StatusOK {
+			log.Printf("⚠️ Sumopod returned HTTP %d for %s: %s", resp.StatusCode, modelName, string(body))
+			lastErr = fmt.Errorf("HTTP %d: %s", resp.StatusCode, string(body))
+			continue
+		}
+
+		responseBody = body
+		success = true
+		break // Success! Exit loop
 	}
 
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+s.apiKey)
-
-	log.Printf("🤖 Calling Sumopod LLM at %s ...", endpoint)
-	resp, err := s.client.Do(req)
-	if err != nil {
-		log.Printf("❌ Sumopod API call failed: %v. Falling back to rule-based scoring.", err)
-		return s.ruleBasedFallback(userPrompt), nil
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("❌ Failed to read Sumopod response: %v", err)
-		return s.ruleBasedFallback(userPrompt), nil
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		log.Printf("❌ Sumopod returned HTTP %d: %s. Falling back.", resp.StatusCode, string(body))
+	if !success {
+		log.Printf("❌ All LLM models failed. Last error: %v. Falling back to rule-based scoring.", lastErr)
 		return s.ruleBasedFallback(userPrompt), nil
 	}
 
@@ -176,7 +198,7 @@ func (s *llmFactoryService) callSumopod(ctx context.Context, systemPrompt string
 			} `json:"message"`
 		} `json:"choices"`
 	}
-	if err := json.Unmarshal(body, &chatResp); err != nil {
+	if err := json.Unmarshal(responseBody, &chatResp); err != nil {
 		log.Printf("❌ Failed to parse Sumopod response JSON: %v", err)
 		return s.ruleBasedFallback(userPrompt), nil
 	}

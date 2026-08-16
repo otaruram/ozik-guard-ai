@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strings"
 	"ozikcarbon-backend/domain"
 	"ozikcarbon-backend/internal/repository"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -49,21 +49,21 @@ func NewAuditService(
 func extractKeywords(text string) []string {
 	lower := strings.ToLower(text)
 	keywordMap := map[string]string{
-		"hutan":       "kehutanan kawasan hutan",
-		"kawasan":     "kehutanan kawasan hutan",
-		"karbon":      "karbon emisi gas rumah kaca",
-		"carbon":      "karbon emisi gas rumah kaca",
-		"emisi":       "karbon emisi gas rumah kaca",
-		"energi":      "energi terbarukan listrik",
-		"surya":       "energi terbarukan tenaga surya",
-		"lingkungan":  "lingkungan amdal dampak",
-		"amdal":       "lingkungan amdal dampak",
-		"izin":        "perizinan izin berusaha",
-		"masyarakat":  "masyarakat fpic konsultasi adat",
-		"fpic":        "masyarakat fpic konsultasi adat",
-		"dampak":      "lingkungan amdal dampak",
-		"lahan":       "kehutanan kawasan hutan lahan",
-		"produksi":    "kehutanan kawasan hutan produksi",
+		"hutan":      "kehutanan kawasan hutan",
+		"kawasan":    "kehutanan kawasan hutan",
+		"karbon":     "karbon emisi gas rumah kaca",
+		"carbon":     "karbon emisi gas rumah kaca",
+		"emisi":      "karbon emisi gas rumah kaca",
+		"energi":     "energi terbarukan listrik",
+		"surya":      "energi terbarukan tenaga surya",
+		"lingkungan": "lingkungan amdal dampak",
+		"amdal":      "lingkungan amdal dampak",
+		"izin":       "perizinan izin berusaha",
+		"masyarakat": "masyarakat fpic konsultasi adat",
+		"fpic":       "masyarakat fpic konsultasi adat",
+		"dampak":     "lingkungan amdal dampak",
+		"lahan":      "kehutanan kawasan hutan lahan",
+		"produksi":   "kehutanan kawasan hutan produksi",
 	}
 
 	seen := make(map[string]bool)
@@ -278,6 +278,9 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 
 	chunksPerPage := 6
 
+	// Keep track of matched issues
+	matchedLLMIssues := make(map[int]bool)
+
 	// Map LLM issues to clauses
 	for i, p := range validParagraphs {
 		totalSentences += strings.Count(p, ".") + strings.Count(p, "?") + strings.Count(p, "!")
@@ -287,13 +290,16 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 		var issue *domain.AuditIssue
 
 		// Check if any LLM issue maps to this paragraph
-		for _, llmIssue := range llmResp.Issues {
+		for idx, llmIssue := range llmResp.Issues {
+			if matchedLLMIssues[idx] {
+				continue
+			}
 			clauseTextLower := strings.ToLower(llmIssue.ClauseText)
 			paragraphLower := strings.ToLower(p)
 
 			// Match by content overlap
-			matchLen := minInt(len(clauseTextLower), 40)
-			if matchLen > 0 && strings.Contains(paragraphLower, clauseTextLower[:matchLen]) {
+			matchLen := minInt(len(clauseTextLower), 20)
+			if matchLen > 0 && (strings.Contains(paragraphLower, clauseTextLower[:matchLen]) || strings.Contains(clauseTextLower, paragraphLower[:minInt(len(paragraphLower), 20)])) {
 				clauseStatus = string(llmIssue.Severity)
 				issue = &domain.AuditIssue{
 					Severity:          domain.RiskSeverity(llmIssue.Severity),
@@ -305,6 +311,7 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 					ChunkIndex:        i + 1,
 				}
 				auditIssues = append(auditIssues, *issue)
+				matchedLLMIssues[idx] = true
 				break
 			}
 		}
@@ -374,6 +381,28 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 		pages[pageNum-1].Chunks = append(pages[pageNum-1].Chunks, clause)
 	}
 
+	// Append any unmatched LLM issues to the first chunk
+	for idx, llmIssue := range llmResp.Issues {
+		if !matchedLLMIssues[idx] {
+			issue := &domain.AuditIssue{
+				Severity:          domain.RiskSeverity(llmIssue.Severity),
+				ClauseText:        llmIssue.ClauseText,
+				MatchedLaw:        llmIssue.MatchedLaw,
+				OriginalLawText:   llmIssue.OriginalLawText,
+				SuggestedRevision: llmIssue.SuggestedRevision,
+				PageNumber:        1,
+				ChunkIndex:        1,
+			}
+			auditIssues = append(auditIssues, *issue)
+			
+			// Also update the first chunk in the JSON
+			if len(pages) > 0 && len(pages[0].Chunks) > 0 && pages[0].Chunks[0].Status == "COMPLIANT" {
+				pages[0].Chunks[0].Status = string(llmIssue.Severity)
+				pages[0].Chunks[0].Issue = issue
+			}
+		}
+	}
+
 	totalPages := len(pages)
 	if totalSentences == 0 {
 		totalSentences = len(validParagraphs)
@@ -409,6 +438,7 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 		CreatedAt:          time.Now(),
 		UpdatedAt:          time.Now(),
 		Issues:             auditIssues,
+		ReviewStatus:       domain.ReviewStatusPending,
 	}
 
 	_, err = s.auditRepo.CreateAudit(ctx, audit)

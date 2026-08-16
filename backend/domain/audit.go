@@ -23,12 +23,21 @@ const (
 type AuditStatus string
 
 const (
-	StatusExcellent      AuditStatus = "EXCELLENT"
-	StatusGood           AuditStatus = "GOOD"
-	StatusNeedsRevision  AuditStatus = "NEEDS_REVISION"
+	StatusExcellent     AuditStatus = "EXCELLENT"
+	StatusGood          AuditStatus = "GOOD"
+	StatusNeedsRevision AuditStatus = "NEEDS_REVISION"
 )
 
 // --- Domain Models ---
+
+type ReviewStatus string
+
+const (
+	ReviewStatusPending  ReviewStatus = "PENDING_REVIEW"
+	ReviewStatusApproved ReviewStatus = "APPROVED"
+	ReviewStatusRejected ReviewStatus = "REJECTED"
+	ReviewStatusRevision ReviewStatus = "NEEDS_REVISION"
+)
 
 type ProjectAudit struct {
 	ID                 string       `json:"id"`
@@ -51,6 +60,9 @@ type ProjectAudit struct {
 	CreatedAt          time.Time    `json:"createdAt"`
 	UpdatedAt          time.Time    `json:"updatedAt"`
 	Issues             []AuditIssue `json:"issues,omitempty"`
+	ReviewStatus       ReviewStatus `json:"reviewStatus"`
+	ReviewerID         *string      `json:"reviewerId,omitempty"`
+	ReviewFeedback     *string      `json:"reviewFeedback,omitempty"`
 }
 
 type AuditIssue struct {
@@ -117,6 +129,8 @@ type ProcessAuditResponse struct {
 	TotalPages         int           `json:"totalPages"`
 	TotalWords         int           `json:"totalWords"`
 	TotalSentences     int           `json:"totalSentences"`
+	ReviewStatus       string        `json:"reviewStatus,omitempty"`
+	ReviewFeedback     *string       `json:"reviewFeedback,omitempty"`
 }
 
 type GuestTeaserResponse struct {
@@ -127,10 +141,10 @@ type GuestTeaserResponse struct {
 	ScoreSocial       float64       `json:"scoreSocial"`
 	ScoreTransparency float64       `json:"scoreTransparency"`
 	SpatialSummary    string        `json:"spatialSummary"`
-	TopViolation     *AuditIssue   `json:"topViolation"`
-	Clauses          []AuditClause `json:"clauses"`
-	LockedFields     []string      `json:"lockedFields"`
-	UpgradeMessage   string        `json:"upgradeMessage"`
+	TopViolation      *AuditIssue   `json:"topViolation"`
+	Clauses           []AuditClause `json:"clauses"`
+	LockedFields      []string      `json:"lockedFields"`
+	UpgradeMessage    string        `json:"upgradeMessage"`
 }
 
 type PublicVerifyResponse struct {

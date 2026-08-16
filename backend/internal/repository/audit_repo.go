@@ -14,6 +14,8 @@ type AuditRepository interface {
 	GetAuditBySHA256Hash(ctx context.Context, hash string) (*domain.ProjectAudit, error)
 	UpdateAuditStatus(ctx context.Context, id string, status string) error
 	DeleteAudit(ctx context.Context, id string, userID string) error
+	GetPendingAudits(ctx context.Context) ([]domain.ProjectAudit, error)
+	UpdateReviewStatus(ctx context.Context, auditID string, reviewerID string, status db.ReviewStatus, feedback string) error
 }
 
 type auditRepository struct {
@@ -49,7 +51,7 @@ func (r *auditRepository) CreateAudit(ctx context.Context, audit *domain.Project
 		db.ProjectAudit.ID.Set(audit.ID),
 		db.ProjectAudit.Status.Set(db.BadgeStatus(audit.Status)),
 	).Exec(ctx)
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +100,7 @@ func (r *auditRepository) DeleteAudit(ctx context.Context, id string, userID str
 	_, err = r.client.ProjectAudit.FindUnique(
 		db.ProjectAudit.ID.Equals(id),
 	).Delete().Exec(ctx)
-	
+
 	return err
 }
 
@@ -141,10 +143,18 @@ func (r *auditRepository) GetAuditByID(ctx context.Context, id string) (*domain.
 		ScoreTransparency: record.ScoreTransparency,
 		SHA256Hash:        record.Sha256Hash,
 		Status:            domain.BadgeStatus(record.Status),
+		ReviewStatus:      domain.ReviewStatus(record.ReviewStatus),
 		AuthorName:        record.User().Name,
 		AuthorEmail:       record.User().Email,
 		CreatedAt:         record.CreatedAt,
 		Issues:            issues,
+	}
+
+	if reviewerID, ok := record.ReviewerID(); ok {
+		auditResp.ReviewerID = &reviewerID
+	}
+	if feedback, ok := record.ReviewFeedback(); ok {
+		auditResp.ReviewFeedback = &feedback
 	}
 
 	if parsedJson, ok := record.ParsedDocumentJSON(); ok {
@@ -180,6 +190,7 @@ func (r *auditRepository) GetAuditsByUserID(ctx context.Context, userID string) 
 			ScoreTransparency: rec.ScoreTransparency,
 			SHA256Hash:        rec.Sha256Hash,
 			Status:            domain.BadgeStatus(rec.Status),
+			ReviewStatus:      domain.ReviewStatus(rec.ReviewStatus),
 			CreatedAt:         rec.CreatedAt,
 		})
 	}
@@ -226,6 +237,7 @@ func (r *auditRepository) GetAuditByIDOrHash(ctx context.Context, idOrHash strin
 		ScoreSocial:        record.ScoreSocial,
 		ScoreTransparency:  record.ScoreTransparency,
 		Status:             domain.BadgeStatus(record.Status),
+		ReviewStatus:       domain.ReviewStatus(record.ReviewStatus),
 		AuthorName:         record.User().Name,
 		AuthorEmail:        record.User().Email,
 		CreatedAt:          record.CreatedAt,
@@ -237,6 +249,13 @@ func (r *auditRepository) GetAuditByIDOrHash(ctx context.Context, idOrHash strin
 		TotalPages:         record.TotalPages,
 		TotalWords:         record.TotalWords,
 		TotalSentences:     record.TotalSentences,
+	}
+
+	if reviewerID, ok := record.ReviewerID(); ok {
+		auditResp.ReviewerID = &reviewerID
+	}
+	if feedback, ok := record.ReviewFeedback(); ok {
+		auditResp.ReviewFeedback = &feedback
 	}
 
 	return auditResp, nil
@@ -272,8 +291,57 @@ func (r *auditRepository) GetAuditBySHA256Hash(ctx context.Context, hash string)
 		ScoreTransparency: record.ScoreTransparency,
 		SHA256Hash:        record.Sha256Hash,
 		Status:            domain.BadgeStatus(record.Status),
+		ReviewStatus:      domain.ReviewStatus(record.ReviewStatus),
 		AuthorName:        record.User().Name,
 		AuthorEmail:       record.User().Email,
 		CreatedAt:         record.CreatedAt,
 	}, nil
+}
+
+func (r *auditRepository) GetPendingAudits(ctx context.Context) ([]domain.ProjectAudit, error) {
+	records, err := r.client.ProjectAudit.FindMany(
+		db.ProjectAudit.ReviewStatus.Equals(db.ReviewStatusPendingReview),
+	).With(
+		db.ProjectAudit.User.Fetch(),
+	).OrderBy(
+		db.ProjectAudit.CreatedAt.Order(db.SortOrderDesc),
+	).Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var audits []domain.ProjectAudit
+	for _, rec := range records {
+		audits = append(audits, domain.ProjectAudit{
+			ID:                rec.ID,
+			UserID:            rec.UserID,
+			ProjectName:       rec.ProjectName,
+			TotalPages:        rec.TotalPages,
+			TotalWords:        rec.TotalWords,
+			TotalSentences:    rec.TotalSentences,
+			FeasibilityScore:  rec.FeasibilityScore,
+			ScoreLegal:        rec.ScoreLegal,
+			ScoreTechnical:    rec.ScoreTechnical,
+			ScoreSocial:       rec.ScoreSocial,
+			ScoreTransparency: rec.ScoreTransparency,
+			SHA256Hash:        rec.Sha256Hash,
+			Status:            domain.BadgeStatus(rec.Status),
+			ReviewStatus:      domain.ReviewStatus(rec.ReviewStatus),
+			AuthorName:        rec.User().Name,
+			AuthorEmail:       rec.User().Email,
+			CreatedAt:         rec.CreatedAt,
+		})
+	}
+	return audits, nil
+}
+
+func (r *auditRepository) UpdateReviewStatus(ctx context.Context, auditID string, reviewerID string, status db.ReviewStatus, feedback string) error {
+	_, err := r.client.ProjectAudit.FindUnique(
+		db.ProjectAudit.ID.Equals(auditID),
+	).Update(
+		db.ProjectAudit.ReviewStatus.Set(status),
+		db.ProjectAudit.ReviewerID.Set(reviewerID),
+		db.ProjectAudit.ReviewFeedback.Set(feedback),
+	).Exec(ctx)
+	return err
 }

@@ -51,6 +51,7 @@ func main() {
 	regulasiHandler := handler.NewRegulasiHandler(regulasiService)
 	freeAuditHandler := handler.NewFreeAuditHandler(piiMasker, pasalID, llmFactory, scoringEngine)
 	freeAuditHandler.SetAuditService(auditService)
+	reviewerHandler := handler.NewReviewerHandler(auditRepo)
 
 	// 5. Fiber App Init
 	app := fiber.New(fiber.Config{
@@ -99,6 +100,11 @@ func main() {
 	admin.Put("/users/:id/credits", adminHandler.UpdateUserCredits)
 	admin.Put("/users/:id/ban", adminHandler.ToggleBanUser)
 	admin.Get("/users/:id/history", adminHandler.GetUserHistory)
+
+	// Reviewer Routes
+	reviewer := v1.Group("/reviewer", middleware.SupabaseAuthMiddleware(cfg, userRepo, emailService), middleware.ReviewerMiddleware(cfg, userRepo))
+	reviewer.Get("/queue", reviewerHandler.GetQueue)
+	reviewer.Put("/audit/:id/review", reviewerHandler.SubmitReview)
 
 	// 8. Health Check
 	app.Get("/health", func(c *fiber.Ctx) error {

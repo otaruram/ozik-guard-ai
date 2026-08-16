@@ -8,7 +8,7 @@ import (
 	"ozikcarbon-backend/internal/repository"
 )
 
-func AdminMiddleware(cfg *config.Config, userRepo repository.UserRepository) fiber.Handler {
+func ReviewerMiddleware(cfg *config.Config, userRepo repository.UserRepository) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		userID, ok := c.Locals("userId").(string)
 		if !ok || userID == "" {
@@ -22,29 +22,29 @@ func AdminMiddleware(cfg *config.Config, userRepo repository.UserRepository) fib
 			userEmail = ""
 		}
 
-		// Bootstrap admin check: If email is in ADMIN_EMAILS
-		isAdmin := false
+		// Bootstrap admin check: If email is in ADMIN_EMAILS, they are also a reviewer
+		isReviewer := false
 		if len(cfg.AdminEmails) > 0 {
 			for _, email := range cfg.AdminEmails {
 				if strings.TrimSpace(email) == userEmail {
-					isAdmin = true
+					isReviewer = true
 					break
 				}
 			}
 		}
 
-		if !isAdmin {
+		if !isReviewer {
 			user, err := userRepo.GetByID(c.Context(), userID)
 			if err == nil && user != nil {
-				if user.Role == "ADMIN" {
-					isAdmin = true
+				if user.Role == "ADMIN" || user.Role == "REVIEWER" {
+					isReviewer = true
 				}
 			}
 		}
 
-		if !isAdmin {
+		if !isReviewer {
 			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-				"error": "Forbidden: Admin access required",
+				"error": "Forbidden: Reviewer access required",
 			})
 		}
 

@@ -64,7 +64,7 @@ func (h *AuditHandler) ProcessAudit(c *fiber.Ctx) error {
 	if strings.HasSuffix(strings.ToLower(fileHeader.Filename), ".pdf") {
 		// Save temporarily
 		c.SaveFile(fileHeader, "./temp.pdf")
-		
+
 		extractedText, parsedPages, err := h.documentParser.ExtractTargetPages("./temp.pdf", pageMode, customRange)
 		if err == nil {
 			text = extractedText
