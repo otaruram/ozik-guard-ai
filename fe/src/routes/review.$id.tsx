@@ -118,6 +118,7 @@ function ReviewerWorkspace() {
                   scoreTransparency: audit.scoreTransparency,
                   issues: audit.issues || [],
                   clauses: audit.clauses || [],
+                  parsedDocumentJson: audit.parsedDocumentJson,
                   hash: audit.sha256Hash
                }}
                userName="Reviewer"
