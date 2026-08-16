@@ -79,7 +79,7 @@ function Hero() {
         </h1>
         
         <p className="max-w-3xl mx-auto text-lg md:text-xl font-bold text-emerald-950/70 leading-relaxed mb-12">
-          OzikSustain mengautomasi audit Project Design Document (PDD) Anda. Deteksi risiko lingkungan, pastikan kepatuhan regulasi secara deterministik, dan dapatkan sertifikasi tanpa *greenwashing*.
+          OzikSustain mengautomasi audit Project Design Document (PDD) Anda. Deteksi risiko lingkungan, pastikan kepatuhan regulasi secara deterministik, dan dapatkan sertifikasi tanpa greenwashing.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
