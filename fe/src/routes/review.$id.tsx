@@ -35,7 +35,7 @@ function ReviewerWorkspace() {
   const fetchAudit = async () => {
     setLoading(true);
     try {
-      const res = await apiFetch<any>(`/guest/audit/${id}`);
+      const res = await apiFetch<any>(`/audit/${id}`);
       setAudit(res);
     } catch (err: any) {
       toast.error("Gagal mengambil data audit. Anda mungkin tidak memiliki akses.");
