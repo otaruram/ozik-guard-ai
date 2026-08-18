@@ -81,10 +81,17 @@ function Dashboard() {
   const refreshHistory = () => {
     setLoadingHistory(true);
     Promise.all([
-      api.getHistory().then(res => setHistoryData(res.audits || [])).catch(console.error),
+      api.getHistory().then(res => setHistoryData(res.audits || [])).catch(err => {
+        console.error("History fetch error:", err);
+      }),
       api.getMe().then(res => {
         setDbUser(res);
-      }).catch(console.error)
+      }).catch(err => {
+        console.error("User fetch error:", err);
+        if (err.message?.includes("Akun pengguna tidak ditemukan") || err.message?.includes("401")) {
+          signOut().then(() => navigate({ to: "/auth" }));
+        }
+      })
     ]).finally(() => setLoadingHistory(false));
   };
 
