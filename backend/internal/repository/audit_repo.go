@@ -4,6 +4,7 @@ import (
 	"context"
 	"ozikcarbon-backend/domain"
 	"ozikcarbon-backend/prisma/db"
+	"strings"
 )
 
 type AuditRepository interface {
@@ -202,6 +203,7 @@ func (r *auditRepository) GetAuditByIDOrHash(ctx context.Context, idOrHash strin
 		db.ProjectAudit.Or(
 			db.ProjectAudit.ID.Equals(idOrHash),
 			db.ProjectAudit.Sha256Hash.Equals(idOrHash),
+			db.ProjectAudit.ID.StartsWith(strings.ToLower(strings.TrimPrefix(idOrHash, "OZK-"))),
 		),
 	).With(
 		db.ProjectAudit.Issues.Fetch(),
