@@ -25,6 +25,7 @@ type auditService struct {
 	pasalID       PasalIdService
 	llmFactory    LLMFactoryService
 	scoringEngine ScoringEngineService
+	ragService    RAGService
 }
 
 func NewAuditService(
@@ -34,6 +35,7 @@ func NewAuditService(
 	pasalID PasalIdService,
 	llmFactory LLMFactoryService,
 	scoringEngine ScoringEngineService,
+	ragService RAGService,
 ) AuditService {
 	return &auditService{
 		auditRepo:     auditRepo,
@@ -42,6 +44,7 @@ func NewAuditService(
 		pasalID:       pasalID,
 		llmFactory:    llmFactory,
 		scoringEngine: scoringEngine,
+		ragService:    ragService,
 	}
 }
 
@@ -206,31 +209,27 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 	// 2. PII Auto-Masking
 	maskedText := s.piiMasker.Mask(text)
 
-	// 3. Extract keywords and search Pasal.id (live RAG)
-	keywords := extractKeywords(text)
-	var allLaws []PasalIdLawResult
-	for _, q := range keywords {
-		laws, _ := s.pasalID.SearchRegulations(ctx, q, "UU")
-		allLaws = append(allLaws, laws...)
-	}
+	// 3. RAG Semantic Search using pgvector
+	lawContextLines, err := s.ragService.QueryPasalDatabase(ctx, text)
+	if err != nil || len(lawContextLines) == 0 {
+		log.Printf("⚠️ RAG pgvector failed or empty: %v. Falling back to Keyword Pasal.id", err)
+		keywords := extractKeywords(text)
+		var allLaws []PasalIdLawResult
+		for _, q := range keywords {
+			laws, _ := s.pasalID.SearchRegulations(ctx, q, "UU")
+			allLaws = append(allLaws, laws...)
+		}
 
-	// Deduplicate laws
-	seen := make(map[string]bool)
-	var uniqueLaws []PasalIdLawResult
-	for _, l := range allLaws {
-		if !seen[l.ID] {
-			seen[l.ID] = true
-			uniqueLaws = append(uniqueLaws, l)
+		seen := make(map[string]bool)
+		for _, l := range allLaws {
+			if !seen[l.ID] {
+				seen[l.ID] = true
+				lawContextLines = append(lawContextLines, fmt.Sprintf("[%s] (%s): %s", l.Title, l.URL, l.Snippet))
+			}
 		}
 	}
 
-	// Build law context strings for LLM injection
-	var lawContextLines []string
-	for _, l := range uniqueLaws {
-		lawContextLines = append(lawContextLines, fmt.Sprintf("[%s] (%s): %s", l.Title, l.URL, l.Snippet))
-	}
-
-	log.Printf("📚 RAG Context: %d unique laws retrieved for LLM injection", len(uniqueLaws))
+	log.Printf("📚 RAG Context: %d laws retrieved for LLM injection", len(lawContextLines))
 
 	// 4. Send to LLM with injected RAG context
 	prompt := fmt.Sprintf("Analyze this PDD text for compliance:\n\n%s", maskedText)
@@ -324,10 +323,10 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 				// Use first matching law from RAG context
 				matchedLaw := "UU No. 41 Tahun 1999 Pasal 38 (Kehutanan)"
 				lawText := "Penggunaan kawasan hutan untuk kepentingan pembangunan di luar kegiatan kehutanan hanya dapat dilakukan dengan IPPKH."
-				for _, l := range uniqueLaws {
-					if strings.Contains(strings.ToLower(l.Title), "kehutanan") || strings.Contains(strings.ToLower(l.Title), "hutan") {
-						matchedLaw = l.Title
-						lawText = l.Snippet
+				for _, l := range lawContextLines {
+					if strings.Contains(strings.ToLower(l), "kehutanan") || strings.Contains(strings.ToLower(l), "hutan") {
+						matchedLaw = "RAG Context Match"
+						lawText = l
 						break
 					}
 				}
@@ -345,10 +344,10 @@ func (s *auditService) ProcessAudit(ctx context.Context, req *domain.ProcessAudi
 				clauseStatus = "MEDIUM_RISK"
 				matchedLaw := "Peraturan Terkait Perizinan & Dampak Lingkungan"
 				lawText := "Setiap kegiatan wajib mengantongi izin sah sebelum operasi."
-				for _, l := range uniqueLaws {
-					if strings.Contains(strings.ToLower(l.Title), "perizinan") || strings.Contains(strings.ToLower(l.Title), "izin") {
-						matchedLaw = l.Title
-						lawText = l.Snippet
+				for _, l := range lawContextLines {
+					if strings.Contains(strings.ToLower(l), "perizinan") || strings.Contains(strings.ToLower(l), "izin") {
+						matchedLaw = "RAG Context Match"
+						lawText = l
 						break
 					}
 				}

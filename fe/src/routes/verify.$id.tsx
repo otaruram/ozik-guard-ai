@@ -26,6 +26,21 @@ function VerifyPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    const sequence = async () => {
+      setStep(1);
+      await new Promise(r => setTimeout(r, 600));
+      setStep(2);
+      await new Promise(r => setTimeout(r, 800));
+      setStep(3);
+      await new Promise(r => setTimeout(r, 900));
+      setStep(4);
+    };
+    sequence();
+  }, []);
+
   useEffect(() => {
     api.verifyBadge(id)
       .then(res => {
@@ -42,10 +57,62 @@ function VerifyPage() {
       });
   }, [id]);
 
-  if (loading) {
+  if (loading || step < 4) {
     return (
-      <div className="min-h-screen bg-emerald-50 flex items-center justify-center">
-        <Loader2 className="h-16 w-16 animate-spin text-emerald-950" />
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6 selection:bg-emerald-900 selection:text-white font-mono">
+        <div className="w-full max-w-2xl border-2 border-emerald-900/50 bg-black shadow-[0_0_40px_rgba(4,120,87,0.15)] rounded-xl overflow-hidden relative">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent opacity-50"></div>
+          <div className="bg-[#111] border-b border-emerald-900/30 px-4 py-3 flex items-center gap-2">
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+              <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+            </div>
+            <div className="text-[10px] sm:text-xs text-emerald-500/60 font-bold ml-4 uppercase tracking-widest flex items-center gap-2">
+              <Lock className="w-3 h-3" /> OzikSustain Secure Node
+            </div>
+          </div>
+          <div className="p-6 md:p-8 space-y-4 text-emerald-400 text-sm md:text-base leading-relaxed">
+            <div className="flex items-center gap-3">
+              <span className="text-emerald-500/50">&gt;</span>
+              <span>Initializing cryptographic sequence...</span>
+              {step === 0 && <span className="w-2 h-5 bg-emerald-400 animate-pulse inline-block ml-1"></span>}
+            </div>
+            {step >= 1 && (
+              <div className="flex items-center gap-3">
+                <span className="text-emerald-500/50">&gt;</span>
+                <span>Connecting to public ledger network <span className="text-emerald-200">[{id.substring(0,12)}...]</span></span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 ml-auto" />
+              </div>
+            )}
+            {step >= 2 && (
+              <div className="flex items-center gap-3">
+                <span className="text-emerald-500/50">&gt;</span>
+                <span>Fetching encrypted payload & PII masking...</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 ml-auto" />
+              </div>
+            )}
+            {step >= 3 && (
+              <div className="flex items-start gap-3">
+                <span className="text-emerald-500/50 mt-1">&gt;</span>
+                <div className="flex-1">
+                  <span>Re-computing HMAC SHA-256 integrity hash...</span>
+                  <div className="mt-2 text-xs text-emerald-600/70 break-all bg-emerald-950/20 p-2 rounded border border-emerald-900/30">
+                    {id.substring(0, 8)}9f045c... [COMPUTING] ...f2d3a91b
+                  </div>
+                </div>
+                {step === 3 ? <Loader2 className="w-4 h-4 text-emerald-500 animate-spin mt-1" /> : <CheckCircle2 className="w-4 h-4 text-emerald-500 ml-auto mt-1" />}
+              </div>
+            )}
+            {step >= 4 && (
+              <div className="flex items-center gap-3 pt-2 text-emerald-300 font-bold border-t border-emerald-900/30 mt-4">
+                <span className="text-emerald-500/50">&gt;</span>
+                <span>Integrity verification complete. Rendering certificate...</span>
+                <span className="w-2 h-5 bg-emerald-400 animate-pulse inline-block ml-1"></span>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     );
   }

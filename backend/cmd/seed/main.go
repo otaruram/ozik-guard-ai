@@ -2,8 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"os"
+	"strings"
 
+	"github.com/google/uuid"
+	"ozikcarbon-backend/internal/service"
 	"ozikcarbon-backend/prisma/db"
 )
 
@@ -54,15 +59,41 @@ func main() {
 		},
 	}
 
+	sumopodURL := os.Getenv("SUMOPOD_URL")
+	sumopodKey := os.Getenv("SUMOPOD_API_KEY")
+	
+	embeddingSvc := service.NewEmbeddingService(sumopodURL, sumopodKey)
+
 	ctx := context.Background()
 	insertedCount := 0
 
 	for _, law := range laws {
-		_, err := client.RegulasiKnowledgeBase.CreateOne(
-			db.RegulasiKnowledgeBase.RegName.Set(law.RegName),
-			db.RegulasiKnowledgeBase.Article.Set(law.Article),
-			db.RegulasiKnowledgeBase.Content.Set(law.Content),
-			db.RegulasiKnowledgeBase.RiskCategory.Set(db.AuditSeverity(law.RiskCategory)),
+		// Generate Embedding
+		vec, err := embeddingSvc.GenerateEmbedding(ctx, law.Content)
+		if err != nil {
+			log.Printf("⚠️ Failed to generate embedding for %s: %v\n", law.RegName, err)
+			continue
+		}
+
+		// Convert []float32 to string format "[1.2, 3.4, ...]" for pgvector insert
+		var strVec []string
+		for _, v := range vec {
+			strVec = append(strVec, fmt.Sprintf("%f", v))
+		}
+		pgvectorStr := "[" + strings.Join(strVec, ",") + "]"
+
+		id := uuid.New().String()
+
+		// Use Raw Query to insert pgvector
+		rawQuery := `INSERT INTO regulasi_knowledge_base (id, "regName", article, content, embedding, "riskCategory", "createdAt") VALUES ($1, $2, $3, $4, $5::vector, $6, NOW())`
+		_, err = client.Prisma.ExecuteRaw(
+			rawQuery, 
+			id, 
+			law.RegName, 
+			law.Article, 
+			law.Content, 
+			pgvectorStr, 
+			law.RiskCategory,
 		).Exec(ctx)
 
 		if err != nil {
@@ -72,5 +103,5 @@ func main() {
 		insertedCount++
 	}
 
-	log.Printf("✅ Seeding complete. Inserted %d laws.\n", insertedCount)
+	log.Printf("✅ Seeding complete. Inserted %d laws with pgvector embeddings.\n", insertedCount)
 }
