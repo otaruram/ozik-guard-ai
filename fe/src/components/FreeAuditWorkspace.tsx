@@ -31,10 +31,10 @@ export function FreeAuditWorkspace() {
     
     try {
       // Call Backend API
-      const res = await api.guestTeaser({
-        pddText: "SAMPEL_DOKUMEN_TEKS_PANJANG_YANG_AKAN_DIPOTONG_OLEH_BACKEND_KE_3_HALAMAN",
-        fileType: "pdf",
-      });
+      const fd = new FormData();
+      fd.append("pddText", "SAMPEL_DOKUMEN_TEKS_PANJANG_YANG_AKAN_DIPOTONG_OLEH_BACKEND_KE_3_HALAMAN");
+      fd.append("fileType", "pdf");
+      const res = await api.guestTeaser(fd);
       setResult(res);
       setStatus("result");
     } catch (err) {

@@ -41,7 +41,12 @@ func main() {
 	scoringEngine := service.NewScoringEngineService()
 	documentParser := service.NewDocumentParserService()
 	regulasiService := service.NewRegulasiService(client, auditRepo, cfg.SumopodURL, cfg.SumopodKey)
-	auditService := service.NewAuditService(auditRepo, userRepo, piiMasker, pasalID, llmFactory, scoringEngine)
+	
+	// pgvector RAG Dependencies
+	embeddingService := service.NewEmbeddingService(cfg.SumopodURL, cfg.SumopodKey)
+	ragService := service.NewRAGService(client, embeddingService)
+
+	auditService := service.NewAuditService(auditRepo, userRepo, piiMasker, pasalID, llmFactory, scoringEngine, ragService)
 
 	// 4. Handlers (DI)
 	auditHandler := handler.NewAuditHandler(auditService, auditRepo, userRepo, documentParser, emailService)
