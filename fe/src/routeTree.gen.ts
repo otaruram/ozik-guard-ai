@@ -20,6 +20,7 @@ import { Route as PageIdRouteImport } from './routes/page.$id'
 import { Route as ReviewIdRouteImport } from './routes/review.$id'
 import { Route as VerifyIdRouteImport } from './routes/verify.$id'
 import { Route as WorkspaceIdRouteImport } from './routes/workspace.$id'
+import { Route as KycOnboardingRouteImport } from './routes/kyc-onboarding'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -59,6 +60,11 @@ const RegulasiRoute = RegulasiRouteImport.update({
 const PageIdRoute = PageIdRouteImport.update({
   id: '/page/$id',
   path: '/page/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KycOnboardingRoute = KycOnboardingRouteImport.update({
+  id: '/kyc-onboarding',
+  path: '/kyc-onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReviewIdRoute = ReviewIdRouteImport.update({
@@ -224,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegulasiRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kyc-onboarding': {
+      id: '/kyc-onboarding'
+      path: '/kyc-onboarding'
+      fullPath: '/kyc-onboarding'
+      preLoaderRoute: typeof KycOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/page/$id': {
       id: '/page/$id'
       path: '/page/$id'
@@ -263,6 +276,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlaygroundRoute: PlaygroundRoute,
   PricingRoute: PricingRoute,
   RegulasiRoute: RegulasiRoute,
+  KycOnboardingRoute: KycOnboardingRoute,
   PageIdRoute: PageIdRoute,
   ReviewIdRoute: ReviewIdRoute,
   VerifyIdRoute: VerifyIdRoute,

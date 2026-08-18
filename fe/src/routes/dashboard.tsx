@@ -107,9 +107,12 @@ function Dashboard() {
   // KYC Guard: redirect unverified users to KYC onboarding
   useEffect(() => {
     if (dbUser && dbUser.kycStatus === "UNVERIFIED") {
-      navigate({ to: "/kyc-onboarding" as any });
+      const isAdmin = user && ["okitr52@gmail.com", "okitarunaramadhan@gmail.com"].includes(user.email || "");
+      if (!isAdmin && dbUser.role !== "ADMIN") {
+        navigate({ to: "/kyc-onboarding" as any });
+      }
     }
-  }, [dbUser, navigate]);
+  }, [dbUser, navigate, user]);
 
   const handleLogout = async () => {
     await signOut();
