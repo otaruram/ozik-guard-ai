@@ -70,27 +70,27 @@ function Hero() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(2,44,34,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(2,44,34,0.05)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_80%)]" />
       <div className="max-w-7xl mx-auto text-center relative z-10">
         <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-emerald-950 bg-emerald-100 text-emerald-950 font-black uppercase tracking-widest text-xs mb-8 shadow-[4px_4px_0_rgba(2,44,34,1)]">
-          <Sparkles className="h-4 w-4" /> Smart Greentech & Legaltech Aggregator
+          <Sparkles className="h-4 w-4" /> AI-Powered Green Supply Chain Compliance
         </div>
         
         <h1 className="text-5xl md:text-7xl font-black text-emerald-950 tracking-tight leading-[1.1] mb-8 uppercase">
-          Validasi Proyek Energi <br className="hidden md:block" />
-          <span className="text-emerald-600">Dalam Hitungan Detik</span>
+          Verify Vendor ESG Compliance <br className="hidden md:block" />
+          <span className="text-emerald-600">In Seconds</span>
         </h1>
         
         <p className="max-w-3xl mx-auto text-lg md:text-xl font-bold text-emerald-950/70 leading-relaxed mb-12">
-          OzikSustain mengautomasi audit Project Design Document (PDD) Anda. Deteksi risiko lingkungan, pastikan kepatuhan regulasi secara deterministik, dan dapatkan sertifikasi tanpa greenwashing.
+          OzikSustain automates the audit of your vendors' environmental documents. Detect compliance risks, ensure alignment with green regulations, and secure your supply chain without greenwashing.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
           <Link to={user ? "/dashboard" : "/auth"}>
             <Button size="lg" className="h-16 px-10 rounded-none bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest text-base transition-all hover:translate-y-1 hover:translate-x-1 shadow-[6px_6px_0_rgba(2,44,34,1)] border-4 border-emerald-950 hover:shadow-none">
-              {user ? "Buka Dashboard" : <><Lock className="mr-2 h-5 w-5 inline" /> Login untuk Audit</>} <ArrowRight className="ml-2 h-5 w-5 inline" />
+              {user ? "Open Dashboard" : <><Lock className="mr-2 h-5 w-5 inline" /> Login to Audit</>} <ArrowRight className="ml-2 h-5 w-5 inline" />
             </Button>
           </Link>
           <Link to="/playground">
             <Button size="lg" variant="outline" className="h-16 px-10 rounded-none border-4 border-emerald-950 bg-white hover:bg-emerald-50 text-emerald-950 font-black uppercase tracking-widest text-base transition-all hover:translate-y-1 hover:translate-x-1 shadow-[6px_6px_0_rgba(2,44,34,1)] hover:shadow-none">
-              <Code2 className="mr-2 h-5 w-5" /> Dokumentasi API
+              <Code2 className="mr-2 h-5 w-5" /> API Documentation
             </Button>
           </Link>
         </div>
@@ -110,10 +110,10 @@ function AboutPlatform() {
               <Cpu className="h-4 w-4" /> Enterprise B2B SaaS
             </div>
             <h2 className="text-3xl md:text-5xl font-black uppercase text-emerald-950 tracking-tight mb-6">
-              Tata Kelola Pengadaan & Kepatuhan ESG
+              Sustainable Procurement & ESG Governance
             </h2>
             <p className="text-lg font-bold text-emerald-950/70 leading-relaxed mb-8 text-justify">
-              OzikSustain adalah platform B2B Software-as-a-Service (SaaS) penunjang tata kelola pengadaan (procurement) dan kepatuhan ESG korporat. Kombinasi kecepatan AI, kontrol pakar manusia, dan keamanan Web3 ini secara signifikan memangkas biaya operasional, mempercepat verifikasi mitra, serta memitigasi risiko hukum perusahaan.
+              OzikSustain is an Enterprise B2B SaaS platform that strengthens sustainable procurement and ESG compliance. By combining AI speed, expert human control, and cryptographic security, we significantly cut operational costs, accelerate vendor verification, and mitigate legal risks in your supply chain.
             </p>
           </div>
           
@@ -121,19 +121,19 @@ function AboutPlatform() {
             <div className="p-6 bg-white border-4 border-emerald-950 shadow-[8px_8px_0_rgba(2,44,34,1)] relative transition-transform hover:-translate-y-1">
               <div className="absolute -top-5 -left-5 w-10 h-10 bg-[#FACC15] text-emerald-950 flex items-center justify-center font-black text-xl border-4 border-emerald-950 shadow-sm">1</div>
               <h3 className="text-xl font-black uppercase text-emerald-950 mb-3 flex items-center gap-3"><Zap className="h-6 w-6 text-emerald-600" /> AI Automation</h3>
-              <p className="text-emerald-950/70 font-bold text-sm leading-relaxed text-justify">Mengotomatisasi tahap awal audit dokumen vendor menggunakan AI untuk mengidentifikasi risiko lingkungan dan regulasi secara cepat.</p>
+              <p className="text-emerald-950/70 font-bold text-sm leading-relaxed text-justify">Automate the initial document audit of vendors using AI to quickly identify environmental and regulatory risks.</p>
             </div>
             
             <div className="p-6 bg-white border-4 border-emerald-950 shadow-[8px_8px_0_rgba(2,44,34,1)] relative ml-0 md:ml-8 transition-transform hover:-translate-y-1">
               <div className="absolute -top-5 -left-5 w-10 h-10 bg-emerald-400 text-emerald-950 flex items-center justify-center font-black text-xl border-4 border-emerald-950 shadow-sm">2</div>
               <h3 className="text-xl font-black uppercase text-emerald-950 mb-3 flex items-center gap-3"><CheckCircle2 className="h-6 w-6 text-emerald-600" /> Human-in-the-Loop (HITL)</h3>
-              <p className="text-emerald-950/70 font-bold text-sm leading-relaxed text-justify">Menjamin akuntabilitas tingkat enterprise dengan memberikan kontrol penuh bagi auditor internal perusahaan untuk meninjau dan memvalidasi anotasi AI.</p>
+              <p className="text-emerald-950/70 font-bold text-sm leading-relaxed text-justify">Ensure enterprise-grade accountability by giving your internal auditors full control to review and validate AI annotations.</p>
             </div>
             
             <div className="p-6 bg-white border-4 border-emerald-950 shadow-[8px_8px_0_rgba(2,44,34,1)] relative ml-0 md:ml-16 transition-transform hover:-translate-y-1">
               <div className="absolute -top-5 -left-5 w-10 h-10 bg-emerald-950 text-white flex items-center justify-center font-black text-xl border-4 border-emerald-950 shadow-sm">3</div>
-              <h3 className="text-xl font-black uppercase text-emerald-950 mb-3 flex items-center gap-3"><ShieldCheck className="h-6 w-6 text-emerald-600" /> Web3 Cryptographic Seal</h3>
-              <p className="text-emerald-950/70 font-bold text-sm leading-relaxed text-justify">Setelah disahkan oleh pakar, hasil evaluasi disegel secara kriptografis menggunakan blockchain (Ethereum Attestation Service) agar anti-manipulasi (tamper-proof).</p>
+              <h3 className="text-xl font-black uppercase text-emerald-950 mb-3 flex items-center gap-3"><ShieldCheck className="h-6 w-6 text-emerald-600" /> Cryptographic Verification Seal</h3>
+              <p className="text-emerald-950/70 font-bold text-sm leading-relaxed text-justify">After expert validation, the evaluation results are cryptographically sealed to ensure they are tamper-proof and authentic.</p>
             </div>
           </div>
         </div>
@@ -146,23 +146,23 @@ function Features() {
   const features = [
     {
       icon: Globe,
-      title: "Verifikasi Spasial Lingkungan",
-      desc: "Integrasi mendalam untuk memvalidasi koordinat dan area proyek dari risiko deforestasi atau tumpang tindih lahan.",
+      title: "Spatial Environmental Verification",
+      desc: "Deep integration to validate project coordinates and land areas against deforestation risks.",
     },
     {
       icon: Scale,
-      title: "Kepatuhan Regulasi Pasal.id",
-      desc: "Menyisir dokumen menggunakan AI deterministik untuk memastikan kepatuhan penuh terhadap UU & PP di Indonesia.",
+      title: "Automated Regulatory Compliance",
+      desc: "Comb through vendor documents using deterministic AI to ensure full compliance with national environmental laws.",
     },
     {
       icon: QrCode,
       title: "Public QR Verification",
-      desc: "Hasilkan lencana QR interaktif yang bisa disematkan pada laporan keberlanjutan Anda untuk transparansi publik.",
+      desc: "Generate interactive QR badges that can be embedded in your sustainability reports for public transparency.",
     },
     {
       icon: Zap,
-      title: "Scoring Engine Terpadu",
-      desc: "Sistem penilaian gabungan dari aspek kelayakan energi, lingkungan, dan legalitas yang bebas interpretasi bias.",
+      title: "Unified ESG Scoring Engine",
+      desc: "A combined scoring system for energy feasibility, environmental impact, and legality, free from human bias.",
     },
   ];
 
@@ -171,9 +171,9 @@ function Features() {
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="text-center mb-20">
           <h2 className="text-3xl md:text-5xl font-black uppercase text-emerald-950 tracking-tight mb-4">
-            Keunggulan OzikSustain
+            Why OzikSustain?
           </h2>
-          <p className="text-emerald-950/70 font-bold max-w-2xl mx-auto">Kami menggabungkan kekuatan AI dan basis data hukum untuk mencegah klaim keliru.</p>
+          <p className="text-emerald-950/70 font-bold max-w-2xl mx-auto">We combine the power of AI and legal databases to prevent false environmental claims in your supply chain.</p>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -209,9 +209,9 @@ function VerificationChecker() {
         <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 border-4 border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,1)] mb-8">
           <ShieldCheck className="w-8 h-8 text-emerald-950" />
         </div>
-        <h2 className="text-3xl md:text-5xl font-black uppercase text-emerald-950 mb-4">Verifikasi Sertifikat</h2>
+        <h2 className="text-3xl md:text-5xl font-black uppercase text-emerald-950 mb-4">Verify Vendor Certificate</h2>
         <p className="text-emerald-950/70 font-bold mb-10 text-lg max-w-2xl mx-auto">
-          Masukkan ID Audit atau SHA-256 Hash dari dokumen untuk memverifikasi keaslian Green Badge OzikSustain.
+          Enter the Audit ID or document SHA-256 Hash to verify the authenticity of the vendor's Green Badge.
         </p>
         
         <form onSubmit={handleVerify} className="max-w-2xl mx-auto flex flex-col sm:flex-row gap-4">
@@ -220,12 +220,12 @@ function VerificationChecker() {
             <Input 
               value={auditId}
               onChange={(e) => setAuditId(e.target.value)}
-              placeholder="Contoh: 123e4567-e89b-12d3-a456-426614174000" 
+              placeholder="Example: 123e4567-e89b-12d3-a456-426614174000" 
               className="pl-12 h-16 border-4 border-emerald-950 rounded-none font-bold text-emerald-950 focus-visible:ring-0 shadow-[6px_6px_0_rgba(2,44,34,1)] bg-white text-lg" 
             />
           </div>
           <Button type="submit" className="h-16 px-10 rounded-none bg-emerald-950 hover:bg-emerald-900 text-white font-black uppercase tracking-widest text-lg border-4 border-emerald-950 shadow-[6px_6px_0_rgba(16,185,129,1)] transition-transform hover:translate-y-1 hover:translate-x-1 hover:shadow-none">
-            Cari Dokumen
+            Search Document
           </Button>
         </form>
       </div>
@@ -235,16 +235,16 @@ function VerificationChecker() {
 
 function HowItWorks() {
   const steps = [
-    { num: "01", title: "Unggah PDD", desc: "Berikan file proposal / dokumen desain proyek hijau Anda." },
-    { num: "02", title: "AI Menganalisis", desc: "Kami mengekstrak klaim energi, cek regulasi, dan verifikasi lokasi." },
-    { num: "03", title: "Terima Sertifikat", desc: "Dapatkan Green Badge, skor kelayakan, dan kode QR unik." },
+    { num: "01", title: "Upload Documents", desc: "Vendors submit their environmental permits and ESG reports." },
+    { num: "02", title: "AI Analysis", desc: "We extract claims, check regulations, and verify spatial data instantly." },
+    { num: "03", title: "Receive Badge", desc: "Get a verified Green Badge, compliance score, and a unique cryptographic QR." },
   ];
   return (
     <section id="how" className="py-24 relative bg-emerald-950 text-white border-y-4 border-emerald-950">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="text-center mb-16 relative z-10">
-          <h2 className="text-3xl md:text-5xl font-black uppercase mb-4">Cara Kerja Kami</h2>
-          <p className="text-white/70 font-bold">Proses otomatis tanpa intervensi manusia.</p>
+          <h2 className="text-3xl md:text-5xl font-black uppercase mb-4">How It Works</h2>
+          <p className="text-white/70 font-bold">Automated vendor verification process.</p>
         </div>
         
         <div className="grid md:grid-cols-3 gap-10 relative z-10">
@@ -269,53 +269,53 @@ function Pricing() {
     <section id="pricing" className="py-24 relative bg-white">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-black uppercase text-emerald-950 mb-4">Skema API Fleksibel</h2>
-          <p className="text-emerald-950/70 font-bold">Pilih paket sesuai dengan jumlah audit dan skala proyek Anda.</p>
+          <h2 className="text-3xl md:text-5xl font-black uppercase text-emerald-950 mb-4">Flexible API Plans</h2>
+          <p className="text-emerald-950/70 font-bold">Choose a plan based on your supply chain scale and audit volume.</p>
         </div>
         
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {/* Plan 1 */}
           <div className="p-8 bg-emerald-50 border-4 border-emerald-950 shadow-[8px_8px_0_rgba(2,44,34,1)] flex flex-col">
-            <div className="text-emerald-700 font-black mb-2 uppercase tracking-wide text-xs">Eceran</div>
+            <div className="text-emerald-700 font-black mb-2 uppercase tracking-wide text-xs">Retail</div>
             <h3 className="text-2xl font-black uppercase text-emerald-950 mb-4">Single Audit</h3>
-            <div className="text-4xl font-black text-emerald-950 mb-1">Rp 99rb</div>
-            <div className="text-emerald-950/60 font-bold text-sm mb-6">/ 1x Audit Penuh</div>
+            <div className="text-4xl font-black text-emerald-950 mb-1">$9</div>
+            <div className="text-emerald-950/60 font-bold text-sm mb-6">/ 1 Full Audit</div>
             <ul className="space-y-4 text-sm font-bold text-emerald-950/80 mb-8 flex-1">
-              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0"/> Laporan PDF Komprehensif</li>
-              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0"/> Akses Pasal.id Terbatas</li>
+              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0"/> Comprehensive PDF Report</li>
+              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0"/> Limited Law Database Access</li>
             </ul>
-            <Button className="w-full rounded-none border-2 border-emerald-950 bg-white hover:bg-emerald-100 text-emerald-950 font-black uppercase shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none">Beli Kredit</Button>
+            <Button className="w-full rounded-none border-2 border-emerald-950 bg-white hover:bg-emerald-100 text-emerald-950 font-black uppercase shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none">Buy Credits</Button>
           </div>
 
           {/* Plan 2 */}
           <div className="p-8 bg-yellow-400 border-4 border-emerald-950 shadow-[12px_12px_0_rgba(2,44,34,1)] flex flex-col relative transform md:-translate-y-4">
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-950 text-white font-black uppercase px-4 py-1 text-xs border-2 border-emerald-950">
-              PALING POPULER
+              MOST POPULAR
             </div>
-            <div className="text-emerald-950 font-black mb-2 uppercase tracking-wide text-xs">UMKM & B2B</div>
+            <div className="text-emerald-950 font-black mb-2 uppercase tracking-wide text-xs">SME & B2B</div>
             <h3 className="text-2xl font-black uppercase text-emerald-950 mb-4">B2B Eco-Basic</h3>
-            <div className="text-4xl font-black text-emerald-950 mb-1">Rp 499rb</div>
-            <div className="text-emerald-950/70 font-bold text-sm mb-6">/ bulan</div>
+            <div className="text-4xl font-black text-emerald-950 mb-1">$49</div>
+            <div className="text-emerald-950/70 font-bold text-sm mb-6">/ month</div>
             <ul className="space-y-4 text-sm font-bold text-emerald-950 mb-8 flex-1">
-              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-950 shrink-0"/> 10 Kredit Audit per Bulan</li>
-              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-950 shrink-0"/> Verified Green Badge Premium</li>
-              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-950 shrink-0"/> Akses API Terbuka</li>
+              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-950 shrink-0"/> 10 Audit Credits per Month</li>
+              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-950 shrink-0"/> Premium Verified Green Badge</li>
+              <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-950 shrink-0"/> Open API Access</li>
             </ul>
-            <Button className="w-full rounded-none bg-emerald-950 hover:bg-emerald-800 text-white font-black uppercase border-2 border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none">Mulai Percobaan</Button>
+            <Button className="w-full rounded-none bg-emerald-950 hover:bg-emerald-800 text-white font-black uppercase border-2 border-emerald-950 shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none">Start Trial</Button>
           </div>
 
           {/* Plan 3 */}
           <div className="p-8 bg-emerald-50 border-4 border-emerald-950 shadow-[8px_8px_0_rgba(2,44,34,1)] flex flex-col">
-            <div className="text-emerald-700 font-black mb-2 uppercase tracking-wide text-xs">Korporat</div>
+            <div className="text-emerald-700 font-black mb-2 uppercase tracking-wide text-xs">Corporate</div>
             <h3 className="text-2xl font-black uppercase text-emerald-950 mb-4">Enterprise</h3>
-            <div className="text-4xl font-black text-emerald-950 mb-1">Kustom</div>
-            <div className="text-emerald-950/60 font-bold text-sm mb-6">/ Skema API Tinggi</div>
+            <div className="text-4xl font-black text-emerald-950 mb-1">Custom</div>
+            <div className="text-emerald-950/60 font-bold text-sm mb-6">/ High Volume API</div>
             <ul className="space-y-4 text-sm font-bold text-emerald-950/80 mb-8 flex-1">
               <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0"/> Unlimited API Calls</li>
               <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0"/> SLA & Dedicated Support</li>
               <li className="flex gap-3 items-start"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0"/> Whitelabel Report</li>
             </ul>
-            <Button className="w-full rounded-none border-2 border-emerald-950 bg-white hover:bg-emerald-100 text-emerald-950 font-black uppercase shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none">Hubungi Penjualan</Button>
+            <Button className="w-full rounded-none border-2 border-emerald-950 bg-white hover:bg-emerald-100 text-emerald-950 font-black uppercase shadow-[4px_4px_0_rgba(2,44,34,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none">Contact Sales</Button>
           </div>
         </div>
       </div>
@@ -328,13 +328,13 @@ function FinalCTA() {
   return (
     <section className="py-24 relative overflow-hidden bg-emerald-100 border-y-4 border-emerald-950">
       <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-        <h2 className="text-4xl md:text-5xl font-black uppercase text-emerald-950 mb-6">Amankan Reputasi ESG Anda</h2>
+        <h2 className="text-4xl md:text-5xl font-black uppercase text-emerald-950 mb-6">Secure Your ESG Reputation</h2>
         <p className="text-lg font-bold text-emerald-950/70 mb-10">
-          OzikSustain telah digunakan oleh puluhan UMKM dan korporat untuk mempercepat audit berkelanjutan dan mencegah greenwashing.
+          OzikSustain is trusted by enterprises to accelerate sustainable audits and prevent greenwashing in their supply chains.
         </p>
         <Link to={user ? "/dashboard" : "/auth"}>
           <Button size="lg" className="h-16 px-10 rounded-none bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest text-lg transition-transform hover:-translate-y-1 hover:-translate-x-1 shadow-[8px_8px_0_rgba(2,44,34,1)] border-4 border-emerald-950">
-            {user ? "Buka Dashboard" : "Mulai Gratis Sekarang"}
+            {user ? "Open Dashboard" : "Start for Free Now"}
           </Button>
         </Link>
       </div>
@@ -355,13 +355,13 @@ function Footer() {
               <span className="text-lg font-black uppercase tracking-widest text-emerald-950">OzikSustain</span>
             </Link>
             <p className="text-sm font-bold text-emerald-950/70 mb-6">
-              Platform agregator kepatuhan hukum dan kelayakan energi hijau terdepan.
+              The leading AI aggregator for sustainable supply chain compliance and green energy laws.
             </p>
           </div>
           <div>
             <h4 className="text-sm font-black uppercase text-emerald-950 mb-4 tracking-widest">Platform</h4>
             <ul className="space-y-3 text-sm font-bold text-emerald-950/70">
-              <li><Link to="/auth" className="hover:text-emerald-600">Audit PDD</Link></li>
+              <li><Link to="/auth" className="hover:text-emerald-600">Vendor Audit</Link></li>
               <li><Link to="/playground" className="hover:text-emerald-600">API Documentation</Link></li>
               <li><Link to="/" className="hover:text-emerald-600">Pricing</Link></li>
             </ul>
