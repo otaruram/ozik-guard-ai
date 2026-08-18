@@ -142,8 +142,8 @@ function Dashboard() {
       >
         <div className="h-20 flex items-center px-6 border-b-4 border-emerald-950 shrink-0 bg-emerald-950 text-white">
           <Link to="/" className="flex items-center gap-3">
-            <div className="grid h-9 w-9 place-items-center rounded-sm bg-emerald-950 text-white shadow-[2px_2px_0_rgba(2,44,34,1)] overflow-hidden">
-              <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-cover" />
+            <div className="grid h-12 w-12 place-items-center bg-transparent overflow-hidden">
+              <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-contain mix-blend-multiply" />
             </div>
             <span className="text-[17px] font-black uppercase tracking-widest">OzikSustain</span>
           </Link>
