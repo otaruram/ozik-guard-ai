@@ -83,8 +83,8 @@ export function HistoriAudit({ history, loading, refreshHistory }: HistoriAuditP
     name: item.projectName,
     date: new Date(item.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
     score: item.feasibilityScore,
-    status: item.reviewStatus === 'APPROVED' ? 'Verified Compliant' : (item.reviewStatus === 'REJECTED' ? 'Rejected' : (item.reviewStatus === 'NEEDS_REVISION' ? 'Needs Revision (Reviewer)' : (item.feasibilityScore >= 80 ? 'Pending Review' : (item.feasibilityScore >= 60 ? 'Pending Review (Medium Risk)' : 'Pending Review (High Risk)')))),
-    color: item.reviewStatus === 'APPROVED' ? 'emerald' : (item.feasibilityScore >= 80 ? 'emerald' : (item.feasibilityScore >= 60 ? 'yellow' : 'red')),
+    status: item.reviewStatus === 'APPROVED' ? 'Verified Compliant' : (item.reviewStatus === 'REJECTED' ? 'Rejected (Integrity Violation)' : (item.reviewStatus === 'NEEDS_REVISION' ? 'Needs Revision (Reviewer)' : (item.feasibilityScore >= 80 ? 'Pending Review' : (item.feasibilityScore >= 60 ? 'Pending Review (Medium Risk)' : 'Pending Review (High Risk)')))),
+    color: item.reviewStatus === 'APPROVED' ? 'emerald' : (item.reviewStatus === 'REJECTED' ? 'red' : (item.feasibilityScore >= 80 ? 'emerald' : (item.feasibilityScore >= 60 ? 'yellow' : 'red'))),
     reviewStatus: item.reviewStatus,
     code: `OZK-${item.id.substring(0, 8).toUpperCase()}`,
   }));

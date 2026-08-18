@@ -5,31 +5,34 @@ import { cn } from "@/lib/utils";
 export function PaketPricing() {
   const plans = [
     {
-      name: "Free (Starter)",
-      price: "Gratis",
-      period: "",
-      desc: "Evaluasi personal, 3 kredit gratis untuk UI & API OzikSustain.",
-      button: "Saat Ini Aktif",
+      name: "Pay-Per-Audit",
+      price: "$9",
+      period: "/ dokumen",
+      desc: "Eceran untuk UMKM. Tidak perlu langganan, bayar hanya saat Anda butuh sertifikat.",
+      button: "Beli Kredit",
       active: true,
-      highlight: false
+      highlight: false,
+      features: ["Sertifikat QR Kriptografi", "Laporan Audit PDF", "Hanya 1 Dokumen"]
     },
     {
-      name: "Developer (Pro)",
-      price: "Rp 499rb",
+      name: "SME Dashboard",
+      price: "$49",
       period: "/ bulan",
-      desc: "100 Kredit Audit/API per bulan, Lencana QR Publik, Support Email.",
+      desc: "Paket menengah (Eco-Basic) dengan akses 10x Audit per bulan di antarmuka web.",
       button: "Langganan Sekarang",
       active: false,
-      highlight: true
+      highlight: true,
+      features: ["10 Kredit/Bulan", "PII Auto-Masking", "Verifikasi Spasial"]
     },
     {
-      name: "Enterprise",
-      price: "Rp 2.499rb",
+      name: "Premium API",
+      price: "$999",
       period: "/ bulan",
-      desc: "Unlimited Audit, Private VPC, SSO, 24/7 Dedicated Support.",
+      desc: "Integrasi sistem backend (Enterprise/B2G) ke ERP untuk ratusan dokumen seketika.",
       button: "Hubungi Sales",
       active: false,
-      highlight: false
+      highlight: false,
+      features: ["Unlimited API Requests", "Private VPC", "Dedicated Support"]
     }
   ];
 
@@ -55,7 +58,15 @@ export function PaketPricing() {
               <span className="text-4xl font-black tracking-tight text-emerald-950">{p.price}</span>
             </div>
             <div className="text-xs font-black uppercase tracking-widest text-emerald-950/60 mb-8">{p.period}</div>
-            <p className="text-sm mb-10 flex-1 font-bold text-emerald-950/80 leading-relaxed">{p.desc}</p>
+            <p className="text-sm mb-6 font-bold text-emerald-950/80 leading-relaxed">{p.desc}</p>
+            <ul className="mb-10 space-y-3 flex-1">
+              {p.features?.map((f, idx) => (
+                <li key={idx} className="flex items-center gap-2 text-sm font-bold text-emerald-950">
+                  <div className="bg-emerald-100 p-1 rounded-full"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-700"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                  {f}
+                </li>
+              ))}
+            </ul>
             <Button 
               className={cn(
                 "w-full h-14 font-black border-4 uppercase tracking-widest rounded-none transition-all",
