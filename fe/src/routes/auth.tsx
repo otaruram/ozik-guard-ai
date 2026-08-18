@@ -61,8 +61,8 @@ function AuthPage() {
 
         <div className="relative z-10">
           <Link to="/" className="inline-flex items-center gap-3 group">
-            <span className="grid h-12 w-12 place-items-center rounded-sm bg-white text-emerald-950 transition-transform group-hover:scale-105 overflow-hidden">
-              <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-cover" />
+            <span className="grid h-16 w-16 place-items-center bg-transparent transition-transform group-hover:scale-105 overflow-hidden">
+              <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-contain mix-blend-screen" />
             </span>
             <div className="flex flex-col leading-none">
               <span className="text-xl font-black tracking-widest uppercase">OzikSustain</span>
@@ -104,8 +104,8 @@ function AuthPage() {
         <div className="w-full max-w-[420px]">
           <div className="lg:hidden mb-10 flex justify-center">
             <Link to="/" className="inline-flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-sm bg-emerald-950 text-white shadow-[4px_4px_0_rgba(2,44,34,1)] overflow-hidden">
-                <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-cover" />
+              <span className="grid h-14 w-14 place-items-center bg-transparent overflow-hidden">
+                <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-contain mix-blend-multiply" />
               </span>
               <span className="text-xl font-black tracking-widest uppercase text-emerald-950">OzikSustain</span>
             </Link>

@@ -366,8 +366,8 @@ function Footer() {
         <div className="grid gap-12 md:grid-cols-4 mb-16">
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center gap-3 mb-6 group">
-              <div className="w-10 h-10 rounded-sm bg-white flex items-center justify-center overflow-hidden border-2 border-emerald-950">
-                <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+              <div className="w-14 h-14 bg-transparent flex items-center justify-center overflow-hidden">
+                <img src="/logo.png" alt="Logo" className="w-full h-full object-contain mix-blend-multiply" />
               </div>
               <span className="text-lg font-black uppercase tracking-widest text-emerald-950">OzikSustain</span>
             </Link>
