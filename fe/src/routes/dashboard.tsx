@@ -109,7 +109,7 @@ function Dashboard() {
     if (dbUser && dbUser.kycStatus === "UNVERIFIED") {
       const isAdmin = user && ["okitr52@gmail.com", "okitarunaramadhan@gmail.com"].includes(user.email || "");
       if (!isAdmin && dbUser.role !== "ADMIN") {
-        navigate({ to: "/kyc-onboarding" as any });
+        navigate({ to: "/kyc-onboarding" });
       }
     }
   }, [dbUser, navigate, user]);
