@@ -25,6 +25,7 @@ function VerifyPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [errorType, setErrorType] = useState<string | null>(null);
 
   const [step, setStep] = useState(0);
 
@@ -44,8 +45,12 @@ function VerifyPage() {
   useEffect(() => {
     api.verifyBadge(id)
       .then(res => {
-        if (!res || res.status === "INVALID" || res.status === "REJECTED" || res.error || res.valid === false) {
+        if (!res || res.error) {
           setError(true);
+          setErrorType(res?.error || "UNKNOWN");
+        } else if (res.status === "INVALID" || res.status === "REJECTED" || res.valid === false) {
+          setError(true);
+          setErrorType("DATA_TAMPERED");
         } else {
           setData(res);
         }
@@ -53,6 +58,7 @@ function VerifyPage() {
       })
       .catch(() => {
         setError(true);
+        setErrorType("NETWORK_ERROR");
         setLoading(false);
       });
   }, [id]);
@@ -118,6 +124,32 @@ function VerifyPage() {
   }
 
   if (error) {
+    if (errorType === "BADGE_NOT_FOUND" || errorType === "NETWORK_ERROR" || errorType === "UNKNOWN") {
+      return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6 selection:bg-gray-900 selection:text-white">
+          <div className="max-w-2xl w-full border-8 border-gray-400 bg-white shadow-[16px_16px_0_rgba(156,163,175,1)] text-center p-12">
+            <Globe className="h-24 w-24 mx-auto text-gray-400 mb-8" />
+            <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-gray-700 mb-4">
+              Badge Not Found
+            </h1>
+            <p className="text-lg md:text-xl font-bold text-gray-600 mb-8 px-4 border-l-4 border-gray-400 ml-4">
+              The verification badge you are looking for does not exist or has not been issued yet.
+            </p>
+            <div className="flex justify-center mb-8">
+              <Badge className="bg-gray-500 text-white font-black uppercase tracking-widest px-6 py-3 rounded-none text-lg hover:bg-gray-600">
+                Status: UNKNOWN
+              </Badge>
+            </div>
+            <Link to="/">
+              <Button className="rounded-none border-2 border-gray-900 bg-gray-50 text-gray-900 hover:bg-gray-200 font-black uppercase tracking-widest w-full max-w-sm h-14">
+                Return to OzikSustain
+              </Button>
+            </Link>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen bg-emerald-50 flex items-center justify-center p-6 selection:bg-red-900 selection:text-white">
         <div className="max-w-2xl w-full border-8 border-red-700 bg-white shadow-[16px_16px_0_rgba(185,28,28,1)] text-center p-12">
