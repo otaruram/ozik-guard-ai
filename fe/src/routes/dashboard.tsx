@@ -100,7 +100,7 @@ function Dashboard() {
   // KYC Guard: redirect unverified users to KYC onboarding
   useEffect(() => {
     if (dbUser && dbUser.kycStatus === "UNVERIFIED") {
-      navigate({ to: "/kyc-onboarding" });
+      navigate({ to: "/kyc-onboarding" as any });
     }
   }, [dbUser, navigate]);
 

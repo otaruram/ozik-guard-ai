@@ -8,7 +8,7 @@ import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth-context";
 
-export const Route = createFileRoute("/kyc-onboarding")({
+export const Route = createFileRoute("/kyc-onboarding" as any)({
   component: KycOnboarding,
 });
 
