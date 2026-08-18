@@ -63,8 +63,8 @@ function KycOnboarding() {
       <div className="w-full max-w-xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-emerald-950 text-white mb-6 border-4 border-emerald-950 shadow-[8px_8px_0_rgba(16,185,129,1)]">
-            <ShieldCheck className="h-10 w-10" />
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-transparent mb-6">
+            <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-contain mix-blend-multiply scale-125" />
           </div>
           <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-emerald-950 mb-2">
             Verifikasi Identitas
