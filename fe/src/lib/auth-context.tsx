@@ -47,9 +47,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setSession(null);
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.warn("Supabase sign out error:", err);
+    } finally {
+      setUser(null);
+      setSession(null);
+      // Force clear local storage to break any infinite redirect loops
+      localStorage.removeItem('sb-' + import.meta.env.VITE_SUPABASE_PROJECT_ID + '-auth-token');
+      // If we don't have project ID, just clear everything matching sb-
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('sb-')) {
+          localStorage.removeItem(key);
+        }
+      });
+    }
   };
 
   return (
