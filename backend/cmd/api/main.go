@@ -90,6 +90,7 @@ func main() {
 	protected.Put("/user/me", userHandler.UpdateMe)
 	protected.Put("/user/me/notifications", userHandler.UpdateNotifications)
 	protected.Post("/user/api-key/regenerate", userHandler.RegenerateAPIKey)
+	protected.Post("/user/kyc", userHandler.SubmitKyc)
 
 	// Audit (Credit-gated for full process)
 	protected.Post("/audit/full-process", middleware.CreditMiddleware(userRepo, cfg), auditHandler.ProcessAudit)
@@ -106,6 +107,7 @@ func main() {
 	admin.Put("/users/:id/ban", adminHandler.ToggleBanUser)
 	admin.Put("/users/:id/role", adminHandler.UpdateUserRole)
 	admin.Get("/users/:id/history", adminHandler.GetUserHistory)
+	admin.Get("/kyc-queue", adminHandler.GetKycQueue)
 
 	// Reviewer Routes
 	reviewer := v1.Group("/reviewer", middleware.SupabaseAuthMiddleware(cfg, userRepo, emailService), middleware.ReviewerMiddleware(cfg, userRepo))

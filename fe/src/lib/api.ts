@@ -72,4 +72,9 @@ export const api = {
   adminUpdateRole: (id: string, role: string) =>
     apiFetch<any>(`/admin/users/${id}/role`, { method: "PUT", body: JSON.stringify({ role }) }),
   adminGetUserHistory: (id: string) => apiFetch<{ history: any[] }>(`/admin/users/${id}/history`),
+  adminGetKycQueue: () => apiFetch<{ queue: any[] }>("/admin/kyc-queue"),
+
+  // KYC
+  submitKyc: (data: { company: string; nib: string; industry: string }) =>
+    apiFetch<any>("/user/kyc", { method: "POST", body: JSON.stringify(data) }),
 };

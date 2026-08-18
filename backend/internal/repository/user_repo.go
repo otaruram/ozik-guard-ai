@@ -18,6 +18,8 @@ type UserRepository interface {
 	UpdateNotifications(ctx context.Context, id string, req *domain.UpdateNotificationRequest) error
 	GetAllUsers(ctx context.Context) ([]domain.User, error)
 	UpdateUserStatus(ctx context.Context, id string, credits int, isBanned bool, role string) error
+	SubmitKyc(ctx context.Context, id string, req *domain.KycSubmitRequest) error
+	GetKycQueue(ctx context.Context) ([]domain.User, error)
 }
 
 type userRepository struct {
@@ -58,6 +60,7 @@ func (r *userRepository) GetByID(ctx context.Context, id string) (*domain.User, 
 		NotifyRegulation: record.NotifyRegulation,
 		Role:             record.Role,
 		IsBanned:         record.IsBanned,
+		KycStatus:        record.KycStatus,
 	}, nil
 }
 
@@ -119,6 +122,7 @@ func (r *userRepository) UpsertFromGoogle(ctx context.Context, user *domain.User
 	user.NotifyRegulation = record.NotifyRegulation
 	user.Role = record.Role
 	user.IsBanned = record.IsBanned
+	user.KycStatus = record.KycStatus
 	return user, isNew, nil
 }
 
@@ -249,4 +253,54 @@ func (r *userRepository) UpdateUserStatus(ctx context.Context, id string, credit
 		db.User.Role.Set(role),
 	).Exec(ctx)
 	return err
+}
+
+func (r *userRepository) SubmitKyc(ctx context.Context, id string, req *domain.KycSubmitRequest) error {
+	_, err := r.client.User.FindUnique(
+		db.User.ID.Equals(id),
+	).Update(
+		db.User.Company.Set(req.Company),
+		db.User.Nib.Set(req.NIB),
+		db.User.Industry.Set(req.Industry),
+		db.User.KycStatus.Set("VERIFIED"),
+	).Exec(ctx)
+	return err
+}
+
+func (r *userRepository) GetKycQueue(ctx context.Context) ([]domain.User, error) {
+	records, err := r.client.User.FindMany(
+		db.User.KycStatus.Equals("VERIFIED"),
+		db.User.Role.Equals("USER"),
+	).OrderBy(
+		db.User.CreatedAt.Order(db.SortOrderAsc),
+	).Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+	var users []domain.User
+	for _, rec := range records {
+		var compPtr *string
+		if v, ok := rec.Company(); ok {
+			compPtr = &v
+		}
+		var nibPtr *string
+		if v, ok := rec.Nib(); ok {
+			nibPtr = &v
+		}
+		var indPtr *string
+		if v, ok := rec.Industry(); ok {
+			indPtr = &v
+		}
+		users = append(users, domain.User{
+			ID:             rec.ID,
+			Email:          rec.Email,
+			Name:           rec.Name,
+			Company:        compPtr,
+			KycStatus:      rec.KycStatus,
+			NIB:            nibPtr,
+			Industry:       indPtr,
+			CreatedAt:      rec.CreatedAt,
+		})
+	}
+	return users, nil
 }

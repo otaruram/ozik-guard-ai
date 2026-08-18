@@ -38,6 +38,7 @@ import { PaketPricing } from "@/components/dashboard/PaketPricing";
 import { ProfilPengguna } from "@/components/dashboard/ProfilPengguna";
 import { AdminPanel } from "@/components/dashboard/AdminPanel";
 import { ReviewerQueueTab } from "@/components/dashboard/ReviewerQueueTab";
+import { KycQueueTab } from "@/components/dashboard/KycQueueTab";
 
 type DashboardSearch = {
   tab?: string;
@@ -95,6 +96,13 @@ function Dashboard() {
       refreshHistory();
     }
   }, [user, loading, navigate]);
+
+  // KYC Guard: redirect unverified users to KYC onboarding
+  useEffect(() => {
+    if (dbUser && dbUser.kycStatus === "UNVERIFIED") {
+      navigate({ to: "/kyc-onboarding" });
+    }
+  }, [dbUser, navigate]);
 
   const handleLogout = async () => {
     await signOut();
@@ -169,6 +177,8 @@ function Dashboard() {
               items: [
                 ...(user && ["okitr52@gmail.com", "okitarunaramadhan@gmail.com"].includes(user?.email || "") 
                   ? [{ key: "admin", label: "Admin Panel", icon: ShieldCheck }] : []),
+                ...(user && ["okitr52@gmail.com", "okitarunaramadhan@gmail.com"].includes(user?.email || "")
+                  ? [{ key: "kyc-queue", label: "Antrean KYC", icon: ShieldCheck }] : []),
                 ...(dbUser?.role === "ADMIN" || dbUser?.role === "REVIEWER" || (user && ["okitr52@gmail.com", "okitarunaramadhan@gmail.com"].includes(user?.email || ""))
                   ? [{ key: "reviewer", label: "Reviewer Queue", icon: EyeOff }] : []),
                 { key: "settings", label: "Pengaturan", icon: Settings },
@@ -265,6 +275,7 @@ function Dashboard() {
           {active === "history" && <HistoriAudit history={historyData} loading={loadingHistory} refreshHistory={refreshHistory} />}
           {active === "profile" && <ProfilPengguna dbUser={dbUser} onProfileUpdate={refreshHistory} />}
           {active === "admin" && <AdminPanel />}
+          {active === "kyc-queue" && <KycQueueTab />}
           {active === "reviewer" && <ReviewerQueueTab />}
           {active === "settings" && <Pengaturan dbUser={dbUser} refreshUser={refreshHistory} />}
           {active === "billing" && <PaketPricing />}
