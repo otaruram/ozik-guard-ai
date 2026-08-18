@@ -304,7 +304,7 @@ func (r *auditRepository) GetPendingAudits(ctx context.Context) ([]domain.Projec
 	).With(
 		db.ProjectAudit.User.Fetch(),
 	).OrderBy(
-		db.ProjectAudit.CreatedAt.Order(db.SortOrderDesc),
+		db.ProjectAudit.CreatedAt.Order(db.SortOrderAsc),
 	).Exec(ctx)
 	if err != nil {
 		return nil, err

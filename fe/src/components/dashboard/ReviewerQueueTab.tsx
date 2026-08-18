@@ -11,6 +11,7 @@ export function ReviewerQueueTab() {
   const [queue, setQueue] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchQueue = async () => {
     setLoading(true);
@@ -32,6 +33,7 @@ export function ReviewerQueueTab() {
     q.projectName?.toLowerCase().includes(search.toLowerCase()) ||
     q.authorName?.toLowerCase().includes(search.toLowerCase())
   );
+  const paginated = filtered.slice((currentPage - 1) * 10, currentPage * 10);
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -77,11 +79,11 @@ export function ReviewerQueueTab() {
                     <Loader2 className="h-8 w-8 animate-spin mx-auto text-emerald-950" />
                   </td>
                 </tr>
-              ) : filtered.length === 0 ? (
+              ) : paginated.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-emerald-950/60 font-bold">Belum ada dokumen yang menunggu review.</td>
                 </tr>
-              ) : filtered.map((row) => (
+              ) : paginated.map((row) => (
                 <tr key={row.id} className="border-b-2 border-emerald-950/20 hover:bg-emerald-50">
                   <td className="p-4 font-bold text-emerald-950 text-sm">
                     {row.projectName}
@@ -104,6 +106,32 @@ export function ReviewerQueueTab() {
             </tbody>
           </table>
         </div>
+        
+        {Math.ceil(filtered.length / 10) > 1 && (
+          <div className="p-4 border-t-4 border-emerald-950 flex items-center justify-between bg-emerald-50">
+            <span className="text-sm font-bold text-emerald-950/70">
+              Halaman {currentPage} dari {Math.ceil(filtered.length / 10)}
+            </span>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                className="rounded-none border-2 border-emerald-950 font-black uppercase text-xs"
+              >
+                Prev
+              </Button>
+              <Button 
+                variant="outline" 
+                disabled={currentPage === Math.ceil(filtered.length / 10)}
+                onClick={() => setCurrentPage(p => Math.min(Math.ceil(filtered.length / 10), p + 1))}
+                className="rounded-none border-2 border-emerald-950 font-black uppercase text-xs"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
