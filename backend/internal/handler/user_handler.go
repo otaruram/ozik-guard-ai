@@ -62,6 +62,8 @@ func (h *UserHandler) GetMe(c *fiber.Ctx) error {
 		APIKey:           user.APIKey,
 		NotifyReportDone: user.NotifyReportDone,
 		NotifyRegulation: user.NotifyRegulation,
+		KycStatus:        user.KycStatus,
+		Industry:         user.Industry,
 	})
 }
 
@@ -151,5 +153,42 @@ func (h *UserHandler) UpdateNotifications(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Preferensi notifikasi berhasil diperbarui",
+	})
+}
+
+// SubmitKyc POST /api/v1/user/kyc
+func (h *UserHandler) SubmitKyc(c *fiber.Ctx) error {
+	userID := c.Locals("userId")
+	if userID == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(domain.ErrorResponse{
+			Error: "UNAUTHORIZED",
+		})
+	}
+	uid := userID.(string)
+
+	var req domain.KycSubmitRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(domain.ErrorResponse{
+			Error: "Invalid request payload",
+		})
+	}
+
+	if req.Company == "" || req.NIB == "" || req.Industry == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(domain.ErrorResponse{
+			Error:   "INCOMPLETE_KYC",
+			Message: "Semua field KYC wajib diisi.",
+		})
+	}
+
+	err := h.userRepo.SubmitKyc(c.Context(), uid, &req)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(domain.ErrorResponse{
+			Error: "KYC_SUBMIT_FAILED",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":   "KYC berhasil disimpan. (Simulasi: Auto-Approved)",
+		"kycStatus": "VERIFIED",
 	})
 }

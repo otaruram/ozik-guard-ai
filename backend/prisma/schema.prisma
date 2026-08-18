@@ -44,6 +44,12 @@ model User {
   notifyRegulation Boolean        @default(true)
   role             String         @default("USER")
   isBanned         Boolean        @default(false)
+  
+  // KYC Fields
+  kycStatus        String         @default("UNVERIFIED") // UNVERIFIED | VERIFIED
+  nib              String?
+  industry         String?
+  
   audits           ProjectAudit[]
   reviewedAudits   ProjectAudit[] @relation("Reviewer")
 

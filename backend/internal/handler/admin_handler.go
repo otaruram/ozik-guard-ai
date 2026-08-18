@@ -110,3 +110,16 @@ func (h *AdminHandler) GetUserHistory(c *fiber.Ctx) error {
 		"history": audits,
 	})
 }
+
+// GetKycQueue returns all VERIFIED KYC users in FIFO order
+func (h *AdminHandler) GetKycQueue(c *fiber.Ctx) error {
+	users, err := h.userRepo.GetKycQueue(c.Context())
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to fetch KYC queue",
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"queue": users,
+	})
+}

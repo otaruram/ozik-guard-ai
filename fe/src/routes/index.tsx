@@ -234,28 +234,15 @@ function VerificationChecker() {
 }
 
 function HowItWorks() {
+  const [clicked, setClicked] = useState<number | null>(null);
+
   const steps = [
-    { 
-      title: "1. MEMBACA DOKUMEN (IN-MEMORY)", 
-      active: true,
-      highlight: false
-    },
-    { 
-      title: "2. PII AUTO-MASKING (UU PDP)", 
-      active: true,
-      highlight: true
-    },
-    { 
-      title: "3. VERIFIKASI DATA SPASIAL", 
-      active: false,
-      highlight: false
-    },
-    { 
-      title: "4. RAG AUDIT REGULASI (PASAL.ID)", 
-      active: false,
-      highlight: false
-    },
+    { title: "1. MEMBACA DOKUMEN (IN-MEMORY)", highlightActive: false },
+    { title: "2. PII AUTO-MASKING (UU PDP)", highlightActive: true },
+    { title: "3. VERIFIKASI DATA SPASIAL", highlightActive: false },
+    { title: "4. RAG AUDIT REGULASI (PASAL.ID)", highlightActive: false },
   ];
+
   return (
     <section id="how" className="py-24 relative bg-emerald-950 text-white border-y-4 border-emerald-950">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_0,transparent_100%)]" />
@@ -266,23 +253,28 @@ function HowItWorks() {
         </div>
         
         <div className="flex flex-col gap-4 max-w-3xl mx-auto font-mono">
-          {steps.map((s, i) => (
-            <div 
-              key={i} 
-              className={`border-4 border-white flex items-center justify-center p-6 transition-all ${
-                s.highlight 
-                  ? "bg-yellow-400 text-emerald-950 border-yellow-400 shadow-[8px_8px_0_rgba(0,0,0,0.5)]" 
-                  : s.active
-                    ? "bg-[#0b1b24] text-white shadow-[8px_8px_0_rgba(0,0,0,0.5)]"
-                    : "bg-transparent text-white/30 border-white/30"
-              }`}
-            >
-              {i === 0 && <CheckCircle2 className="w-6 h-6 mr-3" />}
-              <h3 className={`text-xl md:text-2xl font-black uppercase tracking-wider`}>
-                {s.title}
-              </h3>
-            </div>
-          ))}
+          {steps.map((s, i) => {
+            const isClicked = clicked === i;
+            const isYellow = s.highlightActive && clicked === null;
+            return (
+              <div 
+                key={i} 
+                onClick={() => setClicked(i)}
+                className={`border-4 border-white flex items-center justify-center p-6 cursor-pointer transition-all duration-300 transform ${isClicked ? 'scale-95 opacity-80' : 'hover:scale-[1.02]'} ${
+                  isYellow 
+                    ? "bg-yellow-400 text-emerald-950 border-yellow-400 shadow-[8px_8px_0_rgba(0,0,0,0.5)]" 
+                    : isClicked
+                      ? "bg-emerald-600 text-white shadow-none"
+                      : "bg-[#0b1b24] text-white shadow-[8px_8px_0_rgba(0,0,0,0.5)] hover:bg-emerald-900"
+                }`}
+              >
+                {i === 0 && !isYellow && <CheckCircle2 className="w-6 h-6 mr-3" />}
+                <h3 className={`text-xl md:text-2xl font-black uppercase tracking-wider`}>
+                  {s.title}
+                </h3>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

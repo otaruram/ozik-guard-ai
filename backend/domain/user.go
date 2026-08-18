@@ -17,6 +17,9 @@ type User struct {
 	NotifyRegulation bool      `json:"notifyRegulation"`
 	Role             string    `json:"role"`
 	IsBanned         bool      `json:"isBanned"`
+	KycStatus        string    `json:"kycStatus"`
+	NIB              *string   `json:"nib,omitempty"`
+	Industry         *string   `json:"industry,omitempty"`
 }
 
 type UpdateProfileRequest struct {
@@ -27,6 +30,12 @@ type UpdateProfileRequest struct {
 type UpdateNotificationRequest struct {
 	NotifyReportDone bool `json:"notifyReportDone"`
 	NotifyRegulation bool `json:"notifyRegulation"`
+}
+
+type KycSubmitRequest struct {
+	Company  string `json:"company"`
+	NIB      string `json:"nib"`
+	Industry string `json:"industry"`
 }
 
 type UserMeResponse struct {
@@ -40,4 +49,6 @@ type UserMeResponse struct {
 	APIKey           *string `json:"apiKey,omitempty"`
 	NotifyReportDone bool    `json:"notifyReportDone"`
 	NotifyRegulation bool    `json:"notifyRegulation"`
+	KycStatus        string  `json:"kycStatus"`
+	Industry         *string `json:"industry,omitempty"`
 }
