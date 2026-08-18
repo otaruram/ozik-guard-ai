@@ -235,27 +235,52 @@ function VerificationChecker() {
 
 function HowItWorks() {
   const steps = [
-    { num: "01", title: "Upload Documents", desc: "Vendors submit their environmental permits and ESG reports." },
-    { num: "02", title: "AI Analysis", desc: "We extract claims, check regulations, and verify spatial data instantly." },
-    { num: "03", title: "Receive Badge", desc: "Get a verified Green Badge, compliance score, and a unique cryptographic QR." },
+    { 
+      title: "1. MEMBACA DOKUMEN (IN-MEMORY)", 
+      active: true,
+      highlight: false
+    },
+    { 
+      title: "2. PII AUTO-MASKING (UU PDP)", 
+      active: true,
+      highlight: true
+    },
+    { 
+      title: "3. VERIFIKASI DATA SPASIAL", 
+      active: false,
+      highlight: false
+    },
+    { 
+      title: "4. RAG AUDIT REGULASI (PASAL.ID)", 
+      active: false,
+      highlight: false
+    },
   ];
   return (
     <section id="how" className="py-24 relative bg-emerald-950 text-white border-y-4 border-emerald-950">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <div className="text-center mb-16 relative z-10">
-          <h2 className="text-3xl md:text-5xl font-black uppercase mb-4">How It Works</h2>
-          <p className="text-white/70 font-bold">Automated vendor verification process.</p>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_0,transparent_100%)]" />
+      <div className="max-w-4xl mx-auto px-4 md:px-6 relative z-10">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-black uppercase mb-4">The Drill-Down Engine</h2>
+          <p className="text-white/70 font-bold">Teknologi pemrosesan dokumen kami secara step-by-step.</p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-10 relative z-10">
+        <div className="flex flex-col gap-4 max-w-3xl mx-auto font-mono">
           {steps.map((s, i) => (
-            <div key={i} className="text-center relative">
-              {i !== 2 && <div className="hidden md:block absolute top-10 left-[60%] w-full h-[4px] bg-emerald-800" />}
-              <div className="w-20 h-20 mx-auto bg-white border-4 border-emerald-950 flex items-center justify-center text-3xl font-black text-emerald-950 mb-6 shadow-[6px_6px_0_rgba(16,185,129,1)]">
-                {s.num}
-              </div>
-              <h3 className="text-xl font-black uppercase mb-3">{s.title}</h3>
-              <p className="text-white/70 font-bold text-sm">{s.desc}</p>
+            <div 
+              key={i} 
+              className={`border-4 border-white flex items-center justify-center p-6 transition-all ${
+                s.highlight 
+                  ? "bg-yellow-400 text-emerald-950 border-yellow-400 shadow-[8px_8px_0_rgba(0,0,0,0.5)]" 
+                  : s.active
+                    ? "bg-[#0b1b24] text-white shadow-[8px_8px_0_rgba(0,0,0,0.5)]"
+                    : "bg-transparent text-white/30 border-white/30"
+              }`}
+            >
+              {i === 0 && <CheckCircle2 className="w-6 h-6 mr-3" />}
+              <h3 className={`text-xl md:text-2xl font-black uppercase tracking-wider`}>
+                {s.title}
+              </h3>
             </div>
           ))}
         </div>
