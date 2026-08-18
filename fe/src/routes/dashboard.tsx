@@ -150,7 +150,7 @@ function Dashboard() {
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
-        <div className="h-20 flex items-center px-6 border-b-4 border-emerald-950 shrink-0 bg-emerald-950 text-white">
+        <div className="h-20 flex items-center px-6 border-b-4 border-emerald-950 shrink-0 bg-emerald-50 text-emerald-950">
           <Link to="/" className="flex items-center gap-3">
             <div className="grid h-12 w-12 place-items-center bg-transparent overflow-hidden">
               <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-contain mix-blend-multiply" />
@@ -159,7 +159,7 @@ function Dashboard() {
           </Link>
           <button
             onClick={() => setMobileOpen(false)}
-            className="ml-auto lg:hidden text-white/70 hover:text-white"
+            className="ml-auto lg:hidden text-emerald-950/70 hover:text-emerald-950"
           >
             <X className="h-6 w-6" />
           </button>

@@ -62,7 +62,7 @@ function AuthPage() {
         <div className="relative z-10">
           <Link to="/" className="inline-flex items-center gap-3 group">
             <span className="grid h-16 w-16 place-items-center bg-transparent transition-transform group-hover:scale-105 overflow-hidden">
-              <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-contain mix-blend-screen" />
+              <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-contain mix-blend-screen" style={{ filter: "grayscale(1) invert(1) contrast(200)" }} />
             </span>
             <div className="flex flex-col leading-none">
               <span className="text-xl font-black tracking-widest uppercase">OzikSustain</span>
