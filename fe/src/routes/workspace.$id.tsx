@@ -2,12 +2,14 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { AuditWorkspace } from "@/components/AuditWorkspace";
-import { Loader2, ArrowLeft, Leaf, ShieldCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
-
+import { Loader2, ArrowLeft, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/workspace/$id")({
+  head: () => ({
+    meta: [{ title: "Inspeksi Laporan Audit — OzikSustain" }],
+  }),
   component: WorkspacePage,
 });
 
@@ -19,15 +21,18 @@ function WorkspacePage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.getAuditDetail(id)
+    api
+      .getAuditDetail(id)
       .then((res) => {
-        // Use parsedDocumentJson if available (DrillBit UI), else fallback
         let clauses = [];
         if (res.parsedDocumentJson) {
           try {
-            let parsed = typeof res.parsedDocumentJson === 'string' ? JSON.parse(res.parsedDocumentJson) : res.parsedDocumentJson;
-            if (typeof parsed === 'string') parsed = JSON.parse(parsed); // Double-encoded handler
-            
+            let parsed =
+              typeof res.parsedDocumentJson === "string"
+                ? JSON.parse(res.parsedDocumentJson)
+                : res.parsedDocumentJson;
+            if (typeof parsed === "string") parsed = JSON.parse(parsed);
+
             if (parsed && parsed.pages) {
               clauses = parsed.pages.flatMap((p: any) => p.chunks || p.Chunks || []);
             }
@@ -35,21 +40,27 @@ function WorkspacePage() {
             console.error("Failed to parse document JSON:", e);
           }
         }
-        
+
         if (clauses.length === 0) {
-          clauses = res.issues?.map((issue: any, i: number) => ({
-            id: i + 1,
-            clause: `Klausul Terdeteksi ${i + 1}`,
-            text: issue.clauseText || "Teks paragraf tidak tersedia.",
-            status: issue.severity === "HIGH_RISK" ? "high" : (issue.severity === "MEDIUM_RISK" ? "medium" : "compliant"),
-            issue: {
-              id: issue.id,
-              severity: issue.severity,
-              matchedLaw: issue.matchedLaw,
-              originalLawText: issue.originalLawText,
-              suggestedRevision: issue.suggestedRevision
-            }
-          })) || [];
+          clauses =
+            res.issues?.map((issue: any, i: number) => ({
+              id: i + 1,
+              clause: `KLAUSUL TERDETEKSI #${i + 1}`,
+              text: issue.clauseText || "Teks paragraf tidak tersedia.",
+              status:
+                issue.severity === "HIGH_RISK"
+                  ? "high"
+                  : issue.severity === "MEDIUM_RISK"
+                  ? "medium"
+                  : "compliant",
+              issue: {
+                id: issue.id,
+                severity: issue.severity,
+                matchedLaw: issue.matchedLaw,
+                originalLawText: issue.originalLawText,
+                suggestedRevision: issue.suggestedRevision,
+              },
+            })) || [];
         }
 
         setData({
@@ -60,7 +71,7 @@ function WorkspacePage() {
       })
       .catch((err) => {
         console.error("Failed to load audit:", err);
-        alert("Gagal memuat detail audit.");
+        toast.error("Gagal memuat detail rekaman audit.");
         navigate({ to: "/dashboard" });
       })
       .finally(() => setLoading(false));
@@ -68,55 +79,63 @@ function WorkspacePage() {
 
   if (loading || !data) {
     return (
-      <div className="min-h-screen bg-emerald-50/30 flex items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-emerald-950" />
+      <div className="min-h-screen bg-[#F6F4EE] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#091E17]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-emerald-50/30 flex flex-col font-sans text-emerald-950">
-      <header className="border-b-4 border-emerald-950 bg-white px-6 py-4 flex justify-between items-center z-50">
-        <Link to="/dashboard" className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="hover:bg-emerald-50 rounded-none h-10 w-10 border-2 border-transparent hover:border-emerald-950">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="bg-emerald-950 text-white p-1.5 rounded-none border-2 border-emerald-950 hidden sm:block">
-            <Leaf className="h-4 w-4" />
-          </div>
-          <span className="text-sm font-black tracking-widest uppercase hidden sm:block">Kembali ke Dashboard</span>
+    <div className="min-h-screen bg-[#F6F4EE] bg-archival-grid flex flex-col text-[#091E17]">
+      <header className="border-b-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <Link to="/dashboard" className="inline-flex items-center gap-3 group">
+          <span className="h-8 w-8 border border-[#F6F4EE]/30 flex items-center justify-center group-hover:border-[#FBBF24]">
+            <ArrowLeft className="h-4 w-4 text-[#FBBF24]" />
+          </span>
+          <span className="font-mono text-xs font-bold uppercase tracking-widest">
+            Kembali ke Workspace Utama
+          </span>
         </Link>
-        <div className="font-black uppercase tracking-widest text-emerald-950 text-sm">
-          Workspace Laporan
+        <div className="font-mono text-xs uppercase tracking-widest text-[#34D399]">
+          LAPORAN ADJUDIKASI // ID: {id.substring(0, 12)}
         </div>
       </header>
 
       <main className="flex-1 p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
           {data.reviewStatus === "PENDING_REVIEW" ? (
-            <div className="bg-white border-4 border-emerald-950 p-12 text-center max-w-2xl mx-auto mt-12 shadow-[8px_8px_0_rgba(2,44,34,1)]">
-              <div className="bg-yellow-100 p-4 inline-block mb-6 border-2 border-yellow-500">
-                <ShieldCheck className="h-12 w-12 text-yellow-600 mx-auto" />
+            <div className="bg-white border-[1.5px] border-[#091E17] p-8 md:p-12 text-center max-w-2xl mx-auto mt-10 shadow-[8px_8px_0_#091E17]">
+              <div className="bg-[#FEF3C7] p-4 inline-block mb-5 border border-[#D97706]">
+                <ShieldCheck className="h-10 w-10 text-[#B45309] mx-auto" />
               </div>
-              <h2 className="text-2xl font-black text-emerald-950 uppercase tracking-widest mb-4">Menunggu Tinjauan Reviewer</h2>
-              <p className="text-gray-600 font-bold leading-relaxed mb-8">
-                Dokumen Anda telah dianalisis oleh AI dan saat ini sedang dalam tahap kalibrasi oleh <strong>Ahli Hukum OzikSustain (Human-in-the-Loop)</strong> untuk memastikan akurasi rekomendasi. 
-                <br /><br />
-                Setelah tinjauan selesai (Disetujui/Revisi/Ditolak), Anda akan menerima pemberitahuan via email dan Anda akan mendapatkan akses penuh ke laporan ini beserta SHA-256 QR Badge (jika lulus).
+              <div className="font-mono text-xs font-bold uppercase tracking-widest text-[#B45309] mb-2">
+                STATUS: ANTREAN KALIBRASI PAKAR (HITL)
+              </div>
+              <h2 className="font-editorial text-2xl sm:text-3xl font-semibold text-[#091E17] mb-4">
+                Menunggu Otorisasi Reviewer Hukum
+              </h2>
+              <p className="text-sm text-[#4A5D54] leading-relaxed mb-8">
+                Dokumen Anda telah selesai dipindai oleh mesin vektor IndoBERT dan saat ini sedang berada dalam tahap verifikasi akhir oleh <strong>Auditor Pakar OzikSustain (Human-in-the-Loop)</strong> untuk memastikan akurasi sitasi sebelum segel HMAC-SHA256 diterbitkan.
               </p>
-              <Link to="/dashboard">
-                <Button className="bg-emerald-950 hover:bg-emerald-900 text-white rounded-none border-2 border-emerald-950 font-black tracking-widest uppercase px-8 h-12">
-                  Kembali ke Dashboard
-                </Button>
+              <Link
+                to="/dashboard"
+                className="inline-block bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-xs font-bold tracking-widest uppercase px-7 py-3.5"
+              >
+                Kembali ke Workspace
               </Link>
             </div>
           ) : (
-            <AuditWorkspace 
-              isFreemium={false} 
-              initialResult={data} 
-              initialStatus="result" 
-              userName={data.authorName || user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User"}
-              userEmail={data.authorEmail || user?.email || "user@example.com"}
+            <AuditWorkspace
+              isFreemium={false}
+              initialResult={data}
+              initialStatus="result"
+              userName={
+                data.authorName ||
+                user?.user_metadata?.full_name ||
+                user?.email?.split("@")[0] ||
+                "Auditor"
+              }
+              userEmail={data.authorEmail || user?.email || "auditor@oziksustain.id"}
             />
           )}
         </div>

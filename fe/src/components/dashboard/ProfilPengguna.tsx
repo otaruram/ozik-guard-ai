@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Wand2, Lock, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/lib/api";
@@ -14,14 +13,16 @@ interface ProfilPenggunaProps {
 export function ProfilPengguna({ dbUser, onProfileUpdate }: ProfilPenggunaProps) {
   const [name, setName] = useState(dbUser?.name || "");
   const [company, setCompany] = useState(dbUser?.company || "");
-  const [nib, setNib] = useState("");
-  const [industry, setIndustry] = useState("");
+  const [nib, setNib] = useState(dbUser?.nib || "");
+  const [industry, setIndustry] = useState(dbUser?.industry || "");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (dbUser) {
       setName(dbUser.name || "");
       setCompany(dbUser.company || "");
+      if (dbUser.nib) setNib(dbUser.nib);
+      if (dbUser.industry) setIndustry(dbUser.industry);
     }
   }, [dbUser]);
 
@@ -29,7 +30,7 @@ export function ProfilPengguna({ dbUser, onProfileUpdate }: ProfilPenggunaProps)
     const randomNIB = Math.floor(1000000000000 + Math.random() * 9000000000000).toString();
     setNib(randomNIB);
     setIndustry("Energi Terbarukan & PLTS");
-    if (!company) setCompany("PT. Solusi Hijau Nusantara");
+    if (!company) setCompany("PT Solusi Energi Hijau Nusantara");
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -37,60 +38,124 @@ export function ProfilPengguna({ dbUser, onProfileUpdate }: ProfilPenggunaProps)
     setLoading(true);
     try {
       await api.updateMe({ name, company });
-      toast.success("Profil & Data KYC berhasil diperbarui!");
+      toast.success("Identitas Entitas & Profil Diperbarui");
       onProfileUpdate();
     } catch (err) {
-      toast.error("Gagal memperbarui profil.");
+      toast.error("Gagal memperbarui profil entitas.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="border-4 border-emerald-950 bg-white p-8 shadow-[8px_8px_0_rgba(2,44,34,1)] relative">
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={handleAutoFill}
-          className="absolute top-8 right-8 h-8 px-3 rounded-none border-2 border-emerald-950 text-[10px] font-black uppercase tracking-widest bg-yellow-400 hover:bg-yellow-500 text-emerald-950 shadow-[2px_2px_0_rgba(2,44,34,1)]"
-        >
-          Auto Fill Demo
-        </Button>
+    <div className="max-w-3xl mx-auto">
+      <div className="border-[1.5px] border-[#091E17] bg-white shadow-[6px_6px_0_#091E17] overflow-hidden">
+        <div className="bg-[#071913] text-[#F6F4EE] p-6 md:p-8 border-b-[1.5px] border-[#091E17] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#34D399] mb-1">
+              REGISTRASI BADAN HUKUM // KYB &amp; KYC
+            </div>
+            <h2 className="font-editorial text-2xl font-semibold text-white">
+              Identitas Entitas &amp; Penanggung Jawab
+            </h2>
+            <p className="text-xs text-[#F6F4EE]/70 mt-1">
+              Data ini digunakan pada penerbitan sertifikat kepatuhan proyek hijau resmi.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleAutoFill}
+            className="px-3.5 py-2 bg-[#FBBF24] hover:bg-[#F59E0B] text-[#091E17] font-mono text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer shrink-0"
+          >
+            <Wand2 className="h-3.5 w-3.5" /> Isi Sampel Demo
+          </button>
+        </div>
 
-        <h2 className="text-2xl font-black uppercase tracking-widest text-emerald-950 mb-1">Profil & KYC</h2>
-        <p className="text-xs font-bold text-emerald-950/60 mb-6">Lengkapi data untuk sertifikasi Green Badge.</p>
-        
-        <form onSubmit={handleSave} className="space-y-4">
-          <div>
-            <Label className="font-bold text-emerald-950 uppercase text-xs">Email Pengguna</Label>
-            <Input disabled value={dbUser?.email || ""} className="mt-1 border-4 border-emerald-950/20 bg-gray-50 rounded-none font-bold" />
-          </div>
-          <div>
-            <Label className="font-bold text-emerald-950 uppercase text-xs">Nama Penanggung Jawab</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} required className="mt-1 border-4 border-emerald-950 rounded-none font-bold text-emerald-950 focus-visible:ring-0" />
-          </div>
-          <div className="pt-4 mt-4 border-t-2 border-dashed border-emerald-950/20">
-            <Label className="font-bold text-emerald-950 uppercase text-xs">Nama Perusahaan (Tampil di Badge)</Label>
-            <Input value={company} onChange={(e) => setCompany(e.target.value)} required placeholder="PT. Inovasi Hijau" className="mt-1 border-4 border-emerald-950 rounded-none font-bold text-emerald-950 focus-visible:ring-0" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSave} className="p-6 md:p-8 space-y-5">
+          <div className="grid sm:grid-cols-2 gap-5">
             <div>
-              <Label className="font-bold text-emerald-950 uppercase text-xs">NIB / Izin Usaha</Label>
-              <Input value={nib} onChange={(e) => setNib(e.target.value)} placeholder="13 Digit NIB" required className="mt-1 border-4 border-emerald-950 rounded-none font-bold text-emerald-950 focus-visible:ring-0" />
+              <Label className="font-mono text-xs font-bold uppercase text-[#091E17]">
+                Alamat Email Terdaftar
+              </Label>
+              <Input
+                disabled
+                value={dbUser?.email || ""}
+                className="mt-1.5 border-[1.5px] border-[#091E17]/30 bg-[#F6F4EE] rounded-none font-mono text-xs h-11"
+              />
+            </div>
+
+            <div>
+              <Label className="font-mono text-xs font-bold uppercase text-[#091E17]">
+                Nama Penanggung Jawab Audit
+              </Label>
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="mt-1.5 border-[1.5px] border-[#091E17] rounded-none font-medium text-[#091E17] focus-visible:ring-0 h-11"
+              />
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-[#091E17]/15">
+            <Label className="font-mono text-xs font-bold uppercase text-[#091E17]">
+              Nama Resmi Perusahaan / Instansi (Tampil pada Sertifikat)
+            </Label>
+            <Input
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              required
+              placeholder="PT Solusi Energi Hijau Nusantara"
+              className="mt-1.5 border-[1.5px] border-[#091E17] rounded-none font-medium text-[#091E17] focus-visible:ring-0 h-11"
+            />
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-5">
+            <div>
+              <Label className="font-mono text-xs font-bold uppercase text-[#091E17]">
+                Nomor Induk Berusaha (NIB)
+              </Label>
+              <Input
+                value={nib}
+                onChange={(e) => setNib(e.target.value)}
+                placeholder="13 Digit NIB"
+                required
+                className="mt-1.5 border-[1.5px] border-[#091E17] rounded-none font-mono font-semibold text-[#091E17] focus-visible:ring-0 h-11"
+              />
             </div>
             <div>
-              <Label className="font-bold text-emerald-950 uppercase text-xs">Jenis Industri</Label>
-              <Input value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="Misal: Manufaktur" required className="mt-1 border-4 border-emerald-950 rounded-none font-bold text-emerald-950 focus-visible:ring-0" />
+              <Label className="font-mono text-xs font-bold uppercase text-[#091E17]">
+                Sektor Industri Utama
+              </Label>
+              <Input
+                value={industry}
+                onChange={(e) => setIndustry(e.target.value)}
+                placeholder="Misal: Energi Terbarukan & PLTS"
+                required
+                className="mt-1.5 border-[1.5px] border-[#091E17] rounded-none font-medium text-[#091E17] focus-visible:ring-0 h-11"
+              />
             </div>
           </div>
-          <div className="text-[10px] font-bold text-yellow-600 bg-yellow-50 p-2 border-l-4 border-yellow-400 mt-2">
-            Info: Nomor NIB bersifat rahasia dan tidak akan ditampilkan pada QR Code publik.
+
+          <div className="bg-[#E6F4EE]/70 border-l-4 border-[#0D6E49] p-4 flex items-start gap-3">
+            <Lock className="h-4 w-4 text-[#0D6E49] shrink-0 mt-0.5" />
+            <p className="text-xs text-[#091E17] leading-relaxed">
+              <strong>Perlindungan Privasi UU PDP:</strong> Nomor NIB dienkripsi dan disamarkan pada tampilan publik maupun antrean verifikasi.
+            </p>
           </div>
-          
-          <Button type="submit" disabled={loading} className="w-full h-12 mt-4 rounded-none bg-emerald-950 hover:bg-emerald-900 text-white font-black uppercase tracking-widest text-xs border-2 border-emerald-950">
-            {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Simpan Profil & KYC"}
-          </Button>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full h-12 bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-xs font-bold uppercase tracking-widest border-[1.5px] border-[#091E17] transition-colors flex items-center justify-center gap-2 cursor-pointer"
+          >
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <ShieldCheck className="h-4 w-4 text-[#34D399]" />
+            )}
+            <span>Simpan Perubahan Identitas</span>
+          </button>
         </form>
       </div>
     </div>

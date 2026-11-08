@@ -1,7 +1,15 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ShieldCheck, Building2, Hash, Factory, Loader2, Sparkles, AlertTriangle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import {
+  ShieldCheck,
+  Building2,
+  Hash,
+  Factory,
+  Loader2,
+  Wand2,
+  Lock,
+  ArrowLeft,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/lib/api";
@@ -9,6 +17,9 @@ import { toast } from "sonner";
 import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/kyc-onboarding")({
+  head: () => ({
+    meta: [{ title: "Registrasi Entitas & KYC : OzikSustain" }],
+  }),
   component: KycOnboarding,
 });
 
@@ -22,8 +33,8 @@ function KycOnboarding() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-emerald-50/30 flex items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-emerald-950" />
+      <div className="min-h-screen bg-[#F6F4EE] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#091E17]" />
       </div>
     );
   }
@@ -36,8 +47,8 @@ function KycOnboarding() {
   const handleAutoFill = () => {
     const randomNIB = Math.floor(1000000000000 + Math.random() * 9000000000000).toString();
     setNib(randomNIB);
-    setIndustry("Energi Terbarukan & PLTS");
-    setCompany("PT. Solusi Hijau Nusantara");
+    setIndustry("Energi Terbarukan & Pembangkit Listrik Tenaga Surya");
+    setCompany("PT Solusi Energi Hijau Nusantara");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,112 +57,136 @@ function KycOnboarding() {
     setSubmitting(true);
     try {
       await api.submitKyc({ company, nib, industry });
-      toast.success("✅ KYC Berhasil! (Simulasi: Auto-Approved)", {
-        description: "Di tahap produksi, data ini akan menunggu verifikasi admin terlebih dahulu.",
-        duration: 6000,
+      toast.success("Verifikasi Identitas Entitas Berhasil", {
+        description:
+          "Profil perusahaan Anda telah diaktifkan. Mengalihkan ke Workspace Utama...",
+        duration: 5000,
       });
-      setTimeout(() => navigate({ to: "/dashboard" }), 1500);
+      setTimeout(() => navigate({ to: "/dashboard" }), 1200);
     } catch (err) {
-      toast.error("Gagal mengirim data KYC.");
+      toast.error("Gagal menyimpan data verifikasi KYC.");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-emerald-50/30 flex items-center justify-center p-4 selection:bg-emerald-950 selection:text-white">
-      <div className="w-full max-w-xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-transparent mb-6">
-            <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-contain mix-blend-multiply scale-125" />
+    <div className="min-h-screen bg-[#F6F4EE] bg-archival-grid text-[#091E17] flex flex-col justify-between p-4 sm:p-8">
+      <div className="mx-auto w-full max-w-2xl flex items-center justify-between border-b border-[#091E17]/15 pb-4">
+        <Link to="/" className="inline-flex items-center gap-2.5">
+          <div className="h-9 w-9 border border-[#091E17] bg-white p-1">
+            <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-contain" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-emerald-950 mb-2">
-            Verifikasi Identitas
-          </h1>
-          <p className="text-emerald-950/70 font-bold text-sm max-w-md mx-auto">
-            Lengkapi data perusahaan Anda untuk mendapatkan akses penuh ke OzikSustain.
-          </p>
-        </div>
+          <span className="font-editorial text-lg font-bold">OzikSustain</span>
+        </Link>
+        <span className="font-mono text-[11px] uppercase tracking-widest text-[#0D6E49] font-bold">
+          TAHAP AKHIR // REGISTRASI ENTITAS (KYB/KYC)
+        </span>
+      </div>
 
-        {/* Warning Banner */}
-        <div className="flex items-start gap-3 p-4 border-4 border-yellow-400 bg-yellow-50 mb-6 shadow-[4px_4px_0_rgba(234,179,8,0.5)]">
-          <AlertTriangle className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
-          <div>
-            <p className="text-xs font-black uppercase text-yellow-800">Mode Simulasi (Demo)</p>
-            <p className="text-[11px] font-bold text-yellow-700 mt-1">
-              Saat ini KYC bersifat <strong>Auto-Approve</strong>. Di tahap produksi sesungguhnya, data ini akan diverifikasi oleh tim Admin terlebih dahulu sebelum akun diaktifkan.
+      <div className="w-full max-w-2xl mx-auto my-8">
+        <div className="border-[1.5px] border-[#091E17] bg-white shadow-[8px_8px_0_#091E17] overflow-hidden">
+          {/* Dark Header */}
+          <div className="bg-[#071913] text-[#F6F4EE] p-6 sm:p-8 border-b-[1.5px] border-[#091E17] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#34D399] mb-1">
+                VERIFIKASI BADAN USAHA &amp; IZIN OPERASIONAL
+              </div>
+              <h1 className="font-editorial text-2xl sm:text-3xl font-semibold text-white">
+                Kelengkapan Identitas Pemohon
+              </h1>
+              <p className="text-xs text-[#F6F4EE]/70 mt-1">
+                Diperlukan untuk pencetakan sertifikat kepatuhan resmi dan pelacakan histori audit.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleAutoFill}
+              className="inline-flex items-center gap-2 border border-[#FBBF24] bg-[#FBBF24] px-3.5 py-2 font-mono text-[11px] font-bold uppercase tracking-wider text-[#091E17] hover:bg-[#F59E0B] transition-colors cursor-pointer shrink-0"
+            >
+              <Wand2 className="h-3.5 w-3.5" /> Isi Sampel Demo
+            </button>
+          </div>
+
+          {/* Info Notice */}
+          <div className="bg-[#FEF3C7] border-b border-[#091E17]/20 px-6 sm:px-8 py-3.5 flex items-start gap-3">
+            <ShieldCheck className="h-4 w-4 text-[#B45309] shrink-0 mt-0.5" />
+            <p className="text-xs text-[#78350F] leading-relaxed">
+              <strong>Mode Evaluasi Instan:</strong> Pengajuan identitas saat ini disetujui otomatis untuk keperluan demonstrasi. Pada lingkungan produksi, nomor NIB divalidasi silang oleh tim kepatuhan.
             </p>
           </div>
-        </div>
 
-        {/* Form Card */}
-        <div className="border-4 border-emerald-950 bg-white p-8 shadow-[8px_8px_0_rgba(2,44,34,1)] relative">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleAutoFill}
-            className="absolute top-6 right-6 h-8 px-3 rounded-none border-2 border-emerald-950 text-[10px] font-black uppercase tracking-widest bg-yellow-400 hover:bg-yellow-500 text-emerald-950 shadow-[2px_2px_0_rgba(2,44,34,1)]"
-          >
-            <Sparkles className="w-3 h-3 mr-1.5" /> Auto Fill Demo
-          </Button>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <Label className="font-bold text-emerald-950 uppercase text-xs flex items-center gap-2">
-                <Building2 className="w-4 h-4" /> Nama Perusahaan
+          {/* Form Body */}
+          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6">
+            <div className="space-y-2">
+              <Label className="font-mono text-xs font-bold uppercase tracking-wider text-[#091E17] flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-[#0D6E49]" /> Nama Resmi Badan Usaha / Instansi
               </Label>
               <Input
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
                 required
-                placeholder="PT. Inovasi Hijau Indonesia"
-                className="mt-1 border-4 border-emerald-950 rounded-none font-bold text-emerald-950 focus-visible:ring-0 h-12"
+                placeholder="Contoh: PT Solusi Energi Hijau Nusantara"
+                className="border-[1.5px] border-[#091E17] rounded-none font-medium text-[#091E17] focus-visible:ring-0 h-12 bg-[#F6F4EE]/40"
               />
-              <p className="text-[10px] font-bold text-emerald-950/50 mt-1">Nama ini akan muncul pada Badge Sertifikasi publik.</p>
+              <p className="font-mono text-[11px] text-[#4A5D54]">
+                Nama badan usaha dicantumkan pada dokumen PDF laporan audit.
+              </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="font-bold text-emerald-950 uppercase text-xs flex items-center gap-2">
-                  <Hash className="w-4 h-4" /> NIB / Izin Usaha
+            <div className="grid sm:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <Label className="font-mono text-xs font-bold uppercase tracking-wider text-[#091E17] flex items-center gap-2">
+                  <Hash className="w-4 h-4 text-[#0D6E49]" /> Nomor Induk Berusaha (NIB)
                 </Label>
                 <Input
                   value={nib}
                   onChange={(e) => setNib(e.target.value)}
                   required
-                  placeholder="13 Digit NIB"
-                  className="mt-1 border-4 border-emerald-950 rounded-none font-bold text-emerald-950 focus-visible:ring-0 h-12"
+                  placeholder="13 Digit Nomor NIB"
+                  className="border-[1.5px] border-[#091E17] rounded-none font-mono font-semibold text-[#091E17] focus-visible:ring-0 h-12 bg-[#F6F4EE]/40"
                 />
               </div>
-              <div>
-                <Label className="font-bold text-emerald-950 uppercase text-xs flex items-center gap-2">
-                  <Factory className="w-4 h-4" /> Jenis Industri
+
+              <div className="space-y-2">
+                <Label className="font-mono text-xs font-bold uppercase tracking-wider text-[#091E17] flex items-center gap-2">
+                  <Factory className="w-4 h-4 text-[#0D6E49]" /> Sektor Industri Utama
                 </Label>
                 <Input
                   value={industry}
                   onChange={(e) => setIndustry(e.target.value)}
                   required
-                  placeholder="Misal: Manufaktur"
-                  className="mt-1 border-4 border-emerald-950 rounded-none font-bold text-emerald-950 focus-visible:ring-0 h-12"
+                  placeholder="Contoh: Energi Terbarukan & PLTS"
+                  className="border-[1.5px] border-[#091E17] rounded-none font-medium text-[#091E17] focus-visible:ring-0 h-12 bg-[#F6F4EE]/40"
                 />
               </div>
             </div>
 
-            <div className="text-[10px] font-bold text-emerald-700 bg-emerald-50 p-3 border-l-4 border-emerald-600">
-              Nomor NIB bersifat <strong>rahasia</strong> dan tidak akan ditampilkan pada QR Code publik ataupun Badge sertifikasi.
+            <div className="bg-[#E6F4EE]/60 border-l-4 border-[#0D6E49] p-4 flex items-start gap-3">
+              <Lock className="h-4 w-4 text-[#0D6E49] shrink-0 mt-0.5" />
+              <p className="text-xs text-[#091E17] leading-relaxed">
+                <strong>Jaminan Kerahasiaan UU PDP No. 27/2022:</strong> Nomor Induk Berusaha (NIB) Anda disamarkan secara otomatis pada antrean admin dan tidak pernah ditampilkan pada halaman verifikasi QR publik.
+              </p>
             </div>
 
-            <Button
+            <button
               type="submit"
               disabled={submitting}
-              className="w-full h-14 rounded-none bg-emerald-950 hover:bg-emerald-900 text-white font-black uppercase tracking-widest text-sm border-4 border-emerald-950 shadow-[6px_6px_0_rgba(16,185,129,1)] transition-all hover:translate-y-1 hover:translate-x-1 hover:shadow-none"
+              className="w-full h-14 bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-xs font-bold uppercase tracking-widest border-[1.5px] border-[#091E17] shadow-[4px_4px_0_#D97706] transition-all flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-60"
             >
-              {submitting ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : <ShieldCheck className="h-5 w-5 mr-2" />}
-              {submitting ? "Memverifikasi..." : "Submit & Verifikasi KYC"}
-            </Button>
+              {submitting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <ShieldCheck className="h-4 w-4 text-[#34D399]" />
+              )}
+              <span>{submitting ? "Memvalidasi Data Entitas..." : "Simpan & Buka Workspace Audit"}</span>
+            </button>
           </form>
         </div>
+      </div>
+
+      <div className="mx-auto w-full max-w-2xl text-center font-mono text-[10px] text-[#4A5D54] uppercase tracking-widest">
+        SISTEM REGISTRASI ENTITAS TERVERIFIKASI // OZIKSUSTAIN
       </div>
     </div>
   );

@@ -1,46 +1,83 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Leaf } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, ShieldCheck, Scale, Lock, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/page/$id")({
   component: PageComponent,
 });
 
-const PAGES_DATA: Record<string, { title: string; content: React.ReactNode }> = {
+const PAGES_DATA: Record<
+  string,
+  { code: string; title: string; subtitle: string; content: React.ReactNode }
+> = {
   "pln-sustainaction": {
-    title: "PLN SustainAction 2026",
+    code: "DOKUMEN PROGRAM // PLN SUSTAINACTION 2026",
+    title: "Komitmen Transisi Energi & Rantai Pasok Bersih PLN SustainAction 2026",
+    subtitle:
+      "Peran OzikSustain sebagai agregator kepatuhan hukum dan spasial untuk mempercepat dekarbonisasi rantai pasok nasional.",
     content: (
-      <>
-        <p>Halaman ini berisikan informasi mengenai integrasi dan komitmen OzikSustain dalam mendukung program PLN SustainAction 2026.</p>
-        <p>OzikSustain bertindak sebagai agregator pintar untuk mempercepat transisi energi hijau di tingkat UMKM dan enterprise menengah.</p>
-      </>
+      <div className="space-y-4">
+        <p>
+          OzikSustain dikembangkan sebagai infrastruktur adjudikasi digital yang mendukung visi <strong>PLN SustainAction 2026</strong> dalam mempercepat transisi energi bersih yang akuntabel di seluruh kepulauan Indonesia.
+        </p>
+        <p>
+          Melalui integrasi pencarian vektor hukum <strong>IndoBERT</strong> dan verifikasi poligon spasial, kami membantu korporasi energi serta ribuan pemasok UMKM memvalidasi dokumen <em>Project Design Document</em> (PDD), izin lingkungan (AMDAL/UKL-UPL), dan kelayakan teknis PLTS secara cepat, objektif, dan bebas dari klaim semu (<em>greenwashing</em>).
+        </p>
+      </div>
     ),
   },
-  "kontak": {
-    title: "Hubungi Tim OzikSustain",
+  kontak: {
+    code: "KANAL KOMUNIKASI // TIM ADJUDIKASI",
+    title: "Hubungi Tim Teknis & Hukum OzikSustain",
+    subtitle:
+      "Konsultasi integrasi Enterprise REST API, penyediaan Private VPC, dan dukungan verifikasi sertifikat.",
     content: (
-      <>
-        <p>Email: <strong>hello@ozikcarbon.id</strong></p>
-        <p>Telepon: <strong>+62 811 0000 0000</strong></p>
-        <p>Alamat: Gedung Inovasi Hijau, Lt. 12, Jakarta Selatan, Indonesia.</p>
-      </>
+      <div className="space-y-4">
+        <p>
+          Untuk permintaan demonstrasi korporasi, pengadaan instansi pemerintah (B2G), maupun bantuan teknis terkait kunci API, silakan hubungi tim kami melalui kanal resmi berikut:
+        </p>
+        <div className="grid sm:grid-cols-2 gap-4 font-mono text-xs pt-2">
+          <div className="border border-[#091E17] bg-[#F6F4EE] p-4">
+            <div className="text-[#4A5D54] uppercase mb-1">SURAT ELEKTRONIK RESMI</div>
+            <div className="font-bold text-[#091E17] text-sm">adjudikasi@oziksustain.id</div>
+          </div>
+          <div className="border border-[#091E17] bg-[#F6F4EE] p-4">
+            <div className="text-[#4A5D54] uppercase mb-1">KANTOR OPERASIONAL</div>
+            <div className="font-bold text-[#091E17] text-sm">Jakarta Selatan, DKI Jakarta, ID</div>
+          </div>
+        </div>
+      </div>
     ),
   },
-  "privasi": {
-    title: "Kebijakan Privasi Data",
+  privasi: {
+    code: "KEPATUHAN REGULASI // UU PDP NO. 27 TAHUN 2022",
+    title: "Kebijakan Privasi & Jaminan Zero Data Retention",
+    subtitle:
+      "Arsitektur pemrosesan memori volatil (RAM) dan penyensoran otomatis identitas pribadi.",
     content: (
-      <>
-        <p>Kami sangat menjaga kerahasiaan PDD dan dokumen proposal Anda. OzikSustain mengadopsi prinsip <em>Zero Data Retention Guarantee</em> di mana seluruh dokumen yang diunggah akan otomatis dihapus dari server (RAM) kami segera setelah laporan audit selesai dibuat.</p>
-        <p>Sistem AI kami beroperasi sesuai standar kepatuhan UU Pelindungan Data Pribadi (UU PDP No. 27 Tahun 2022).</p>
-      </>
+      <div className="space-y-4">
+        <p>
+          OzikSustain menerapkan standar perlindungan tertinggi atas dokumen rahasia perusahaan Anda. Kami mengadopsi arsitektur <strong>Zero Data Retention</strong> di mana berkas mentah PDD atau kontrak yang diunggah diproses langsung di memori volatil (RAM) dan segera dihapus begitu laporan evaluasi selesai disusun.
+        </p>
+        <p>
+          Sebelum teks dokumen dianalisis oleh model bahasa, lapisan <em>PII Auto-Masking</em> kami secara otomatis menyamarkan Nomor Induk Kependudukan (NIK), Nomor Induk Berusaha (NIB), dan nama individu sesuai amanat <strong>Undang-Undang Pelindungan Data Pribadi (UU No. 27 Tahun 2022)</strong>.
+        </p>
+      </div>
     ),
   },
-  "disclaimer": {
-    title: "Disclaimer Hak Cipta",
+  disclaimer: {
+    code: "KETENTUAN HUKUM // HAK CIPTA & BATASAN TANGGUNG JAWAB",
+    title: "Ketentuan Layanan & Pernyataan Hukum",
+    subtitle:
+      "Pedoman penggunaan laporan adjudikasi digital dan lencana verifikasi kriptografi OzikSustain.",
     content: (
-      <>
-        <p>Hak cipta seluruh desain, algoritma dual-track, dan aset visual OzikSustain dilindungi oleh hukum. Dilarang melakukan <em>reverse engineering</em> atau menyalin materi tanpa izin tertulis dari OzikSustain Inc.</p>
-      </>
+      <div className="space-y-4">
+        <p>
+          Seluruh hasil pemindaian AI pada platform OzikSustain dilengkapi dengan rujukan pasal deterministik dari korpus <strong>Pasal.id</strong> serta melewati mekanisme kalibrasi pakar (<em>Human-in-the-Loop</em>) sebelum lencana kriptografi HMAC-SHA256 diterbitkan.
+        </p>
+        <p>
+          Setiap upaya memodifikasi isi dokumen setelah sertifikat diterbitkan akan membatalkan kecocokan hash SHA-256 pada buku besar verifikasi publik kami secara otomatis.
+        </p>
+      </div>
     ),
   },
 };
@@ -48,46 +85,39 @@ const PAGES_DATA: Record<string, { title: string; content: React.ReactNode }> = 
 function PageComponent() {
   const { id } = Route.useParams();
   const page = PAGES_DATA[id] || {
-    title: "Halaman Tidak Ditemukan",
-    content: <p>Halaman yang Anda cari tidak tersedia atau sedang dalam perbaikan.</p>,
+    code: "INDEKS 404",
+    title: "Lembar Informasi Tidak Ditemukan",
+    subtitle: "Dokumen yang Anda maksud tidak tersedia dalam indeks.",
+    content: <p>Silakan kembali ke halaman utama untuk mengakses modul yang aktif.</p>,
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-emerald-950 selection:bg-emerald-950 selection:text-white flex flex-col">
-      <header className="border-b border-border/40 bg-white px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="bg-emerald-950 text-white p-2 rounded group-hover:bg-emerald-800 transition-colors">
-            <Leaf className="h-5 w-5" />
+    <div className="min-h-screen bg-[#F6F4EE] bg-archival-grid text-[#091E17] py-12 md:py-20 px-4">
+      <article className="mx-auto max-w-3xl border-[1.5px] border-[#091E17] bg-white shadow-[8px_8px_0_#091E17]">
+        <div className="bg-[#071913] text-[#F6F4EE] p-8 md:p-10 border-b-[1.5px] border-[#091E17]">
+          <div className="font-mono text-xs font-bold uppercase tracking-widest text-[#34D399] mb-2">
+            {page.code}
           </div>
-          <span className="text-xl font-black tracking-widest uppercase text-emerald-950 hidden sm:block">OzikSustain</span>
-        </Link>
-        <Link to="/">
-          <Button variant="ghost" size="icon" className="text-emerald-950 hover:bg-emerald-50 rounded-none transition-all">
-            <ArrowLeft className="h-6 w-6" />
-          </Button>
-        </Link>
-      </header>
-      
-      <main className="flex-1 p-6 md:p-12 flex justify-center">
-        <article className="w-full max-w-3xl">
-          <div className="border-4 border-emerald-950 bg-white p-8 md:p-12 shadow-[12px_12px_0_rgba(2,44,34,1)]">
-            <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-emerald-950 mb-8 border-b-4 border-emerald-950/10 pb-6">
-              {page.title}
-            </h1>
-            <div className="prose prose-emerald max-w-none text-emerald-950/80 font-medium text-lg leading-relaxed space-y-6">
-              {page.content}
-            </div>
-            
-            <div className="mt-16 pt-8 border-t-4 border-emerald-950/10">
-              <Link to="/">
-                <Button className="bg-emerald-950 text-white hover:bg-emerald-900 border-4 border-transparent rounded-none font-black uppercase tracking-widest px-8 py-6 shadow-[4px_4px_0_rgba(0,0,0,0.3)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all">
-                  Kembali ke Beranda
-                </Button>
-              </Link>
-            </div>
+          <h1 className="font-editorial text-3xl md:text-4xl font-semibold text-white leading-tight">
+            {page.title}
+          </h1>
+          <p className="mt-3 text-sm text-[#F6F4EE]/75 leading-relaxed">{page.subtitle}</p>
+        </div>
+
+        <div className="p-8 md:p-10 text-sm sm:text-base text-[#091E17]/90 leading-relaxed space-y-6">
+          {page.content}
+
+          <div className="pt-8 border-t border-[#091E17]/15 flex items-center justify-between">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 border-[1.5px] border-[#091E17] bg-[#091E17] px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-[#F6F4EE] hover:bg-[#0D6E49] transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" /> Kembali ke Beranda
+            </Link>
+            <span className="font-mono text-[11px] text-[#4A5D54]">OZIKSUSTAIN LEGAL ARCHIVE</span>
           </div>
-        </article>
-      </main>
+        </div>
+      </article>
     </div>
   );
 }

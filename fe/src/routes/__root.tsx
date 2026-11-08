@@ -8,29 +8,41 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/site-header";
 import { AuthProvider } from "@/lib/auth-context";
+import { Compass, RotateCcw, ArrowLeft } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+    <div className="flex min-h-screen items-center justify-center bg-[#F6F4EE] bg-archival-grid px-4 text-[#091E17]">
+      <div className="w-full max-w-lg border-[1.5px] border-[#091E17] bg-white p-8 md:p-12 shadow-[6px_6px_0_#091E17]">
+        <div className="flex items-center justify-between border-b border-[#091E17]/15 pb-4 mb-6 font-mono text-xs uppercase tracking-widest text-[#4A5D54]">
+          <span>KODE STATUS // 404</span>
+          <span>INDEKS TIDAK DITEMUKAN</span>
+        </div>
+        <h1 className="font-editorial text-5xl md:text-6xl font-semibold tracking-tight text-[#091E17]">
+          Lembar Arsip Tidak Tersedia
+        </h1>
+        <p className="mt-4 text-sm leading-relaxed text-[#4A5D54]">
+          Rute atau dokumen yang Anda tuju tidak terdaftar dalam registri sistem OzikSustain atau telah dipindahkan ke indeks baru.
         </p>
-        <div className="mt-6">
+        <div className="mt-8 flex flex-wrap gap-3">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center gap-2 border-[1.5px] border-[#091E17] bg-[#091E17] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[#F6F4EE] transition-transform hover:-translate-y-0.5"
           >
-            Go home
+            <ArrowLeft className="h-4 w-4" /> Kembali ke Beranda
+          </Link>
+          <Link
+            to="/audit"
+            className="inline-flex items-center gap-2 border-[1.5px] border-[#091E17] bg-[#F6F4EE] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[#091E17] transition-colors hover:bg-[#ECE9DF]"
+          >
+            <Compass className="h-4 w-4" /> Uji Coba Audit PDD
           </Link>
         </div>
       </div>
@@ -46,29 +58,33 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
+    <div className="flex min-h-screen items-center justify-center bg-[#F6F4EE] bg-archival-grid px-4 text-[#091E17]">
+      <div className="w-full max-w-lg border-[1.5px] border-[#091E17] bg-white p-8 md:p-12 shadow-[6px_6px_0_#091E17]">
+        <div className="flex items-center justify-between border-b border-[#091E17]/15 pb-4 mb-6 font-mono text-xs uppercase tracking-widest text-[#B91C1C]">
+          <span>INTERRUPTION // RUNTIME</span>
+          <span>GANGGUAN PEMUATAN</span>
+        </div>
+        <h1 className="font-editorial text-3xl md:text-4xl font-semibold tracking-tight text-[#091E17]">
+          Kendala Pemrosesan Halaman
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+        <p className="mt-3 text-sm leading-relaxed text-[#4A5D54]">
+          Terjadi gangguan saat memuat modul antarmuka ini. Silakan muat ulang sesi atau kembali ke beranda utama.
         </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <div className="mt-8 flex flex-wrap gap-3">
           <button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center gap-2 border-[1.5px] border-[#091E17] bg-[#091E17] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[#F6F4EE] cursor-pointer"
           >
-            Try again
+            <RotateCcw className="h-4 w-4" /> Muat Ulang Modul
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="inline-flex items-center gap-2 border-[1.5px] border-[#091E17] bg-white px-5 py-3 text-xs font-bold uppercase tracking-widest text-[#091E17] hover:bg-[#ECE9DF]"
           >
-            Go home
+            Beranda Utama
           </a>
         </div>
       </div>
@@ -81,18 +97,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "OzikSustain — Smart Greentech & Legaltech Aggregator" },
-      { name: "description", content: "Audit contracts, Terms of Service, and SOPs against Indonesian regulations in 30 seconds. Zero data retention, deterministic RAG, public QR verification." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "OzikSustain — Smart Greentech & Legaltech Aggregator" },
-      { property: "og:description", content: "Audit contracts, Terms of Service, and SOPs against Indonesian regulations in 30 seconds. Zero data retention, deterministic RAG, public QR verification." },
+      { title: "OzikSustain : Mesin Audit Kepatuhan Hukum & Spasial Proyek Hijau" },
+      {
+        name: "description",
+        content:
+          "Platform adjudikasi digital untuk audit Project Design Document (PDD), izin lingkungan, dan rantai pasok hijau berbasis IndoBERT RAG, pengawasan pakar, dan segel kriptografi SHA-256.",
+      },
+      { name: "author", content: "OzikSustain" },
+      { property: "og:title", content: "OzikSustain : Mesin Audit Kepatuhan Hukum & Spasial Proyek Hijau" },
+      {
+        property: "og:description",
+        content:
+          "Audit dokumen PDD dan izin lingkungan terhadap UU LHK, Permen ESDM, dan Perpres Nilai Ekonomi Karbon dalam hitungan detik dengan rujukan Pasal.id.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "OzikSustain — Smart Greentech & Legaltech Aggregator" },
-      { name: "twitter:description", content: "Audit contracts, Terms of Service, and SOPs against Indonesian regulations in 30 seconds. Zero data retention, deterministic RAG, public QR verification." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b58f587c-0bfd-4830-9dd9-9b7087339f07/id-preview-676d54e1--e2df3c0c-4206-424f-8112-8836d7d92297.lovable.app-1784800781560.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b58f587c-0bfd-4830-9dd9-9b7087339f07/id-preview-676d54e1--e2df3c0c-4206-424f-8112-8836d7d92297.lovable.app-1784800781560.png" },
+      { name: "twitter:title", content: "OzikSustain : Mesin Audit Kepatuhan Hukum & Spasial Proyek Hijau" },
     ],
     links: [
       {
@@ -104,7 +124,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap",
       },
     ],
   }),
@@ -116,7 +136,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="id">
       <head>
         <HeadContent />
       </head>
@@ -131,20 +151,24 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const hideChrome = pathname.startsWith("/dashboard") || pathname.startsWith("/workspace") || pathname.startsWith("/auth") || pathname.startsWith("/playground") || pathname === "/audit";
+  const hideChrome =
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/workspace") ||
+    pathname.startsWith("/review") ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/kyc-onboarding") ||
+    pathname.startsWith("/verify");
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-      <div className="min-h-screen flex flex-col bg-background">
-        {!hideChrome && (
-          <SiteHeader />
-        )}
-        <main className="flex-1">
-          <Outlet />
-        </main>
-        <Toaster richColors position="top-right" />
-      </div>
+        <div className="min-h-screen flex flex-col bg-[#F6F4EE] text-[#091E17]">
+          {!hideChrome && <SiteHeader />}
+          <main className="flex-1">
+            <Outlet />
+          </main>
+          <Toaster richColors position="top-right" />
+        </div>
       </AuthProvider>
     </QueryClientProvider>
   );

@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuditRouteImport } from './routes/audit'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as KycOnboardingRouteImport } from './routes/kyc-onboarding'
 import { Route as PlaygroundRouteImport } from './routes/playground'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as RegulasiRouteImport } from './routes/regulasi'
@@ -20,7 +21,6 @@ import { Route as PageIdRouteImport } from './routes/page.$id'
 import { Route as ReviewIdRouteImport } from './routes/review.$id'
 import { Route as VerifyIdRouteImport } from './routes/verify.$id'
 import { Route as WorkspaceIdRouteImport } from './routes/workspace.$id'
-import { Route as KycOnboardingRouteImport } from './routes/kyc-onboarding'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -42,6 +42,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KycOnboardingRoute = KycOnboardingRouteImport.update({
+  id: '/kyc-onboarding',
+  path: '/kyc-onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlaygroundRoute = PlaygroundRouteImport.update({
   id: '/playground',
   path: '/playground',
@@ -60,11 +65,6 @@ const RegulasiRoute = RegulasiRouteImport.update({
 const PageIdRoute = PageIdRouteImport.update({
   id: '/page/$id',
   path: '/page/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const KycOnboardingRoute = KycOnboardingRouteImport.update({
-  id: '/kyc-onboarding',
-  path: '/kyc-onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReviewIdRoute = ReviewIdRouteImport.update({
@@ -88,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/audit': typeof AuditRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/kyc-onboarding': typeof KycOnboardingRoute
   '/playground': typeof PlaygroundRoute
   '/pricing': typeof PricingRoute
   '/regulasi': typeof RegulasiRoute
@@ -101,6 +102,7 @@ export interface FileRoutesByTo {
   '/audit': typeof AuditRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/kyc-onboarding': typeof KycOnboardingRoute
   '/playground': typeof PlaygroundRoute
   '/pricing': typeof PricingRoute
   '/regulasi': typeof RegulasiRoute
@@ -115,6 +117,7 @@ export interface FileRoutesById {
   '/audit': typeof AuditRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/kyc-onboarding': typeof KycOnboardingRoute
   '/playground': typeof PlaygroundRoute
   '/pricing': typeof PricingRoute
   '/regulasi': typeof RegulasiRoute
@@ -130,6 +133,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/auth'
     | '/dashboard'
+    | '/kyc-onboarding'
     | '/playground'
     | '/pricing'
     | '/regulasi'
@@ -143,6 +147,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/auth'
     | '/dashboard'
+    | '/kyc-onboarding'
     | '/playground'
     | '/pricing'
     | '/regulasi'
@@ -156,6 +161,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/auth'
     | '/dashboard'
+    | '/kyc-onboarding'
     | '/playground'
     | '/pricing'
     | '/regulasi'
@@ -170,6 +176,7 @@ export interface RootRouteChildren {
   AuditRoute: typeof AuditRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
+  KycOnboardingRoute: typeof KycOnboardingRoute
   PlaygroundRoute: typeof PlaygroundRoute
   PricingRoute: typeof PricingRoute
   RegulasiRoute: typeof RegulasiRoute
@@ -209,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kyc-onboarding': {
+      id: '/kyc-onboarding'
+      path: '/kyc-onboarding'
+      fullPath: '/kyc-onboarding'
+      preLoaderRoute: typeof KycOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/playground': {
       id: '/playground'
       path: '/playground'
@@ -228,13 +242,6 @@ declare module '@tanstack/react-router' {
       path: '/regulasi'
       fullPath: '/regulasi'
       preLoaderRoute: typeof RegulasiRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/kyc-onboarding': {
-      id: '/kyc-onboarding'
-      path: '/kyc-onboarding'
-      fullPath: '/kyc-onboarding'
-      preLoaderRoute: typeof KycOnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/page/$id': {
@@ -273,10 +280,10 @@ const rootRouteChildren: RootRouteChildren = {
   AuditRoute: AuditRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
+  KycOnboardingRoute: KycOnboardingRoute,
   PlaygroundRoute: PlaygroundRoute,
   PricingRoute: PricingRoute,
   RegulasiRoute: RegulasiRoute,
-  KycOnboardingRoute: KycOnboardingRoute,
   PageIdRoute: PageIdRoute,
   ReviewIdRoute: ReviewIdRoute,
   VerifyIdRoute: VerifyIdRoute,

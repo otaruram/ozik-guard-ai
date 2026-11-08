@@ -1,4 +1,4 @@
-import { Leaf, ShieldCheck } from "lucide-react";
+import { ShieldCheck, FileCheck2, Activity } from "lucide-react";
 import { AuditWorkspace } from "@/components/AuditWorkspace";
 
 interface DashboardUtamaProps {
@@ -8,35 +8,81 @@ interface DashboardUtamaProps {
   userEmail: string;
 }
 
-export function DashboardUtama({ history, onAuditComplete, userName, userEmail }: DashboardUtamaProps) {
+export function DashboardUtama({
+  history,
+  onAuditComplete,
+  userName,
+  userEmail,
+}: DashboardUtamaProps) {
   const total = history.length;
-  const avgCompliance = total > 0 
-    ? Math.round(history.reduce((acc, curr) => acc + (curr.feasibilityScore || 0), 0) / total) 
-    : 0;
-  const greenBadges = history.filter(h => h.status === "ACTIVE" || (h.feasibilityScore || 0) >= 50).length;
+  const avgCompliance =
+    total > 0
+      ? Math.round(
+          history.reduce((acc, curr) => acc + (curr.feasibilityScore || 0), 0) / total
+        )
+      : 0;
+  const greenBadges = history.filter(
+    (h) => h.reviewStatus === "APPROVED" || h.status === "ACTIVE" || (h.feasibilityScore || 0) >= 75
+  ).length;
 
   return (
     <div suppressHydrationWarning className="max-w-7xl mx-auto space-y-8">
-      {/* Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="border-4 border-emerald-950 bg-white p-6 shadow-[6px_6px_0_rgba(2,44,34,1)]">
-          <div className="text-xs font-black text-emerald-950/60 uppercase tracking-widest">Total Proyek Dievaluasi</div>
-          <div className="mt-2 text-4xl font-black text-emerald-950">{total} <span className="text-xl">Proyek</span></div>
+      {/* Telemetry Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="instrument-card p-6 flex flex-col justify-between">
+          <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-[#4A5D54] mb-3">
+            <span>METRIK 01 // VOLUME EVALUASI</span>
+            <FileCheck2 className="h-4 w-4 text-[#0D6E49]" />
+          </div>
+          <div>
+            <div className="font-mono text-3xl md:text-4xl font-bold text-[#091E17] tabular-nums">
+              {total} <span className="text-sm font-normal text-[#4A5D54]">Dokumen PDD</span>
+            </div>
+            <div className="mt-1 text-xs text-[#4A5D54]">
+              Total berkas proyek yang telah dipindai
+            </div>
+          </div>
         </div>
-        <div className="border-4 border-emerald-950 bg-emerald-950 text-white p-6 shadow-[6px_6px_0_rgba(2,44,34,0.3)] relative overflow-hidden">
-          <div className="text-xs font-black text-white/60 uppercase tracking-widest">Rata-rata Compliance</div>
-          <div className="mt-2 text-4xl font-black">{avgCompliance}<span className="text-xl text-white/60">/100</span></div>
-          <Leaf className="absolute -right-4 -bottom-4 h-24 w-24 text-white/10" />
+
+        <div className="border-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] p-6 shadow-[4px_4px_0_#D97706] flex flex-col justify-between">
+          <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-[#34D399] mb-3">
+            <span>METRIK 02 // RATA-RATA SKOR</span>
+            <Activity className="h-4 w-4 text-[#FBBF24]" />
+          </div>
+          <div>
+            <div className="font-mono text-3xl md:text-4xl font-bold text-white tabular-nums">
+              {avgCompliance}
+              <span className="text-base text-[#F6F4EE]/60">/100</span>
+            </div>
+            <div className="mt-1 text-xs text-[#F6F4EE]/70">
+              Indeks kepatuhan gabungan 4 pilar
+            </div>
+          </div>
         </div>
-        <div className="border-4 border-emerald-950 bg-white p-6 shadow-[6px_6px_0_rgba(2,44,34,1)]">
-          <div className="text-xs font-black text-emerald-950/60 uppercase tracking-widest">Verified Green Badges</div>
-          <div className="mt-2 text-4xl font-black text-emerald-950 flex items-center gap-3">
-            {greenBadges} <ShieldCheck className="h-8 w-8 text-emerald-600" />
+
+        <div className="instrument-card p-6 flex flex-col justify-between">
+          <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-[#4A5D54] mb-3">
+            <span>METRIK 03 // SERTIFIKAT AKTIF</span>
+            <ShieldCheck className="h-4 w-4 text-[#0D6E49]" />
+          </div>
+          <div>
+            <div className="font-mono text-3xl md:text-4xl font-bold text-[#0D6E49] tabular-nums">
+              {greenBadges} <span className="text-sm font-normal text-[#4A5D54]">Lencana QR</span>
+            </div>
+            <div className="mt-1 text-xs text-[#4A5D54]">
+              Tersegel kriptografi HMAC-SHA256
+            </div>
           </div>
         </div>
       </div>
 
-      <AuditWorkspace isFreemium={false} onAuditComplete={onAuditComplete} userName={userName} userEmail={userEmail} />
+      {/* Main Audit Workspace */}
+      <AuditWorkspace
+        isFreemium={false}
+        onAuditComplete={onAuditComplete}
+        userName={userName}
+        userEmail={userEmail}
+      />
     </div>
   );
 }

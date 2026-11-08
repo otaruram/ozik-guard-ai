@@ -1,135 +1,230 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
-import { Leaf, Menu, X, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Menu, X, ArrowUpRight, ShieldCheck, FileSearch, Scale, Terminal, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth-context";
 
-const NAV = [
-  { to: "/#features", label: "Features", hash: true },
-  { to: "/#how", label: "How It Works", hash: true },
-  { to: "/pricing", label: "Pricing", hash: false },
-  { to: "/#verify", label: "Verification Badge", hash: true },
-  { to: "/playground", label: "Dokumentasi API", hash: false },
+function GithubIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      role="img"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <title>GitHub</title>
+      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+    </svg>
+  );
+}
+
+const NAV_ITEMS = [
+  { to: "/audit", label: "Uji Coba PDD", code: "01", icon: FileSearch },
+  { to: "/regulasi", label: "Direktori Hukum", code: "02", icon: Scale },
+  { to: "/pricing", label: "Skema Biaya", code: "03", icon: Layers },
+  { to: "/playground", label: "Spesifikasi API", code: "04", icon: Terminal },
 ] as const;
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
-  const isLanding = location.pathname === "/";
+  const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 md:px-6">
-        <Link to="/" className="flex items-center gap-2.5 shrink-0">
-          <span className="grid h-12 w-12 place-items-center bg-transparent overflow-hidden">
-            <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-contain mix-blend-multiply" />
-          </span>
-          <div className="flex flex-col leading-none">
-            <span className="text-[15px] font-black tracking-widest text-emerald-950 uppercase">
-              OzikSustain
+    <header className="sticky top-0 z-40 w-full border-b-[1.5px] border-[#091E17] bg-[#F6F4EE]/95 backdrop-blur-md">
+      {/* Top Telemetry Strip */}
+      <div className="hidden lg:block border-b border-[#091E17]/15 bg-[#071913] text-[#F6F4EE] px-6 py-1.5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between font-mono text-[11px] tracking-wider">
+          <div className="flex items-center gap-4">
+            <span className="inline-flex items-center gap-1.5 text-[#34D399]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#34D399] animate-pulse" />
+              MESIN INDOBERT RAG AKTIF
             </span>
-            <span className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-950/70">
-              Greentech & Legaltech
-            </span>
+            <span className="text-[#F6F4EE]/30">|</span>
+            <span className="text-[#F6F4EE]/75">BASIS REGULASI: UU 32/2009 • PERPRES 98/2021 • PERMEN ESDM 2/2024 • UU PDP 27/2022</span>
           </div>
-          <Badge
-            variant="secondary"
-            className="ml-1 hidden lg:inline-flex bg-success/10 text-success border-success/20 text-[10px] font-semibold"
-          >
-            BETA
-          </Badge>
-        </Link>
-
-        {isLanding && (
-          <nav className="ml-6 hidden md:flex items-center gap-1">
-            {NAV.map((n) => (
-              n.hash ? (
-                <a
-                  key={n.to}
-                  href={n.to}
-                  className="px-3 py-2 text-sm font-medium text-muted-foreground rounded-md hover:text-foreground hover:bg-muted transition-colors"
-                >
-                  {n.label}
-                </a>
-              ) : (
-                <Link
-                  key={n.to}
-                  to={n.to}
-                  className="px-3 py-2 text-sm font-medium text-muted-foreground rounded-md hover:text-foreground hover:bg-muted transition-colors"
-                  activeProps={{ className: "text-foreground bg-muted" }}
-                >
-                  {n.label}
-                </Link>
-              )
-            ))}
-          </nav>
-        )}
-
-        {isLanding && (
-          <div className="ml-auto flex items-center gap-2">
-            <Button variant="ghost" size="sm" asChild className="hidden md:inline-flex">
-              <Link to="/auth">Masuk</Link>
-            </Button>
-            <Button size="sm" asChild className="hidden md:inline-flex gap-1.5 bg-emerald-950 text-white hover:bg-emerald-900 rounded-none shadow-[2px_2px_0_rgba(2,44,34,1)] hover:translate-y-0.5 hover:shadow-none transition-all">
-              <Link to="/audit">
-                <User className="h-3.5 w-3.5" /> Coba Audit Gratis
-              </Link>
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setOpen((v) => !v)}
-              aria-label="Menu"
+          <div className="flex items-center gap-4 text-[#F6F4EE]/75">
+            <span>ZERO DATA RETENTION (IN-MEMORY)</span>
+            <span className="text-[#F6F4EE]/30">|</span>
+            <a
+              href="https://github.com/otaruram/ozik-guard-ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-[#F6F4EE] hover:text-[#34D399] transition-colors"
             >
-              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+              <GithubIcon className="h-3 w-3" />
+              <span>GITHUB</span>
+            </a>
+            <span className="text-[#F6F4EE]/30">|</span>
+            <Link to="/page/$id" params={{ id: "pln-sustainaction" }} className="text-[#FBBF24] hover:underline">
+              PLN SUSTAINACTION 2026
+            </Link>
           </div>
-        )}
+        </div>
       </div>
 
-      {isLanding && (
-        <div
-          className={cn(
-            "md:hidden overflow-hidden border-t border-border/60 transition-all",
-            open ? "max-h-96" : "max-h-0",
-          )}
-        >
-          <nav className="flex flex-col p-3 gap-1">
-            {NAV.map((n) => (
-              n.hash ? (
-                <a
-                  key={n.to}
-                  href={n.to}
-                  onClick={() => setOpen(false)}
-                  className="px-3 py-2.5 text-sm font-medium rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-                >
-                  {n.label}
-                </a>
-              ) : (
-                <Link
-                  key={n.to}
-                  to={n.to}
-                  onClick={() => setOpen(false)}
-                  className="px-3 py-2.5 text-sm font-medium rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-                  activeProps={{ className: "text-foreground bg-muted" }}
-                >
-                  {n.label}
-                </Link>
-              )
-            ))}
-            <div className="mt-2 flex gap-2 border-t border-border/60 pt-3">
-              <Button variant="outline" size="sm" asChild className="flex-1">
-                <Link to="/auth" onClick={() => setOpen(false)}>Masuk</Link>
-              </Button>
-              <Button size="sm" asChild className="flex-1">
-                <Link to="/audit" onClick={() => setOpen(false)}>
-                  Coba Audit Gratis
-                </Link>
-              </Button>
+      {/* Main Header Bar */}
+      <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 md:px-6">
+        <Link to="/" className="flex items-center gap-3 group shrink-0" onClick={() => setOpen(false)}>
+          <div className="grid h-11 w-11 place-items-center border-[1.5px] border-[#091E17] bg-white p-1.5 shadow-[2px_2px_0_#091E17] transition-transform group-hover:-translate-y-0.5">
+            <img src="/logo.png" alt="Logo OzikSustain" className="h-full w-full object-contain mix-blend-multiply" />
+          </div>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="font-editorial text-xl font-bold tracking-tight text-[#091E17]">
+                OzikSustain
+              </span>
+              <span className="border border-[#091E17] bg-[#E6F4EE] px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-widest text-[#0D6E49]">
+                v2.4
+              </span>
             </div>
-          </nav>
+            <span className="font-mono text-[10px] font-medium uppercase tracking-widest text-[#4A5D54]">
+              Adjudikasi ESG & Kepatuhan Hukum
+            </span>
+          </div>
+        </Link>
+
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center border-[1.5px] border-[#091E17] bg-white">
+          {NAV_ITEMS.map((item, idx) => {
+            const isActive = location.pathname === item.to;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2.5 text-xs font-semibold tracking-wide transition-colors",
+                  idx !== 0 && "border-l border-[#091E17]/20",
+                  isActive
+                    ? "bg-[#091E17] text-[#F6F4EE]"
+                    : "text-[#091E17] hover:bg-[#ECE9DF]"
+                )}
+              >
+                <span className={cn("font-mono text-[10px]", isActive ? "text-[#FBBF24]" : "text-[#4A5D54]")}>
+                  {item.code}
+                </span>
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Actions */}
+        <div className="hidden md:flex items-center gap-3">
+          <a
+            href="https://github.com/otaruram/ozik-guard-ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Repository GitHub OzikSustain"
+            className="grid h-10 w-10 place-items-center border-[1.5px] border-[#091E17] bg-white text-[#091E17] shadow-[2px_2px_0_#091E17] transition-all hover:-translate-y-0.5 hover:bg-[#ECE9DF]"
+          >
+            <GithubIcon className="h-4 w-4" />
+          </a>
+          {user ? (
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center gap-2 border-[1.5px] border-[#091E17] bg-[#0D6E49] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-[3px_3px_0_#091E17] transition-all hover:-translate-y-0.5 hover:bg-[#09583A]"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              Workspace Audit
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/auth"
+                className="inline-flex items-center px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-[#091E17] border-[1.5px] border-transparent hover:border-[#091E17] hover:bg-white transition-all"
+              >
+                Masuk Akun
+              </Link>
+              <Link
+                to="/audit"
+                className="inline-flex items-center gap-2 border-[1.5px] border-[#091E17] bg-[#091E17] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-[#F6F4EE] shadow-[3px_3px_0_#D97706] transition-all hover:-translate-y-0.5 hover:bg-[#0D6E49]"
+              >
+                Simulasi Audit PDD
+                <ArrowUpRight className="h-3.5 w-3.5 text-[#FBBF24]" />
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* Mobile Menu Trigger */}
+        <button
+          type="button"
+          className="md:hidden inline-flex h-11 w-11 items-center justify-center border-[1.5px] border-[#091E17] bg-white text-[#091E17]"
+          onClick={() => setOpen((v) => !v)}
+          aria-label={open ? "Tutup navigasi" : "Buka navigasi"}
+        >
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {/* Mobile Drawer */}
+      {open && (
+        <div className="md:hidden border-t-[1.5px] border-[#091E17] bg-[#F6F4EE] px-4 py-5 space-y-4">
+          <div className="grid gap-2">
+            {NAV_ITEMS.map((item) => {
+              const isActive = location.pathname === item.to;
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "flex items-center justify-between border-[1.5px] border-[#091E17] px-4 py-3 text-sm font-bold",
+                    isActive ? "bg-[#091E17] text-[#F6F4EE]" : "bg-white text-[#091E17]"
+                  )}
+                >
+                  <span className="flex items-center gap-3">
+                    <Icon className="h-4 w-4 text-[#0D6E49]" />
+                    {item.label}
+                  </span>
+                  <span className="font-mono text-xs opacity-60">[{item.code}]</span>
+                </Link>
+              );
+            })}
+          </div>
+          <div className="pt-2 border-t border-[#091E17]/15 space-y-2">
+            <a
+              href="https://github.com/otaruram/ozik-guard-ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 border-[1.5px] border-[#091E17] bg-white py-2.5 text-xs font-bold uppercase tracking-widest text-[#091E17]"
+            >
+              <GithubIcon className="h-4 w-4" />
+              <span>Lihat di GitHub</span>
+            </a>
+            <div className="grid grid-cols-2 gap-3">
+              {user ? (
+              <Link
+                to="/dashboard"
+                onClick={() => setOpen(false)}
+                className="col-span-2 flex items-center justify-center gap-2 border-[1.5px] border-[#091E17] bg-[#0D6E49] py-3 text-xs font-bold uppercase tracking-widest text-white"
+              >
+                Buka Workspace Audit
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/auth"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center justify-center border-[1.5px] border-[#091E17] bg-white py-3 text-xs font-bold uppercase tracking-widest text-[#091E17]"
+                >
+                  Masuk Akun
+                </Link>
+                <Link
+                  to="/audit"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center justify-center border-[1.5px] border-[#091E17] bg-[#091E17] py-3 text-xs font-bold uppercase tracking-widest text-[#F6F4EE]"
+                >
+                  Uji Coba Gratis
+                </Link>
+              </>
+            )}
+            </div>
+          </div>
         </div>
       )}
     </header>

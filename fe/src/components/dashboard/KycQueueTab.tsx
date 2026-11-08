@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Loader2, Building2, ShieldCheck, Hash } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api";
 
@@ -22,12 +21,15 @@ export function KycQueueTab() {
     }
   };
 
-  useEffect(() => { fetchQueue(); }, []);
+  useEffect(() => {
+    fetchQueue();
+  }, []);
 
-  const filtered = queue.filter(u =>
-    u.name?.toLowerCase().includes(search.toLowerCase()) ||
-    u.company?.toLowerCase().includes(search.toLowerCase()) ||
-    u.email?.toLowerCase().includes(search.toLowerCase())
+  const filtered = queue.filter(
+    (u) =>
+      u.name?.toLowerCase().includes(search.toLowerCase()) ||
+      u.company?.toLowerCase().includes(search.toLowerCase()) ||
+      u.email?.toLowerCase().includes(search.toLowerCase())
   );
   const paginated = filtered.slice((currentPage - 1) * 10, currentPage * 10);
   const totalPages = Math.ceil(filtered.length / 10);
@@ -40,91 +42,100 @@ export function KycQueueTab() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      <div className="border-4 border-emerald-950 bg-white shadow-[8px_8px_0_rgba(2,44,34,1)]">
-        <div className="p-6 border-b-4 border-emerald-950 bg-emerald-950 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="border-[1.5px] border-[#091E17] bg-white shadow-[6px_6px_0_#091E17]">
+        <div className="p-6 border-b-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-black uppercase tracking-widest flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5" /> Antrean KYC (FIFO)
+            <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#34D399] mb-1">
+              REGISTRI ENTITAS TERDAFTAR // FIFO QUEUE
+            </div>
+            <h2 className="font-editorial text-2xl font-semibold text-white flex items-center gap-2">
+              Antrean Verifikasi Badan Usaha (KYC)
             </h2>
-            <p className="text-white/60 font-bold text-xs mt-1">Daftar user yang telah menyelesaikan form KYC. Urutan: Dokumen terlama di atas.</p>
           </div>
           <Input
-            placeholder="Cari nama/perusahaan..."
+            placeholder="Cari nama atau badan usaha..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-            className="w-full sm:w-64 border-2 border-white/30 bg-emerald-900 text-white placeholder:text-white/40 rounded-none font-bold focus-visible:ring-0"
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full sm:w-64 border border-[#F6F4EE]/30 bg-[#091E17] text-white placeholder:text-[#F6F4EE]/40 rounded-none font-mono text-xs focus-visible:ring-0 h-10"
           />
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-emerald-50 border-b-4 border-emerald-950">
-                <th className="p-4 text-left text-xs font-black uppercase tracking-wider text-emerald-950/60">Nama</th>
-                <th className="p-4 text-left text-xs font-black uppercase tracking-wider text-emerald-950/60">Perusahaan</th>
-                <th className="p-4 text-left text-xs font-black uppercase tracking-wider text-emerald-950/60">NIB (Masked)</th>
-                <th className="p-4 text-left text-xs font-black uppercase tracking-wider text-emerald-950/60">Industri</th>
-                <th className="p-4 text-left text-xs font-black uppercase tracking-wider text-emerald-950/60">Status</th>
+              <tr className="bg-[#F6F4EE] border-b-[1.5px] border-[#091E17] font-mono text-xs uppercase text-[#091E17]">
+                <th className="p-4">Penanggung Jawab</th>
+                <th className="p-4">Badan Usaha</th>
+                <th className="p-4">NIB (Tersensor UU PDP)</th>
+                <th className="p-4">Sektor Industri</th>
+                <th className="p-4">Status</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-[#091E17]/15 text-xs">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center">
-                    <Loader2 className="h-8 w-8 animate-spin mx-auto text-emerald-950" />
+                  <td colSpan={5} className="p-10 text-center">
+                    <Loader2 className="h-6 w-6 animate-spin mx-auto text-[#091E17]" />
                   </td>
                 </tr>
               ) : paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-emerald-950/60 font-bold">Belum ada data KYC.</td>
-                </tr>
-              ) : paginated.map((row) => (
-                <tr key={row.id} className="border-b-2 border-emerald-950/20 hover:bg-emerald-50">
-                  <td className="p-4 font-bold text-emerald-950 text-sm">{row.name}</td>
-                  <td className="p-4 text-sm">
-                    <span className="flex items-center gap-2 font-bold text-emerald-950">
-                      <Building2 className="w-4 h-4 text-emerald-600" /> {row.company || "-"}
-                    </span>
-                  </td>
-                  <td className="p-4 text-sm font-mono font-bold text-emerald-950/70">
-                    <span className="flex items-center gap-2">
-                      <Hash className="w-4 h-4 text-yellow-500" /> {maskNib(row.nib)}
-                    </span>
-                  </td>
-                  <td className="p-4 text-sm font-bold text-emerald-950/80">{row.industry || "-"}</td>
-                  <td className="p-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 border-2 border-emerald-600 bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-widest">
-                      <ShieldCheck className="w-3 h-3" /> Verified
-                    </span>
+                  <td colSpan={5} className="p-10 text-center font-mono text-[#4A5D54]">
+                    Belum terdapat data pengajuan KYC.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                paginated.map((row) => (
+                  <tr key={row.id} className="hover:bg-[#F6F4EE]/60">
+                    <td className="p-4 font-semibold text-[#091E17]">{row.name}</td>
+                    <td className="p-4">
+                      <span className="flex items-center gap-2 font-medium text-[#091E17]">
+                        <Building2 className="w-4 h-4 text-[#0D6E49]" /> {row.company || "-"}
+                      </span>
+                    </td>
+                    <td className="p-4 font-mono font-bold text-[#4A5D54]">
+                      <span className="flex items-center gap-1.5">
+                        <Hash className="w-3.5 h-3.5 text-[#D97706]" /> {maskNib(row.nib)}
+                      </span>
+                    </td>
+                    <td className="p-4 text-[#4A5D54]">{row.industry || "-"}</td>
+                    <td className="p-4">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 border border-[#0D6E49] bg-[#E6F4EE] text-[#0D6E49] font-mono text-[10px] font-bold uppercase">
+                        <ShieldCheck className="w-3 h-3" /> Terverifikasi
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
         {totalPages > 1 && (
-          <div className="p-4 border-t-4 border-emerald-950 flex items-center justify-between bg-emerald-50">
-            <span className="text-sm font-bold text-emerald-950/70">
+          <div className="p-4 border-t-[1.5px] border-[#091E17] flex items-center justify-between bg-[#F6F4EE] font-mono text-xs">
+            <span className="text-[#4A5D54]">
               Halaman {currentPage} dari {totalPages}
             </span>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
+              <button
+                type="button"
                 disabled={currentPage === 1}
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                className="rounded-none border-2 border-emerald-950 font-black uppercase text-xs"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                className="px-3 py-1.5 border border-[#091E17] bg-white font-bold uppercase disabled:opacity-40 cursor-pointer"
               >
-                Prev
-              </Button>
-              <Button
-                variant="outline"
+                Sebelumnya
+              </button>
+              <button
+                type="button"
                 disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                className="rounded-none border-2 border-emerald-950 font-black uppercase text-xs"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                className="px-3 py-1.5 border border-[#091E17] bg-white font-bold uppercase disabled:opacity-40 cursor-pointer"
               >
-                Next
-              </Button>
+                Berikutnya
+              </button>
             </div>
           </div>
         )}
