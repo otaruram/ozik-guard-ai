@@ -49,13 +49,13 @@ export function ProfilPengguna({ dbUser, onProfileUpdate }: ProfilPenggunaProps)
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="border-[1.5px] border-[#091E17] bg-white shadow-[6px_6px_0_#091E17] overflow-hidden">
-        <div className="bg-[#071913] text-[#F6F4EE] p-6 md:p-8 border-b-[1.5px] border-[#091E17] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="border-[1.5px] border-[#091E17] bg-white shadow-[4px_4px_0_#091E17] sm:shadow-[6px_6px_0_#091E17] overflow-hidden">
+        <div className="bg-[#071913] text-[#F6F4EE] p-5 sm:p-6 md:p-8 border-b-[1.5px] border-[#091E17] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#34D399] mb-1">
               REGISTRASI BADAN HUKUM // KYB &amp; KYC
             </div>
-            <h2 className="font-editorial text-2xl font-semibold text-white">
+            <h2 className="font-editorial text-xl sm:text-2xl font-semibold text-white break-words">
               Identitas Entitas &amp; Penanggung Jawab
             </h2>
             <p className="text-xs text-[#F6F4EE]/70 mt-1">
@@ -65,13 +65,13 @@ export function ProfilPengguna({ dbUser, onProfileUpdate }: ProfilPenggunaProps)
           <button
             type="button"
             onClick={handleAutoFill}
-            className="px-3.5 py-2 bg-[#FBBF24] hover:bg-[#F59E0B] text-[#091E17] font-mono text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer shrink-0"
+            className="px-3.5 py-2 bg-[#FBBF24] hover:bg-[#F59E0B] text-[#091E17] font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer shrink-0 self-start sm:self-auto"
           >
             <Wand2 className="h-3.5 w-3.5" /> Isi Sampel Demo
           </button>
         </div>
 
-        <form onSubmit={handleSave} className="p-6 md:p-8 space-y-5">
+        <form onSubmit={handleSave} className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-5">
           <div className="grid sm:grid-cols-2 gap-5">
             <div>
               <Label className="font-mono text-xs font-bold uppercase text-[#091E17]">

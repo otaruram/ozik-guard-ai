@@ -66,21 +66,21 @@ export function SiteHeader() {
 
       {/* Main Header Bar */}
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 md:px-6">
-        <Link to="/" className="flex items-center gap-3 group shrink-0" onClick={() => setOpen(false)}>
-          <div className="grid h-11 w-11 place-items-center border-[1.5px] border-[#091E17] bg-white p-1.5 shadow-[2px_2px_0_#091E17] transition-transform group-hover:-translate-y-0.5">
+        <Link to="/" className="flex items-center gap-3 group shrink-0 min-w-0" onClick={() => setOpen(false)}>
+          <div className="grid h-10 w-10 sm:h-11 sm:w-11 place-items-center border-[1.5px] border-[#091E17] bg-white p-1.5 shadow-[2px_2px_0_#091E17] transition-transform group-hover:-translate-y-0.5 shrink-0">
             <img src="/logo.png" alt="Logo OzikSustain" className="h-full w-full object-contain mix-blend-multiply" />
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col min-w-0">
             <div className="flex items-center gap-2">
-              <span className="font-editorial text-xl font-bold tracking-tight text-[#091E17]">
+              <span className="font-editorial text-lg sm:text-xl font-bold tracking-tight text-[#091E17]">
                 OzikSustain
               </span>
               <span className="border border-[#091E17] bg-[#E6F4EE] px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-widest text-[#0D6E49]">
                 v2.4
               </span>
             </div>
-            <span className="font-mono text-[10px] font-medium uppercase tracking-widest text-[#4A5D54]">
-              Adjudikasi ESG & Kepatuhan Hukum
+            <span className="font-mono text-[9px] sm:text-[10px] font-medium uppercase tracking-widest text-[#4A5D54] truncate max-w-[150px] xs:max-w-none">
+              Adjudikasi ESG &amp; Kepatuhan Hukum
             </span>
           </div>
         </Link>
@@ -196,7 +196,7 @@ export function SiteHeader() {
               <GithubIcon className="h-4 w-4" />
               <span>Lihat di GitHub</span>
             </a>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
               {user ? (
               <Link
                 to="/dashboard"
@@ -210,14 +210,14 @@ export function SiteHeader() {
                 <Link
                   to="/auth"
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-center border-[1.5px] border-[#091E17] bg-white py-3 text-xs font-bold uppercase tracking-widest text-[#091E17]"
+                  className="flex items-center justify-center border-[1.5px] border-[#091E17] bg-white py-3 px-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#091E17] text-center"
                 >
                   Masuk Akun
                 </Link>
                 <Link
                   to="/audit"
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-center border-[1.5px] border-[#091E17] bg-[#091E17] py-3 text-xs font-bold uppercase tracking-widest text-[#F6F4EE]"
+                  className="flex items-center justify-center border-[1.5px] border-[#091E17] bg-[#091E17] py-3 px-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#F6F4EE] text-center"
                 >
                   Uji Coba Gratis
                 </Link>

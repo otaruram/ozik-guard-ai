@@ -185,6 +185,9 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100vw;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
@@ -194,15 +197,28 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    max-width: 100vw;
+    position: relative;
+    width: 100%;
   }
 
-  h1, h2, .font-editorial {
-    font-family: var(--font-display);
+  /* Global Mobile-Safe Text Wrapping */
+  p, span, h1, h2, h3, h4, h5, h6, label, a, td, th {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
-  code, pre, .font-mono, .tabular-nums {
+  code, pre, .font-mono {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  h1, h2, .font-display, .font-editorial {
+    font-family: var(--font-display);
+    overflow-wrap: break-word;
+    hyphens: manual;
   }
 
   :focus-visible {
@@ -261,12 +277,34 @@
   transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+@media (max-width: 640px) {
+  .instrument-card {
+    box-shadow: 2.5px 2.5px 0px #091E17;
+  }
+}
+
 .instrument-card-interactive:hover {
   transform: translate(-2px, -2px);
   box-shadow: 6px 6px 0px #091E17;
 }
 
+@media (max-width: 640px) {
+  .instrument-card-interactive:hover {
+    transform: none;
+    box-shadow: 2.5px 2.5px 0px #091E17;
+  }
+}
+
 .instrument-card-interactive:active {
   transform: translate(2px, 2px);
   box-shadow: 1px 1px 0px #091E17;
+}
+
+/* Custom Scrollbar Utilities */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

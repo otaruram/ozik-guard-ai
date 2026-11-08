@@ -96,10 +96,10 @@ export function PaketPricing() {
           <div
             key={p.name}
             className={cn(
-              "flex flex-col justify-between p-7 border-[1.5px] border-[#091E17] relative",
+              "flex flex-col justify-between p-5 sm:p-7 border-[1.5px] border-[#091E17] relative",
               p.highlight
-                ? "bg-[#091E17] text-[#F6F4EE] shadow-[8px_8px_0_#D97706]"
-                : "bg-white text-[#091E17] shadow-[5px_5px_0_#091E17]"
+                ? "bg-[#091E17] text-[#F6F4EE] shadow-[4px_4px_0_#D97706] sm:shadow-[8px_8px_0_#D97706]"
+                : "bg-white text-[#091E17] shadow-[3px_3px_0_#091E17] sm:shadow-[5px_5px_0_#091E17]"
             )}
           >
             <div>

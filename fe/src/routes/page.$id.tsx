@@ -92,29 +92,29 @@ function PageComponent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F4EE] bg-archival-grid text-[#091E17] py-12 md:py-20 px-4">
-      <article className="mx-auto max-w-3xl border-[1.5px] border-[#091E17] bg-white shadow-[8px_8px_0_#091E17]">
-        <div className="bg-[#071913] text-[#F6F4EE] p-8 md:p-10 border-b-[1.5px] border-[#091E17]">
-          <div className="font-mono text-xs font-bold uppercase tracking-widest text-[#34D399] mb-2">
+    <div className="min-h-screen bg-[#F6F4EE] bg-archival-grid text-[#091E17] py-8 sm:py-14 md:py-20 px-3 sm:px-4">
+      <article className="mx-auto max-w-3xl border-[1.5px] border-[#091E17] bg-white shadow-[4px_4px_0_#091E17] sm:shadow-[8px_8px_0_#091E17]">
+        <div className="bg-[#071913] text-[#F6F4EE] p-5 sm:p-8 md:p-10 border-b-[1.5px] border-[#091E17]">
+          <div className="font-mono text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#34D399] mb-2">
             {page.code}
           </div>
-          <h1 className="font-editorial text-3xl md:text-4xl font-semibold text-white leading-tight">
+          <h1 className="font-editorial text-2xl sm:text-3xl md:text-4xl font-semibold text-white leading-tight break-words">
             {page.title}
           </h1>
-          <p className="mt-3 text-sm text-[#F6F4EE]/75 leading-relaxed">{page.subtitle}</p>
+          <p className="mt-2.5 text-xs sm:text-sm text-[#F6F4EE]/75 leading-relaxed">{page.subtitle}</p>
         </div>
 
-        <div className="p-8 md:p-10 text-sm sm:text-base text-[#091E17]/90 leading-relaxed space-y-6">
+        <div className="p-5 sm:p-8 md:p-10 text-xs sm:text-sm md:text-base text-[#091E17]/90 leading-relaxed space-y-6">
           {page.content}
 
-          <div className="pt-8 border-t border-[#091E17]/15 flex items-center justify-between">
+          <div className="pt-6 sm:pt-8 border-t border-[#091E17]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 border-[1.5px] border-[#091E17] bg-[#091E17] px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-[#F6F4EE] hover:bg-[#0D6E49] transition-colors"
+              className="inline-flex items-center justify-center gap-2 border-[1.5px] border-[#091E17] bg-[#091E17] px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-[#F6F4EE] hover:bg-[#0D6E49] transition-colors text-center w-full sm:w-auto"
             >
               <ArrowLeft className="h-4 w-4" /> Kembali ke Beranda
             </Link>
-            <span className="font-mono text-[11px] text-[#4A5D54]">OZIKSUSTAIN LEGAL ARCHIVE</span>
+            <span className="font-mono text-[10px] sm:text-[11px] text-[#4A5D54]">OZIKSUSTAIN LEGAL ARCHIVE</span>
           </div>
         </div>
       </article>

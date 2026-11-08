@@ -161,8 +161,12 @@ export function AdminPanel() {
               <Loader2 className="h-7 w-7 animate-spin text-[#091E17]" />
             </div>
           ) : (
-            <div className="overflow-x-auto border-[1.5px] border-[#091E17]">
-              <table className="w-full border-collapse text-left">
+            <div className="border-[1.5px] border-[#091E17]">
+              <div className="sm:hidden px-3.5 py-1.5 bg-[#F6F4EE] border-b border-[#091E17]/15 font-mono text-[10px] text-[#4A5D54]">
+                Geser tabel ke samping untuk melihat opsi tindakan &rarr;
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-left min-w-[650px]">
                 <thead>
                   <tr className="border-b-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] font-mono text-xs uppercase">
                     <th className="p-4">Nama / Email</th>
@@ -279,8 +283,9 @@ export function AdminPanel() {
                 </tbody>
               </table>
             </div>
-          )}
-        </TabsContent>
+          </div>
+        )}
+      </TabsContent>
 
         <TabsContent
           value="models"
@@ -308,9 +313,9 @@ export function AdminPanel() {
 
       {/* Modal Edit Credits */}
       <Dialog open={!!editingCredits} onOpenChange={(o: boolean) => !o && setEditingCredits(null)}>
-        <DialogContent className="rounded-none border-[1.5px] border-[#091E17] shadow-[8px_8px_0_#091E17] sm:max-w-[400px] bg-white">
+        <DialogContent className="rounded-none border-[1.5px] border-[#091E17] shadow-[4px_4px_0_#091E17] sm:shadow-[8px_8px_0_#091E17] max-w-[92vw] sm:max-w-[400px] bg-white">
           <DialogHeader>
-            <DialogTitle className="font-editorial text-xl font-semibold text-[#091E17]">
+            <DialogTitle className="font-editorial text-lg sm:text-xl font-semibold text-[#091E17]">
               Sesuaikan Saldo Kredit
             </DialogTitle>
             <DialogDescription className="text-xs text-[#4A5D54]">
@@ -349,9 +354,9 @@ export function AdminPanel() {
 
       {/* Dialog Change Role */}
       <Dialog open={!!editingRole} onOpenChange={(open) => !open && setEditingRole(null)}>
-        <DialogContent className="border-[1.5px] border-[#091E17] rounded-none shadow-[8px_8px_0_#091E17] p-6 bg-white sm:max-w-[400px]">
+        <DialogContent className="border-[1.5px] border-[#091E17] rounded-none shadow-[4px_4px_0_#091E17] sm:shadow-[8px_8px_0_#091E17] p-5 sm:p-6 bg-white max-w-[92vw] sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle className="font-editorial text-xl font-semibold text-[#091E17]">
+            <DialogTitle className="font-editorial text-lg sm:text-xl font-semibold text-[#091E17]">
               Ubah Otoritas Role
             </DialogTitle>
             <DialogDescription className="text-xs text-[#4A5D54]">
@@ -393,9 +398,9 @@ export function AdminPanel() {
 
       {/* Modal View History */}
       <Dialog open={!!viewingHistory} onOpenChange={(o: boolean) => !o && setViewingHistory(null)}>
-        <DialogContent className="rounded-none border-[1.5px] border-[#091E17] shadow-[8px_8px_0_#091E17] sm:max-w-[700px] max-h-[80vh] overflow-y-auto bg-white">
+        <DialogContent className="rounded-none border-[1.5px] border-[#091E17] shadow-[4px_4px_0_#091E17] sm:shadow-[8px_8px_0_#091E17] max-w-[95vw] sm:max-w-[700px] max-h-[85vh] overflow-y-auto bg-white p-4 sm:p-6">
           <DialogHeader>
-            <DialogTitle className="font-editorial text-2xl font-semibold text-[#091E17]">
+            <DialogTitle className="font-editorial text-xl sm:text-2xl font-semibold text-[#091E17]">
               Histori Evaluasi: {viewingHistory?.name}
             </DialogTitle>
           </DialogHeader>
@@ -413,10 +418,10 @@ export function AdminPanel() {
                 {userHistory.map((h) => (
                   <div
                     key={h.id}
-                    className="border border-[#091E17] p-4 bg-[#F6F4EE] flex justify-between items-center"
+                    className="border border-[#091E17] p-3 sm:p-4 bg-[#F6F4EE] flex flex-col sm:flex-row gap-2 sm:items-center justify-between"
                   >
-                    <div>
-                      <div className="font-bold text-sm text-[#091E17]">{h.projectName}</div>
+                    <div className="min-w-0">
+                      <div className="font-bold text-sm text-[#091E17] truncate">{h.projectName}</div>
                       <div className="font-mono text-[11px] text-[#4A5D54] mt-0.5">
                         {new Date(h.createdAt).toLocaleDateString("id-ID", {
                           year: "numeric",
@@ -425,7 +430,7 @@ export function AdminPanel() {
                         })}
                       </div>
                     </div>
-                    <span className="px-2.5 py-1 bg-[#091E17] text-[#F6F4EE] font-mono text-[10px] font-bold uppercase">
+                    <span className="self-start sm:self-auto px-2.5 py-1 bg-[#091E17] text-[#F6F4EE] font-mono text-[10px] font-bold uppercase shrink-0">
                       {h.status}
                     </span>
                   </div>

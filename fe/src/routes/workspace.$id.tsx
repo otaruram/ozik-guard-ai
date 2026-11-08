@@ -87,24 +87,25 @@ function WorkspacePage() {
 
   return (
     <div className="min-h-screen bg-[#F6F4EE] bg-archival-grid flex flex-col text-[#091E17]">
-      <header className="border-b-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-        <Link to="/dashboard" className="inline-flex items-center gap-3 group">
-          <span className="h-8 w-8 border border-[#F6F4EE]/30 flex items-center justify-center group-hover:border-[#FBBF24]">
+      <header className="border-b-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] px-3 sm:px-6 py-3 sm:py-4 flex justify-between items-center sticky top-0 z-50 gap-2">
+        <Link to="/dashboard" className="inline-flex items-center gap-2 sm:gap-3 group min-w-0">
+          <span className="h-8 w-8 border border-[#F6F4EE]/30 flex items-center justify-center group-hover:border-[#FBBF24] shrink-0">
             <ArrowLeft className="h-4 w-4 text-[#FBBF24]" />
           </span>
-          <span className="font-mono text-xs font-bold uppercase tracking-widest">
-            Kembali ke Workspace Utama
+          <span className="font-mono text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest">
+            <span className="hidden sm:inline">Kembali ke Workspace Utama</span>
+            <span className="sm:hidden">Kembali</span>
           </span>
         </Link>
-        <div className="font-mono text-xs uppercase tracking-widest text-[#34D399]">
-          LAPORAN ADJUDIKASI // ID: {id.substring(0, 12)}
+        <div className="font-mono text-[10px] sm:text-xs uppercase tracking-widest text-[#34D399] shrink-0 truncate max-w-[130px] sm:max-w-none">
+          ID: {id.substring(0, 8)}...
         </div>
       </header>
 
-      <main className="flex-1 p-4 md:p-8">
+      <main className="flex-1 p-3 sm:p-6 md:p-8">
         <div className="max-w-7xl mx-auto">
           {data.reviewStatus === "PENDING_REVIEW" ? (
-            <div className="bg-white border-[1.5px] border-[#091E17] p-8 md:p-12 text-center max-w-2xl mx-auto mt-10 shadow-[8px_8px_0_#091E17]">
+            <div className="bg-white border-[1.5px] border-[#091E17] p-5 sm:p-8 md:p-12 text-center max-w-2xl mx-auto mt-6 sm:mt-10 shadow-[4px_4px_0_#091E17] sm:shadow-[8px_8px_0_#091E17]">
               <div className="bg-[#FEF3C7] p-4 inline-block mb-5 border border-[#D97706]">
                 <ShieldCheck className="h-10 w-10 text-[#B45309] mx-auto" />
               </div>

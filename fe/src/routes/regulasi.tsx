@@ -182,38 +182,38 @@ function ResultCard({ item, index }: { item: any; index: number }) {
         </article>
       </DialogTrigger>
 
-      <DialogContent className="max-w-2xl bg-white border-[1.5px] border-[#091E17] rounded-none shadow-[8px_8px_0_#091E17] p-0 overflow-hidden">
-        <div className="bg-[#071913] text-[#F6F4EE] p-6 border-b-[1.5px] border-[#091E17] space-y-2">
-          <div className="flex items-center justify-between font-mono text-xs">
+      <DialogContent className="max-w-[95vw] sm:max-w-2xl bg-white border-[1.5px] border-[#091E17] rounded-none shadow-[4px_4px_0_#091E17] sm:shadow-[8px_8px_0_#091E17] p-0 overflow-hidden max-h-[90vh] flex flex-col">
+        <div className="bg-[#071913] text-[#F6F4EE] p-4 sm:p-6 border-b-[1.5px] border-[#091E17] space-y-2 shrink-0">
+          <div className="flex flex-col xs:flex-row xs:items-center justify-between font-mono text-[11px] sm:text-xs gap-1">
             <span className="text-[#FBBF24] font-bold uppercase tracking-widest flex items-center gap-2">
-              <FileText className="h-4 w-4" /> {item.article}
+              <FileText className="h-4 w-4 shrink-0" /> {item.article}
             </span>
             {item.similarity && (
-              <span className="border border-[#34D399]/40 bg-[#064E3B]/40 text-[#34D399] px-2.5 py-0.5 text-[11px]">
-                KEMIRIPAN INDOBERT: {(item.similarity * 100).toFixed(1)}%
+              <span className="border border-[#34D399]/40 bg-[#064E3B]/40 text-[#34D399] px-2 py-0.5 text-[10px] sm:text-[11px] self-start xs:self-auto">
+                KEMIRIPAN: {(item.similarity * 100).toFixed(1)}%
               </span>
             )}
           </div>
-          <DialogTitle className="font-editorial text-2xl font-semibold text-white leading-snug">
+          <DialogTitle className="font-editorial text-xl sm:text-2xl font-semibold text-white leading-snug break-words">
             {item.regName}
           </DialogTitle>
         </div>
 
-        <div className="p-6 md:p-8 max-h-[60vh] overflow-y-auto space-y-4 bg-[#F6F4EE]/40">
-          <div className="flex items-center justify-between font-mono text-[11px] text-[#4A5D54] border-b border-[#091E17]/15 pb-2">
+        <div className="p-4 sm:p-6 md:p-8 overflow-y-auto space-y-4 bg-[#F6F4EE]/40 flex-1">
+          <div className="flex items-center justify-between font-mono text-[10px] sm:text-[11px] text-[#4A5D54] border-b border-[#091E17]/15 pb-2">
             <span>BUNYI KUTIPAN REGULASI RESMI</span>
             <span>KORPUS PASAL.ID</span>
           </div>
-          <DialogDescription className="font-serif text-base text-[#091E17] leading-relaxed whitespace-pre-wrap bg-white p-5 border border-[#091E17]/20">
+          <DialogDescription className="font-serif text-sm sm:text-base text-[#091E17] leading-relaxed whitespace-pre-wrap bg-white p-4 sm:p-5 border border-[#091E17]/20 break-words">
             "{item.content}"
           </DialogDescription>
         </div>
 
-        <div className="p-4 bg-white border-t-[1.5px] border-[#091E17] flex flex-wrap items-center justify-between gap-3">
+        <div className="p-3 sm:p-4 bg-white border-t-[1.5px] border-[#091E17] flex flex-col xs:flex-row items-stretch xs:items-center justify-between gap-2.5 shrink-0">
           <button
             type="button"
             onClick={copyCitation}
-            className="px-4 py-2.5 border-[1.5px] border-[#091E17] bg-[#F6F4EE] hover:bg-[#ECE9DF] text-[#091E17] font-mono text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
+            className="px-3.5 sm:px-4 py-2 sm:py-2.5 border-[1.5px] border-[#091E17] bg-[#F6F4EE] hover:bg-[#ECE9DF] text-[#091E17] font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider inline-flex items-center justify-center gap-2 cursor-pointer text-center"
           >
             {copied ? <Check className="h-4 w-4 text-[#0D6E49]" /> : <Copy className="h-4 w-4" />}
             {copied ? "Sitasi Disalin" : "Salin Sitasi"}
@@ -226,9 +226,9 @@ function ResultCard({ item, index }: { item: any; index: number }) {
                 "_blank"
               )
             }
-            className="px-5 py-2.5 bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 transition-colors cursor-pointer"
+            className="px-4 sm:px-5 py-2 sm:py-2.5 bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider inline-flex items-center justify-center gap-2 transition-colors cursor-pointer text-center"
           >
-            <ExternalLink className="h-4 w-4 text-[#FBBF24]" /> Telusuri Lembaran JDIH BPK
+            <ExternalLink className="h-4 w-4 text-[#FBBF24]" /> Telusuri JDIH BPK
           </button>
         </div>
       </DialogContent>
@@ -323,23 +323,23 @@ function RegulasiHijau() {
 
           {/* Search Input Box */}
           <div className="relative max-w-3xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#091E17]/50" />
+            <Search className="absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-[#091E17]/50" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Ketik kata kunci hukum... (contoh: Izin PLTS Atap, Sanksi tanpa AMDAL, SRN PPI Karbon)"
-              className="w-full h-15 pl-12 pr-28 text-sm sm:text-base text-[#091E17] bg-white border-[1.5px] border-[#091E17] shadow-[5px_5px_0_#D97706] focus:outline-none font-medium placeholder:text-[#4A5D54]/60"
+              className="w-full h-12 sm:h-15 pl-10 sm:pl-12 pr-20 sm:pr-28 text-xs sm:text-base text-[#091E17] bg-white border-[1.5px] border-[#091E17] shadow-[3px_3px_0_#D97706] sm:shadow-[5px_5px_0_#D97706] focus:outline-none font-medium placeholder:text-[#4A5D54]/60"
             />
             {loading ? (
-              <div className="absolute inset-y-0 right-4 flex items-center">
-                <Loader2 className="h-5 w-5 text-[#0D6E49] animate-spin" />
+              <div className="absolute inset-y-0 right-3 sm:right-4 flex items-center">
+                <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 text-[#0D6E49] animate-spin" />
               </div>
             ) : query ? (
               <button
                 type="button"
                 onClick={() => setQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-[#ECE9DF] text-[#091E17] font-mono text-[10px] font-bold uppercase cursor-pointer"
+                className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 px-2 sm:px-2.5 py-1 bg-[#ECE9DF] text-[#091E17] font-mono text-[9px] sm:text-[10px] font-bold uppercase cursor-pointer"
               >
                 Reset
               </button>
@@ -347,8 +347,8 @@ function RegulasiHijau() {
           </div>
 
           {/* Topic Filter Bar */}
-          <div className="mt-6 flex flex-wrap items-center gap-2">
-            <span className="font-mono text-[10px] uppercase tracking-widest text-[#F6F4EE]/60 mr-1 flex items-center gap-1">
+          <div className="mt-5 sm:mt-6 flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-[#F6F4EE]/60 mr-1 flex items-center gap-1">
               <Filter className="h-3 w-3" /> TOPIK CEPAT:
             </span>
             {QUICK_TOPICS.map((topic) => (
@@ -356,13 +356,13 @@ function RegulasiHijau() {
                 key={topic.code}
                 type="button"
                 onClick={() => setQuery(topic.query)}
-                className={`px-3 py-1.5 border font-mono text-xs transition-colors cursor-pointer ${
+                className={`px-2.5 sm:px-3 py-1 sm:py-1.5 border font-mono text-[10px] sm:text-xs transition-colors cursor-pointer ${
                   query === topic.query
                     ? "border-[#FBBF24] bg-[#FBBF24] text-[#091E17] font-bold"
                     : "border-[#F6F4EE]/25 bg-[#0C261E] text-[#F6F4EE]/85 hover:border-[#FBBF24]"
                 }`}
               >
-                <span className="opacity-60 mr-1.5">[{topic.code}]</span>
+                <span className="opacity-60 mr-1">[{topic.code}]</span>
                 {topic.label}
               </button>
             ))}

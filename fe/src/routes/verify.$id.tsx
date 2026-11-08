@@ -195,42 +195,42 @@ function VerifyPage() {
   return (
     <div className="min-h-screen bg-[#F6F4EE] bg-archival-grid text-[#091E17] pb-20">
       {/* Top Ledger Bar */}
-      <header className="bg-[#071913] text-[#F6F4EE] border-b-[1.5px] border-[#091E17] px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-20">
-        <Link to="/" className="inline-flex items-center gap-3">
-          <ArrowLeft className="h-4 w-4 text-[#FBBF24]" />
-          <span className="font-mono text-xs font-bold uppercase tracking-widest">
+      <header className="bg-[#071913] text-[#F6F4EE] border-b-[1.5px] border-[#091E17] px-3 sm:px-6 md:px-8 py-3 sm:py-4 flex justify-between items-center sticky top-0 z-20 gap-2">
+        <Link to="/" className="inline-flex items-center gap-2 sm:gap-3 min-w-0">
+          <ArrowLeft className="h-4 w-4 text-[#FBBF24] shrink-0" />
+          <span className="font-mono text-[10px] sm:text-xs font-bold uppercase tracking-widest truncate max-w-[170px] sm:max-w-none">
             BUKU BESAR VERIFIKASI PUBLIK // OZIKSUSTAIN
           </span>
         </Link>
-        <div className="font-mono text-[11px] text-[#34D399] flex items-center gap-2">
+        <div className="font-mono text-[10px] sm:text-[11px] text-[#34D399] flex items-center gap-1.5 shrink-0">
           <span className="h-2 w-2 rounded-full bg-[#34D399]" />
-          TERVERIFIKASI HMAC-SHA256
+          <span className="hidden xs:inline">TERVERIFIKASI</span> SHA-256
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto mt-10 md:mt-14 px-4">
-        <div className="border-[1.5px] border-[#091E17] bg-white shadow-[10px_10px_0_#091E17] overflow-hidden">
+      <div className="max-w-4xl mx-auto mt-6 sm:mt-10 md:mt-14 px-3 sm:px-4">
+        <div className="border-[1.5px] border-[#091E17] bg-white shadow-[4px_4px_0_#091E17] sm:shadow-[10px_10px_0_#091E17] overflow-hidden">
           {/* Certificate Header */}
-          <div className="bg-[#071913] text-[#F6F4EE] p-8 md:p-12 border-b-[1.5px] border-[#091E17] relative overflow-hidden">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-              <div className="space-y-3">
-                <div className="inline-flex items-center gap-2 border border-[#34D399]/50 bg-[#064E3B]/50 px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-widest text-[#34D399]">
-                  <Fingerprint className="h-3.5 w-3.5" /> SERTIFIKAT KEPATUHAN PROYEK HIJAU RESMI
+          <div className="bg-[#071913] text-[#F6F4EE] p-5 sm:p-8 md:p-12 border-b-[1.5px] border-[#091E17] relative overflow-hidden">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-6 relative z-10">
+              <div className="space-y-2.5 sm:space-y-3">
+                <div className="inline-flex items-center gap-2 border border-[#34D399]/50 bg-[#064E3B]/50 px-2.5 sm:px-3 py-1 font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#34D399]">
+                  <Fingerprint className="h-3.5 w-3.5" /> SERTIFIKAT KEPATUHAN PROYEK HIJAU
                 </div>
-                <h1 className="font-editorial text-3xl md:text-4xl font-semibold text-white">
+                <h1 className="font-editorial text-2xl sm:text-3xl md:text-4xl font-semibold text-white break-words">
                   {data.projectName || "Proyek Energi Terbarukan Terverifikasi"}
                 </h1>
-                <p className="font-mono text-xs text-[#F6F4EE]/70">
+                <p className="font-mono text-[11px] sm:text-xs text-[#F6F4EE]/70 break-all">
                   ID REGISTRI: <span className="text-[#FBBF24]">{id}</span>
                 </p>
               </div>
 
-              <div className="border-[1.5px] border-[#FBBF24] bg-[#0C261E] p-5 text-center shrink-0 min-w-[140px]">
-                <div className="font-mono text-4xl font-bold text-[#FBBF24] tabular-nums">
+              <div className="border-[1.5px] border-[#FBBF24] bg-[#0C261E] p-4 sm:p-5 text-center shrink-0 min-w-[120px] sm:min-w-[140px] self-start md:self-auto">
+                <div className="font-mono text-3xl sm:text-4xl font-bold text-[#FBBF24] tabular-nums">
                   {data.feasibilityScore}
-                  <span className="text-base text-[#F6F4EE]/60">/100</span>
+                  <span className="text-sm sm:text-base text-[#F6F4EE]/60">/100</span>
                 </div>
-                <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#34D399] mt-1">
+                <div className="font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-[#34D399] mt-1">
                   SKOR KELAYAKAN
                 </div>
               </div>
@@ -238,7 +238,7 @@ function VerifyPage() {
           </div>
 
           {/* Section 01: Project Identity */}
-          <div className="p-6 md:p-8 border-b border-[#091E17]/20">
+          <div className="p-4 sm:p-6 md:p-8 border-b border-[#091E17]/20">
             <div className="font-mono text-xs font-bold uppercase tracking-widest text-[#0D6E49] mb-4 flex items-center gap-2">
               <BookOpen className="h-4 w-4" /> 01 // IDENTITAS ENTITAS &amp; PERLINDUNGAN DATA
             </div>

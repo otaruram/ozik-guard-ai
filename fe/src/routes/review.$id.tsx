@@ -84,34 +84,35 @@ function ReviewerWorkspace() {
 
   return (
     <div className="min-h-screen bg-[#F6F4EE] bg-archival-grid flex flex-col text-[#091E17]">
-      <header className="bg-[#071913] text-[#F6F4EE] px-6 py-4 border-b-[1.5px] border-[#091E17] flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-4">
+      <header className="bg-[#071913] text-[#F6F4EE] px-3 sm:px-6 py-3 sm:py-4 border-b-[1.5px] border-[#091E17] flex items-center justify-between sticky top-0 z-50 gap-2">
+        <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
           <Link
             to="/dashboard"
             search={{ tab: "reviewer" }}
-            className="h-9 w-9 border border-[#F6F4EE]/30 flex items-center justify-center hover:border-[#FBBF24]"
+            className="h-8 w-8 sm:h-9 sm:w-9 border border-[#F6F4EE]/30 flex items-center justify-center hover:border-[#FBBF24] shrink-0"
           >
             <ArrowLeft className="h-4 w-4 text-[#FBBF24]" />
           </Link>
-          <div>
-            <h1 className="font-editorial text-xl font-semibold text-white flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-[#FBBF24]" /> Panel Keputusan Auditor Pakar
+          <div className="min-w-0">
+            <h1 className="font-editorial text-base sm:text-xl font-semibold text-white flex items-center gap-1.5 sm:gap-2 truncate">
+              <ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5 text-[#FBBF24] shrink-0" />
+              <span className="truncate">Panel Keputusan Auditor</span>
             </h1>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-[#34D399]">
-              KALIBRASI HUMAN-IN-THE-LOOP // ID: {id.substring(0, 12)}
+            <p className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-[#34D399] truncate">
+              HITL // ID: {id.substring(0, 10)}
             </p>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 p-4 lg:p-8 grid lg:grid-cols-12 gap-6 max-w-[1600px] mx-auto w-full items-start">
-        <div className="lg:col-span-8 bg-white border-[1.5px] border-[#091E17] shadow-[6px_6px_0_#091E17] overflow-hidden">
-          <div className="bg-[#F6F4EE] border-b-[1.5px] border-[#091E17] p-4 flex items-center justify-between">
-            <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-[#091E17] flex items-center gap-2">
-              <FileText className="h-4 w-4 text-[#0D6E49]" /> Hasil Pemindaian Awal AI:{" "}
-              {audit.projectName}
+      <main className="flex-1 p-3 sm:p-6 lg:p-8 grid lg:grid-cols-12 gap-4 sm:gap-6 max-w-[1600px] mx-auto w-full items-start">
+        <div className="lg:col-span-8 bg-white border-[1.5px] border-[#091E17] shadow-[3px_3px_0_#091E17] sm:shadow-[6px_6px_0_#091E17] overflow-hidden">
+          <div className="bg-[#F6F4EE] border-b-[1.5px] border-[#091E17] p-3 sm:p-4 flex flex-col sm:flex-row gap-2 sm:items-center justify-between">
+            <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-[#091E17] flex items-center gap-2 truncate">
+              <FileText className="h-4 w-4 text-[#0D6E49] shrink-0" />
+              <span className="truncate">Hasil Pemindaian Awal AI: {audit.projectName}</span>
             </h2>
-            <span className="font-mono text-xs font-bold text-[#0D6E49]">
+            <span className="font-mono text-xs font-bold text-[#0D6E49] shrink-0">
               SKOR: {audit.feasibilityScore}/100
             </span>
           </div>
@@ -137,13 +138,13 @@ function ReviewerWorkspace() {
           />
         </div>
 
-        <div className="lg:col-span-4 space-y-5 sticky top-24">
-          <div className="bg-white border-[1.5px] border-[#091E17] p-6 shadow-[6px_6px_0_#091E17] space-y-5">
+        <div className="lg:col-span-4 space-y-4 sm:space-y-5 sticky top-20 sm:top-24">
+          <div className="bg-white border-[1.5px] border-[#091E17] p-4 sm:p-6 shadow-[3px_3px_0_#091E17] sm:shadow-[6px_6px_0_#091E17] space-y-4 sm:space-y-5">
             <div className="border-b border-[#091E17]/15 pb-3">
               <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#0D6E49]">
                 OTORISASI AKHIR
               </div>
-              <h3 className="font-editorial text-2xl font-semibold text-[#091E17]">
+              <h3 className="font-editorial text-xl sm:text-2xl font-semibold text-[#091E17]">
                 Putusan Adjudikasi Pakar
               </h3>
             </div>

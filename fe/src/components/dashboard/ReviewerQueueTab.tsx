@@ -68,9 +68,12 @@ export function ReviewerQueueTab() {
         />
       </div>
 
-      <div className="border-[1.5px] border-[#091E17] bg-white shadow-[6px_6px_0_#091E17]">
+      <div className="border-[1.5px] border-[#091E17] bg-white shadow-[4px_4px_0_#091E17] sm:shadow-[6px_6px_0_#091E17]">
+        <div className="sm:hidden px-3.5 py-1.5 bg-[#F6F4EE] border-b border-[#091E17]/15 font-mono text-[10px] text-[#4A5D54]">
+          Geser tabel ke samping untuk melihat opsi tindakan &rarr;
+        </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[600px]">
             <thead>
               <tr className="bg-[#071913] text-[#F6F4EE] border-b-[1.5px] border-[#091E17] font-mono text-xs uppercase">
                 <th className="p-4">Nama Berkas Proyek</th>

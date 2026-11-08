@@ -141,28 +141,28 @@ export function Pengaturan({ dbUser, refreshUser }: PengaturanProps) {
 
         <TabsContent
           value="account"
-          className="border-[1.5px] border-[#091E17] bg-white p-6 sm:p-8 shadow-[6px_6px_0_#091E17]"
+          className="border-[1.5px] border-[#091E17] bg-white p-4 sm:p-6 md:p-8 shadow-[4px_4px_0_#091E17] sm:shadow-[6px_6px_0_#091E17]"
         >
           <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#0D6E49] mb-1">
             KEAMANAN IDENTITAS
           </div>
-          <h3 className="font-editorial text-2xl font-semibold text-[#091E17] mb-6">
+          <h3 className="font-editorial text-xl sm:text-2xl font-semibold text-[#091E17] mb-5 sm:mb-6 break-words">
             Akun OAuth 2.0 Terhubung
           </h3>
 
-          <div className="border-[1.5px] border-[#091E17] bg-[#F6F4EE] p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="grid h-12 w-12 place-items-center bg-white border border-[#091E17] shrink-0">
-              <ShieldCheck className="h-6 w-6 text-[#0D6E49]" />
+          <div className="border-[1.5px] border-[#091E17] bg-[#F6F4EE] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="grid h-10 w-10 sm:h-12 sm:w-12 place-items-center bg-white border border-[#091E17] shrink-0">
+              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 text-[#0D6E49]" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-mono font-bold text-[#091E17] text-sm truncate">
+              <div className="font-mono font-bold text-[#091E17] text-xs sm:text-sm truncate">
                 {userEmail}
               </div>
               <div className="text-xs text-[#4A5D54] mt-0.5">
                 Otentikasi terverifikasi melalui Google OAuth 2.0. Tidak ada kata sandi yang disimpan di server.
               </div>
             </div>
-            <span className="bg-[#091E17] text-[#34D399] font-mono font-bold uppercase text-[10px] px-3 py-1">
+            <span className="bg-[#091E17] text-[#34D399] font-mono font-bold uppercase text-[9px] sm:text-[10px] px-2.5 sm:px-3 py-1 shrink-0">
               AKTIF
             </span>
           </div>
@@ -170,19 +170,19 @@ export function Pengaturan({ dbUser, refreshUser }: PengaturanProps) {
 
         <TabsContent
           value="notifications"
-          className="border-[1.5px] border-[#091E17] bg-white p-6 sm:p-8 shadow-[6px_6px_0_#091E17]"
+          className="border-[1.5px] border-[#091E17] bg-white p-4 sm:p-6 md:p-8 shadow-[4px_4px_0_#091E17] sm:shadow-[6px_6px_0_#091E17]"
         >
           <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#0D6E49] mb-1">
             PREFERENSI KOMUNIKASI
           </div>
-          <h3 className="font-editorial text-2xl font-semibold text-[#091E17] mb-6">
+          <h3 className="font-editorial text-xl sm:text-2xl font-semibold text-[#091E17] mb-5 sm:mb-6 break-words">
             Pemberitahuan Laporan &amp; Pembaruan Hukum
           </h3>
 
-          <div className="space-y-5">
-            <label className="flex items-start gap-3.5 cursor-pointer p-4 border border-[#091E17]/20 bg-[#F6F4EE]/50">
+          <div className="space-y-4 sm:space-y-5">
+            <label className="flex items-start gap-3.5 cursor-pointer p-3.5 sm:p-4 border border-[#091E17]/20 bg-[#F6F4EE]/50">
               <Checkbox
-                className="mt-0.5 border-[1.5px] border-[#091E17] rounded-none h-5 w-5 data-[state=checked]:bg-[#091E17] data-[state=checked]:text-white"
+                className="mt-0.5 border-[1.5px] border-[#091E17] rounded-none h-5 w-5 data-[state=checked]:bg-[#091E17] data-[state=checked]:text-white shrink-0"
                 checked={notifyReportDone}
                 onCheckedChange={(c) => setNotifyReportDone(c as boolean)}
               />
@@ -196,9 +196,9 @@ export function Pengaturan({ dbUser, refreshUser }: PengaturanProps) {
               </div>
             </label>
 
-            <label className="flex items-start gap-3.5 cursor-pointer p-4 border border-[#091E17]/20 bg-[#F6F4EE]/50">
+            <label className="flex items-start gap-3.5 cursor-pointer p-3.5 sm:p-4 border border-[#091E17]/20 bg-[#F6F4EE]/50">
               <Checkbox
-                className="mt-0.5 border-[1.5px] border-[#091E17] rounded-none h-5 w-5 data-[state=checked]:bg-[#091E17] data-[state=checked]:text-white"
+                className="mt-0.5 border-[1.5px] border-[#091E17] rounded-none h-5 w-5 data-[state=checked]:bg-[#091E17] data-[state=checked]:text-white shrink-0"
                 checked={notifyRegulation}
                 onCheckedChange={(c) => setNotifyRegulation(c as boolean)}
               />
@@ -216,7 +216,7 @@ export function Pengaturan({ dbUser, refreshUser }: PengaturanProps) {
               type="button"
               onClick={handleSavePreferences}
               disabled={isSavingPrefs}
-              className="px-6 py-3 bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-xs font-bold uppercase tracking-widest cursor-pointer inline-flex items-center gap-2"
+              className="px-5 sm:px-6 py-2.5 sm:py-3 bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-xs font-bold uppercase tracking-wider sm:tracking-widest cursor-pointer inline-flex items-center gap-2"
             >
               {isSavingPrefs && <Loader2 className="h-4 w-4 animate-spin" />}
               <span>{isSavingPrefs ? "Menyimpan..." : "Simpan Preferensi"}</span>
@@ -226,12 +226,12 @@ export function Pengaturan({ dbUser, refreshUser }: PengaturanProps) {
 
         <TabsContent
           value="api"
-          className="border-[1.5px] border-[#091E17] bg-white p-6 sm:p-8 shadow-[6px_6px_0_#091E17]"
+          className="border-[1.5px] border-[#091E17] bg-white p-4 sm:p-6 md:p-8 shadow-[4px_4px_0_#091E17] sm:shadow-[6px_6px_0_#091E17]"
         >
           <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#0D6E49] mb-1">
             INTEGRASI SISTEM EKSTERNAL
           </div>
-          <h3 className="font-editorial text-2xl font-semibold text-[#091E17] mb-6">
+          <h3 className="font-editorial text-xl sm:text-2xl font-semibold text-[#091E17] mb-5 sm:mb-6 break-words">
             Manajemen Kunci REST API
           </h3>
 

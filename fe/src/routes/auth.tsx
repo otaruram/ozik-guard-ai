@@ -169,34 +169,36 @@ function AuthPage() {
       </aside>
 
       {/* Right Authentication Terminal (5 Cols) */}
-      <section className="lg:col-span-5 flex flex-col justify-between p-6 sm:p-10 xl:p-14 bg-[#F6F4EE] bg-archival-grid">
-        <div className="flex items-center justify-between lg:justify-end">
-          <Link to="/" className="lg:hidden inline-flex items-center gap-2.5">
-            <div className="h-9 w-9 border border-[#091E17] bg-white p-1">
+      <section className="lg:col-span-5 flex flex-col justify-between p-4 sm:p-8 xl:p-14 bg-[#F6F4EE] bg-archival-grid min-w-0">
+        <div className="flex items-center justify-between lg:justify-end gap-2">
+          <Link to="/" className="lg:hidden inline-flex items-center gap-2 shrink-0">
+            <div className="h-8 w-8 sm:h-9 sm:w-9 border border-[#091E17] bg-white p-1">
               <img src="/logo.png" alt="OzikSustain" className="h-full w-full object-contain" />
             </div>
-            <span className="font-editorial text-lg font-bold text-[#091E17]">OzikSustain</span>
+            <span className="font-editorial text-base sm:text-lg font-bold text-[#091E17]">OzikSustain</span>
           </Link>
           <Link
             to="/audit"
-            className="inline-flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[#0D6E49] hover:underline"
+            className="inline-flex items-center gap-1.5 font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#0D6E49] hover:underline shrink-0"
           >
-            <FileSearch className="h-3.5 w-3.5" /> Coba Sandbox Tanpa Login
+            <FileSearch className="h-3.5 w-3.5" />
+            <span className="hidden xs:inline">Coba Sandbox Tanpa Login</span>
+            <span className="xs:hidden">Coba Sandbox</span>
           </Link>
         </div>
 
-        <div className="w-full max-w-md mx-auto my-8">
-          <div className="border-[1.5px] border-[#091E17] bg-white p-7 sm:p-10 shadow-[6px_6px_0_#091E17]">
+        <div className="w-full max-w-md mx-auto my-6 sm:my-8">
+          <div className="border-[1.5px] border-[#091E17] bg-white p-5 sm:p-8 md:p-10 shadow-[4px_4px_0_#091E17] sm:shadow-[6px_6px_0_#091E17]">
             <div className="flex items-center justify-between border-b border-[#091E17]/15 pb-4 mb-6 font-mono text-[10px] text-[#4A5D54]">
               <span>OTENTIKASI IDENTITAS</span>
               <span className="text-[#0D6E49] font-bold">SESI TERENKRIPSI</span>
             </div>
 
-            <div className="mb-8">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center border-[1.5px] border-[#091E17] bg-[#091E17] text-[#FBBF24]">
-                <ShieldCheck className="h-6 w-6" />
+            <div className="mb-6 sm:mb-8">
+              <div className="mb-4 inline-flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center border-[1.5px] border-[#091E17] bg-[#091E17] text-[#FBBF24]">
+                <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
-              <h2 className="font-editorial text-2xl sm:text-3xl font-semibold text-[#091E17]">
+              <h2 className="font-editorial text-2xl sm:text-3xl font-semibold text-[#091E17] break-words">
                 Masuk ke Workspace
               </h2>
               <p className="mt-2 text-xs sm:text-sm text-[#4A5D54] leading-relaxed">
@@ -208,10 +210,10 @@ function AuthPage() {
             <button
               type="button"
               onClick={signInWithGoogle}
-              className="w-full h-14 px-5 bg-white hover:bg-[#091E17] text-[#091E17] hover:text-[#F6F4EE] border-[1.5px] border-[#091E17] shadow-[4px_4px_0_#091E17] hover:shadow-[4px_4px_0_#D97706] transition-all flex items-center justify-center gap-3.5 font-mono text-xs font-bold uppercase tracking-widest cursor-pointer"
+              className="w-full h-12 sm:h-14 px-4 sm:px-5 bg-white hover:bg-[#091E17] text-[#091E17] hover:text-[#F6F4EE] border-[1.5px] border-[#091E17] shadow-[3px_3px_0_#091E17] sm:shadow-[4px_4px_0_#091E17] hover:shadow-[3px_3px_0_#D97706] transition-all flex items-center justify-center gap-2.5 sm:gap-3.5 font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest cursor-pointer"
             >
               <GoogleIcon className="h-5 w-5 shrink-0" />
-              <span>Lanjutkan dengan Akun Google</span>
+              <span>Lanjutkan dengan Google</span>
             </button>
 
             <div className="mt-8 space-y-3 pt-6 border-t border-[#091E17]/15">

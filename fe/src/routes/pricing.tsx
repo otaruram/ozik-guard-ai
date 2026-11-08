@@ -155,10 +155,10 @@ function PricingPage() {
           {PLANS.map((p) => (
             <div
               key={p.name}
-              className={`border-[1.5px] border-[#091E17] p-7 md:p-8 flex flex-col justify-between ${
+              className={`border-[1.5px] border-[#091E17] p-5 sm:p-7 md:p-8 flex flex-col justify-between ${
                 p.highlighted
-                  ? "bg-[#091E17] text-[#F6F4EE] shadow-[8px_8px_0_#D97706] lg:-translate-y-2"
-                  : "bg-white text-[#091E17] shadow-[5px_5px_0_#091E17]"
+                  ? "bg-[#091E17] text-[#F6F4EE] shadow-[4px_4px_0_#D97706] sm:shadow-[8px_8px_0_#D97706] lg:-translate-y-2"
+                  : "bg-white text-[#091E17] shadow-[3px_3px_0_#091E17] sm:shadow-[5px_5px_0_#091E17]"
               }`}
             >
               <div>
@@ -225,30 +225,30 @@ function PricingPage() {
         </div>
 
         {/* Interactive ROI & Cost Efficiency Calculator */}
-        <section className="border-[1.5px] border-[#091E17] bg-white shadow-[6px_6px_0_#091E17] overflow-hidden">
-          <div className="bg-[#071913] text-[#F6F4EE] px-6 md:px-8 py-4 border-b-[1.5px] border-[#091E17] flex items-center justify-between">
-            <div className="flex items-center gap-2.5 font-mono text-xs font-bold uppercase tracking-widest">
-              <Calculator className="h-4 w-4 text-[#FBBF24]" />
-              SIMULATOR EFISIENSI BIAYA &amp; WAKTU AUDIT (TANGIBLE ROI)
+        <section className="border-[1.5px] border-[#091E17] bg-white shadow-[4px_4px_0_#091E17] sm:shadow-[6px_6px_0_#091E17] overflow-hidden">
+          <div className="bg-[#071913] text-[#F6F4EE] px-4 sm:px-6 md:px-8 py-3.5 sm:py-4 border-b-[1.5px] border-[#091E17] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5 font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest">
+              <Calculator className="h-4 w-4 text-[#FBBF24] shrink-0" />
+              <span>SIMULATOR EFISIENSI BIAYA &amp; WAKTU AUDIT</span>
             </div>
-            <span className="font-mono text-[10px] text-[#34D399]">ESTIMASI REAL-TIME</span>
+            <span className="font-mono text-[9px] sm:text-[10px] text-[#34D399] self-start sm:self-auto">ESTIMASI REAL-TIME</span>
           </div>
 
-          <div className="p-6 md:p-10 grid lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-6 space-y-5">
-              <h3 className="font-editorial text-2xl md:text-3xl font-semibold text-[#091E17]">
+          <div className="p-4 sm:p-6 md:p-10 grid lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            <div className="lg:col-span-6 space-y-4 sm:space-y-5">
+              <h3 className="font-editorial text-2xl md:text-3xl font-semibold text-[#091E17] break-words">
                 Hitung Penghematan Anggaran Kepatuhan Rantai Pasok Anda
               </h3>
               <p className="text-xs sm:text-sm text-[#4A5D54] leading-relaxed">
                 Geser jumlah dokumen vendor atau PDD yang dievaluasi setiap bulan untuk membandingkan biaya konsultasi hukum lingkungan konvensional dengan mesin adjudikasi OzikSustain.
               </p>
 
-              <div className="bg-[#F6F4EE] border-[1.5px] border-[#091E17] p-5 space-y-4">
+              <div className="bg-[#F6F4EE] border-[1.5px] border-[#091E17] p-4 sm:p-5 space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between font-mono">
-                  <span className="text-xs font-bold uppercase text-[#091E17]">
-                    VOLUME DOKUMEN PDD / BULAN:
+                  <span className="text-[11px] sm:text-xs font-bold uppercase text-[#091E17]">
+                    VOLUME DOKUMEN / BULAN:
                   </span>
-                  <span className="text-2xl font-bold text-[#0D6E49] tabular-nums">
+                  <span className="text-xl sm:text-2xl font-bold text-[#0D6E49] tabular-nums">
                     {docCount} Dokumen
                   </span>
                 </div>
@@ -260,45 +260,45 @@ function PricingPage() {
                   onChange={(e) => setDocCount(Number(e.target.value))}
                   className="w-full accent-[#091E17] cursor-pointer h-2 bg-[#ECE9DF]"
                 />
-                <div className="flex justify-between font-mono text-[10px] text-[#4A5D54]">
-                  <span>1 Dokumen (UMKM)</span>
-                  <span>25 Dokumen (Menengah)</span>
-                  <span>100 Dokumen (Enterprise)</span>
+                <div className="flex justify-between font-mono text-[9px] sm:text-[10px] text-[#4A5D54]">
+                  <span>1 Dokumen</span>
+                  <span>25 Dokumen</span>
+                  <span>100 Dokumen</span>
                 </div>
               </div>
             </div>
 
-            <div className="lg:col-span-6 grid sm:grid-cols-2 gap-4 font-mono">
-              <div className="border-[1.5px] border-[#091E17] bg-[#F6F4EE] p-5 space-y-2">
-                <span className="text-[10px] uppercase text-[#4A5D54] block">
+            <div className="lg:col-span-6 grid sm:grid-cols-2 gap-3 sm:gap-4 font-mono">
+              <div className="border-[1.5px] border-[#091E17] bg-[#F6F4EE] p-4 sm:p-5 space-y-1.5 sm:space-y-2">
+                <span className="text-[9px] sm:text-[10px] uppercase text-[#4A5D54] block">
                   BIAYA KONSULTAN MANUAL (EST.)
                 </span>
-                <div className="text-xl font-bold text-[#B91C1C] line-through tabular-nums">
+                <div className="text-lg sm:text-xl font-bold text-[#B91C1C] line-through tabular-nums">
                   Rp {manualCostIDR.toLocaleString("id-ID")}
                 </div>
-                <span className="text-[11px] text-[#4A5D54] block">
+                <span className="text-[10px] sm:text-[11px] text-[#4A5D54] block">
                   Waktu tunggu: ~{timeSavedDays} hari kerja
                 </span>
               </div>
 
-              <div className="border-[1.5px] border-[#091E17] bg-[#E6F4EE] p-5 space-y-2">
-                <span className="text-[10px] uppercase text-[#0D6E49] font-bold block">
+              <div className="border-[1.5px] border-[#091E17] bg-[#E6F4EE] p-4 sm:p-5 space-y-1.5 sm:space-y-2">
+                <span className="text-[9px] sm:text-[10px] uppercase text-[#0D6E49] font-bold block">
                   BIAYA OZIKSUSTAIN
                 </span>
-                <div className="text-xl font-bold text-[#091E17] tabular-nums">
+                <div className="text-lg sm:text-xl font-bold text-[#091E17] tabular-nums">
                   Rp {ozikCostIDR.toLocaleString("id-ID")}
                 </div>
-                <span className="text-[11px] text-[#0D6E49] font-bold block">
+                <span className="text-[10px] sm:text-[11px] text-[#0D6E49] font-bold block">
                   Selesai dalam &lt; 1 Hari Kerja (HITL)
                 </span>
               </div>
 
-              <div className="sm:col-span-2 border-[1.5px] border-[#091E17] bg-[#091E17] text-[#F6F4EE] p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="sm:col-span-2 border-[1.5px] border-[#091E17] bg-[#091E17] text-[#F6F4EE] p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <span className="text-[10px] uppercase text-[#FBBF24] font-bold block">
+                  <span className="text-[9px] sm:text-[10px] uppercase text-[#FBBF24] font-bold block">
                     ESTIMASI PENGHEMATAN ANGGARAN
                   </span>
-                  <div className="text-2xl font-bold text-white tabular-nums mt-0.5">
+                  <div className="text-xl sm:text-2xl font-bold text-white tabular-nums mt-0.5">
                     Rp {savingsIDR.toLocaleString("id-ID")}
                   </div>
                 </div>
@@ -319,13 +319,17 @@ function PricingPage() {
             <div className="font-mono text-xs font-bold uppercase tracking-widest text-[#0D6E49] mb-1">
               MATRIKS SPESIFIKASI TEKNIS
             </div>
-            <h3 className="font-editorial text-2xl sm:text-3xl font-semibold text-[#091E17]">
+            <h3 className="font-editorial text-2xl sm:text-3xl font-semibold text-[#091E17] break-words">
               Perbandingan Parameter Antar Paket
             </h3>
           </div>
 
-          <div className="border-[1.5px] border-[#091E17] bg-white shadow-[6px_6px_0_#091E17] overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="border-[1.5px] border-[#091E17] bg-white shadow-[4px_4px_0_#091E17] sm:shadow-[6px_6px_0_#091E17] overflow-hidden">
+            <div className="sm:hidden px-3.5 py-1.5 bg-[#F6F4EE] border-b border-[#091E17]/15 font-mono text-[10px] text-[#4A5D54]">
+              Geser tabel ke samping untuk melihat seluruh paket &rarr;
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[580px]">
               <thead>
                 <tr className="bg-[#071913] text-[#F6F4EE] border-b-[1.5px] border-[#091E17] font-mono text-xs uppercase">
                   <th className="p-4">Kapabilitas &amp; Parameter</th>
@@ -348,8 +352,9 @@ function PricingPage() {
               </tbody>
             </table>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
-  );
+  </div>
+);
 }

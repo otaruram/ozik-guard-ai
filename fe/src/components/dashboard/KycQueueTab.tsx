@@ -42,13 +42,13 @@ export function KycQueueTab() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      <div className="border-[1.5px] border-[#091E17] bg-white shadow-[6px_6px_0_#091E17]">
-        <div className="p-6 border-b-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="border-[1.5px] border-[#091E17] bg-white shadow-[4px_4px_0_#091E17] sm:shadow-[6px_6px_0_#091E17]">
+        <div className="p-4 sm:p-6 border-b-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#34D399] mb-1">
               REGISTRI ENTITAS TERDAFTAR // FIFO QUEUE
             </div>
-            <h2 className="font-editorial text-2xl font-semibold text-white flex items-center gap-2">
+            <h2 className="font-editorial text-xl sm:text-2xl font-semibold text-white flex items-center gap-2">
               Antrean Verifikasi Badan Usaha (KYC)
             </h2>
           </div>
@@ -63,8 +63,11 @@ export function KycQueueTab() {
           />
         </div>
 
+        <div className="sm:hidden px-3.5 py-1.5 bg-[#F6F4EE] border-b border-[#091E17]/15 font-mono text-[10px] text-[#4A5D54]">
+          Geser tabel ke samping untuk melihat detail entitas &rarr;
+        </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[600px]">
             <thead>
               <tr className="bg-[#F6F4EE] border-b-[1.5px] border-[#091E17] font-mono text-xs uppercase text-[#091E17]">
                 <th className="p-4">Penanggung Jawab</th>

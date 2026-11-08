@@ -499,20 +499,22 @@ export function AuditWorkspace({
   // ─── 1. IDLE STATE ───
   if (status === "idle") {
     return (
-      <div className="w-full border-[1.5px] border-[#091E17] bg-white shadow-[6px_6px_0_#091E17] flex flex-col">
-        <div className="border-b-[1.5px] border-[#091E17] bg-[#071913] px-6 py-4 flex items-center justify-between">
-          <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-[#F6F4EE] flex items-center gap-2.5">
-            <Activity className="h-4 w-4 text-[#34D399]" />
-            {isFreemium
-              ? "TERMINAL UJI COBA PUBLIK // PEMINDAIAN PDD"
-              : "TERMINAL ADJUDIKASI PENUH // WORKSPACE PRO"}
+      <div className="w-full border-[1.5px] border-[#091E17] bg-white shadow-[4px_4px_0_#091E17] sm:shadow-[6px_6px_0_#091E17] flex flex-col">
+        <div className="border-b-[1.5px] border-[#091E17] bg-[#071913] px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-[#F6F4EE] flex items-center gap-2">
+            <Activity className="h-4 w-4 text-[#34D399] shrink-0" />
+            <span className="truncate">
+              {isFreemium
+                ? "TERMINAL UJI COBA PUBLIK // PEMINDAIAN PDD"
+                : "TERMINAL ADJUDIKASI PENUH // WORKSPACE PRO"}
+            </span>
           </h3>
-          <span className="font-mono text-[10px] text-[#FBBF24] uppercase">
+          <span className="font-mono text-[9px] sm:text-[10px] text-[#FBBF24] uppercase shrink-0">
             FORMAT: PDF, DOCX, TXT (MAKS. 10 MB)
           </span>
         </div>
 
-        <div className="p-6 md:p-12 grid lg:grid-cols-12 gap-8 items-center bg-[#F6F4EE]/40">
+        <div className="p-4 sm:p-6 md:p-10 lg:p-12 grid lg:grid-cols-12 gap-6 lg:gap-8 items-center bg-[#F6F4EE]/40">
           {/* Upload Dropzone */}
           <div className="lg:col-span-7">
             <input
@@ -524,31 +526,31 @@ export function AuditWorkspace({
             />
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="w-full border-2 border-dashed border-[#091E17] bg-white p-10 md:p-12 hover:bg-[#091E17] hover:text-[#F6F4EE] transition-all cursor-pointer flex flex-col items-center justify-center group text-[#091E17] shadow-[4px_4px_0_#091E17]"
+              className="w-full border-2 border-dashed border-[#091E17] bg-white p-6 sm:p-10 md:p-12 hover:bg-[#091E17] hover:text-[#F6F4EE] transition-all cursor-pointer flex flex-col items-center justify-center group text-[#091E17] shadow-[3px_3px_0_#091E17] sm:shadow-[4px_4px_0_#091E17]"
             >
-              <div className="h-16 w-16 border-[1.5px] border-current flex items-center justify-center mb-5 group-hover:-translate-y-1 transition-transform">
-                <Upload className="h-7 w-7" />
+              <div className="h-12 w-12 sm:h-16 sm:w-16 border-[1.5px] border-current flex items-center justify-center mb-4 sm:mb-5 group-hover:-translate-y-1 transition-transform">
+                <Upload className="h-6 w-6 sm:h-7 sm:w-7" />
               </div>
-              <h4 className="font-editorial text-2xl font-semibold mb-2 text-center">
+              <h4 className="font-editorial text-xl sm:text-2xl font-semibold mb-2 text-center break-words">
                 Pilih atau Tarik Dokumen PDD ke Sini
               </h4>
-              <p className="text-xs opacity-75 text-center max-w-md leading-relaxed mb-6">
+              <p className="text-xs opacity-75 text-center max-w-md leading-relaxed mb-5 sm:mb-6">
                 Dokumen Anda diproses langsung di memori volatil (RAM) dengan penyensoran identitas otomatis sesuai UU PDP No. 27 Tahun 2022.
               </p>
-              <span className="border-[1.5px] border-current px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-widest group-hover:bg-[#FBBF24] group-hover:text-[#091E17] group-hover:border-[#FBBF24] transition-colors">
+              <span className="border-[1.5px] border-current px-4 sm:px-5 py-2 sm:py-2.5 font-mono text-[11px] sm:text-xs font-bold uppercase tracking-widest group-hover:bg-[#FBBF24] group-hover:text-[#091E17] group-hover:border-[#FBBF24] transition-colors text-center">
                 Telusuri Berkas Lokal
               </span>
             </div>
           </div>
 
           {/* Instant Demo Simulation Option */}
-          <div className="lg:col-span-5 border-[1.5px] border-[#091E17] bg-white p-6 md:p-7 space-y-5 shadow-[4px_4px_0_#091E17]">
-            <div className="flex items-center justify-between border-b border-[#091E17]/15 pb-3 font-mono text-[10px] text-[#4A5D54]">
+          <div className="lg:col-span-5 border-[1.5px] border-[#091E17] bg-white p-5 sm:p-6 md:p-7 space-y-4 sm:space-y-5 shadow-[3px_3px_0_#091E17] sm:shadow-[4px_4px_0_#091E17]">
+            <div className="flex items-center justify-between border-b border-[#091E17]/15 pb-2.5 sm:pb-3 font-mono text-[10px] text-[#4A5D54]">
               <span>BELUM MEMILIKI BERKAS PDD?</span>
               <span className="text-[#0D6E49] font-bold">SIMULASI INSTAN</span>
             </div>
             <div>
-              <h4 className="font-editorial text-xl font-semibold text-[#091E17]">
+              <h4 className="font-editorial text-lg sm:text-xl font-semibold text-[#091E17] break-words">
                 Uji Menggunakan Dokumen Sampel PLTS Terapung 15 MWp
               </h4>
               <p className="mt-2 text-xs text-[#4A5D54] leading-relaxed">
@@ -556,11 +558,11 @@ export function AuditWorkspace({
               </p>
             </div>
             <div className="bg-[#F6F4EE] border border-[#091E17]/20 p-3 font-mono text-[11px] space-y-1 text-[#091E17]">
-              <div className="flex justify-between">
+              <div className="flex justify-between gap-2">
                 <span className="text-[#4A5D54]">Berkas:</span>
                 <span className="font-bold truncate ml-2">PDD_PLTS_Cirata_15MWp.pdf</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between gap-2">
                 <span className="text-[#4A5D54]">Cakupan:</span>
                 <span>5 Klausul Kunci • 4 Pilar Skor</span>
               </div>
@@ -568,7 +570,7 @@ export function AuditWorkspace({
             <button
               type="button"
               onClick={runDemoSampleAudit}
-              className="w-full py-3.5 px-5 bg-[#0D6E49] hover:bg-[#091E17] text-white font-mono text-xs font-bold uppercase tracking-widest border-[1.5px] border-[#091E17] shadow-[3px_3px_0_#091E17] transition-all hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-3 sm:py-3.5 px-4 sm:px-5 bg-[#0D6E49] hover:bg-[#091E17] text-white font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest border-[1.5px] border-[#091E17] shadow-[2.5px_2.5px_0_#091E17] sm:shadow-[3px_3px_0_#091E17] transition-all hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2"
             >
               <Zap className="h-4 w-4 text-[#FBBF24]" />
               Jalankan Simulasi Sampel PDD
@@ -582,33 +584,34 @@ export function AuditWorkspace({
   // ─── 2. CONFIGURE STATE ───
   if (status === "configure") {
     return (
-      <div className="w-full border-[1.5px] border-[#091E17] bg-white shadow-[6px_6px_0_#091E17] flex flex-col">
-        <div className="border-b-[1.5px] border-[#091E17] bg-[#071913] px-6 py-4 flex items-center justify-between">
+      <div className="w-full border-[1.5px] border-[#091E17] bg-white shadow-[4px_4px_0_#091E17] sm:shadow-[6px_6px_0_#091E17] flex flex-col">
+        <div className="border-b-[1.5px] border-[#091E17] bg-[#071913] px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-[#F6F4EE] flex items-center gap-2">
-            <FileStack className="h-4 w-4 text-[#FBBF24]" /> Konfigurasi Cakupan Audit Dokumen
+            <FileStack className="h-4 w-4 text-[#FBBF24] shrink-0" />
+            <span>Konfigurasi Cakupan Audit Dokumen</span>
           </h3>
           <button
             type="button"
             onClick={() => setStatus("idle")}
-            className="font-mono text-xs text-[#F6F4EE]/70 hover:text-white underline cursor-pointer"
+            className="font-mono text-xs text-[#F6F4EE]/70 hover:text-white underline cursor-pointer self-start sm:self-auto"
           >
             Ganti Berkas
           </button>
         </div>
 
-        <div className="p-6 md:p-10 max-w-3xl mx-auto w-full space-y-6">
-          <div className="bg-[#F6F4EE] border-[1.5px] border-[#091E17] p-4 flex justify-between items-center">
-            <div>
+        <div className="p-4 sm:p-6 md:p-10 max-w-3xl mx-auto w-full space-y-5 sm:space-y-6">
+          <div className="bg-[#F6F4EE] border-[1.5px] border-[#091E17] p-3.5 sm:p-4 flex justify-between items-center gap-3">
+            <div className="min-w-0">
               <p className="font-mono text-[10px] font-bold uppercase text-[#4A5D54] mb-1">
                 BERKAS DOKUMEN TERPILIH
               </p>
-              <p className="font-mono text-sm font-bold text-[#091E17] truncate max-w-sm">
+              <p className="font-mono text-xs sm:text-sm font-bold text-[#091E17] truncate max-w-xs sm:max-w-sm">
                 {fileName}
               </p>
             </div>
-            <div className="text-right font-mono">
+            <div className="text-right font-mono shrink-0">
               <p className="text-[10px] font-bold uppercase text-[#4A5D54] mb-1">UKURAN</p>
-              <p className="text-sm font-bold text-[#091E17]">
+              <p className="text-xs sm:text-sm font-bold text-[#091E17]">
                 {(fileSize / 1024 / 1024).toFixed(2)} MB
               </p>
             </div>
@@ -783,33 +786,33 @@ export function AuditWorkspace({
     const curIdx = Math.max(0, order.indexOf(status));
 
     return (
-      <div className="w-full border-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] shadow-[8px_8px_0_#091E17] min-h-[460px] relative overflow-hidden flex flex-col justify-between p-8 md:p-12">
+      <div className="w-full border-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] shadow-[4px_4px_0_#091E17] sm:shadow-[8px_8px_0_#091E17] min-h-[440px] relative overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-12">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#34D399]/15 to-transparent animate-scan-beam" />
 
-        <div className="relative z-10 flex items-center justify-between border-b border-[#F6F4EE]/15 pb-4 font-mono text-xs">
-          <span className="text-[#34D399] flex items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            MESIN ADJUDIKASI SEDANG MEMPROSES: {fileName || "DOKUMEN PDD"}
+        <div className="relative z-10 flex flex-col xs:flex-row xs:items-center justify-between border-b border-[#F6F4EE]/15 pb-3 sm:pb-4 font-mono text-[11px] sm:text-xs gap-2">
+          <span className="text-[#34D399] flex items-center gap-2 truncate">
+            <Loader2 className="h-4 w-4 animate-spin shrink-0" />
+            <span className="truncate">MEMPROSES: {fileName || "DOKUMEN PDD"}</span>
           </span>
-          <span className="text-[#FBBF24]">LANGKAH {curIdx + 1} / 4</span>
+          <span className="text-[#FBBF24] shrink-0">LANGKAH {curIdx + 1} / 4</span>
         </div>
 
-        <div className="relative z-10 my-8 max-w-2xl mx-auto w-full space-y-3">
+        <div className="relative z-10 my-6 sm:my-8 max-w-2xl mx-auto w-full space-y-2.5 sm:space-y-3">
           {steps.map((step, sIdx) => {
             const isDone = sIdx < curIdx;
             const isCurrent = sIdx === curIdx;
             return (
               <div
                 key={step.key}
-                className={`border p-4 transition-all ${
+                className={`border p-3.5 sm:p-4 transition-all ${
                   isCurrent
-                    ? "border-[#FBBF24] bg-[#0C261E] shadow-[4px_4px_0_#FBBF24]"
+                    ? "border-[#FBBF24] bg-[#0C261E] shadow-[3px_3px_0_#FBBF24] sm:shadow-[4px_4px_0_#FBBF24]"
                     : isDone
                     ? "border-[#34D399]/40 bg-[#091E17]/80 opacity-90"
                     : "border-[#F6F4EE]/15 bg-[#091E17]/30 opacity-45"
                 }`}
               >
-                <div className="flex items-center justify-between font-mono text-[11px] mb-1">
+                <div className="flex items-center justify-between font-mono text-[10px] sm:text-[11px] mb-1">
                   <span className={isCurrent ? "text-[#FBBF24] font-bold" : "text-[#34D399]"}>
                     {step.code}
                   </span>
@@ -817,20 +820,20 @@ export function AuditWorkspace({
                     {isDone ? "SELESAI" : isCurrent ? "MEMPROSES..." : "MENUNGGU"}
                   </span>
                 </div>
-                <div className="font-semibold text-sm text-white flex items-center gap-2">
+                <div className="font-semibold text-xs sm:text-sm text-white flex items-center gap-2">
                   {isDone && <CheckCircle2 className="h-4 w-4 text-[#34D399] shrink-0" />}
                   {isCurrent && <Loader2 className="h-4 w-4 text-[#FBBF24] animate-spin shrink-0" />}
-                  <span>{step.label}</span>
+                  <span className="break-words">{step.label}</span>
                 </div>
                 {isCurrent && (
-                  <p className="mt-1.5 font-mono text-xs text-[#F6F4EE]/70">{step.detail}</p>
+                  <p className="mt-1.5 font-mono text-[11px] sm:text-xs text-[#F6F4EE]/70">{step.detail}</p>
                 )}
               </div>
             );
           })}
         </div>
 
-        <div className="relative z-10 border-t border-[#F6F4EE]/15 pt-4 flex items-center justify-between font-mono text-[11px] text-[#F6F4EE]/60">
+        <div className="relative z-10 border-t border-[#F6F4EE]/15 pt-3 sm:pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-1 font-mono text-[10px] sm:text-[11px] text-[#F6F4EE]/60">
           <span>KEAMANAN MEMORI: ZERO DATA RETENTION</span>
           <span>KORPUS: PASAL.ID VECTOR INDEX</span>
         </div>
@@ -842,39 +845,41 @@ export function AuditWorkspace({
   return (
     <div
       ref={reportRef}
-      className="w-full border-[1.5px] border-[#091E17] bg-white shadow-[8px_8px_0_#091E17] flex flex-col"
+      className="w-full border-[1.5px] border-[#091E17] bg-white shadow-[4px_4px_0_#091E17] sm:shadow-[8px_8px_0_#091E17] flex flex-col"
       style={{ minHeight: "640px" }}
     >
       {/* Top Instrument Navigation Bar */}
-      <div className="border-b-[1.5px] border-[#091E17] bg-[#071913] px-4 md:px-6 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-2">
+      <div className="border-b-[1.5px] border-[#091E17] bg-[#071913] px-3 sm:px-6 py-2.5 sm:py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shrink-0">
+        <div className="grid grid-cols-2 sm:flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
           <button
             type="button"
             onClick={() => setView("cover")}
-            className={`px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-2 border ${
+            className={`px-3 sm:px-4 py-2 font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 border ${
               view === "cover"
                 ? "bg-[#FBBF24] text-[#091E17] border-[#FBBF24]"
                 : "border-[#F6F4EE]/20 text-[#F6F4EE]/75 hover:text-white"
             }`}
           >
-            <FileStack className="h-3.5 w-3.5" />
-            Lembar Ringkasan Eksekutif
+            <FileStack className="h-3.5 w-3.5 shrink-0" />
+            <span className="hidden sm:inline">Lembar Ringkasan Eksekutif</span>
+            <span className="sm:hidden">Ringkasan</span>
           </button>
           <button
             type="button"
             onClick={() => setView("workspace")}
-            className={`px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-2 border ${
+            className={`px-3 sm:px-4 py-2 font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 border ${
               view === "workspace"
                 ? "bg-[#FBBF24] text-[#091E17] border-[#FBBF24]"
                 : "border-[#F6F4EE]/20 text-[#F6F4EE]/75 hover:text-white"
             }`}
           >
-            <Scale className="h-3.5 w-3.5" />
-            Inspeksi Klausul &amp; Pasal ({flatClauses.length})
+            <Scale className="h-3.5 w-3.5 shrink-0" />
+            <span className="hidden sm:inline">Inspeksi Klausul &amp; Pasal ({flatClauses.length})</span>
+            <span className="sm:hidden">Klausul ({flatClauses.length})</span>
           </button>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="grid grid-cols-2 sm:flex items-center gap-1.5 sm:gap-2.5 w-full sm:w-auto">
           <button
             type="button"
             onClick={() => {
@@ -882,16 +887,20 @@ export function AuditWorkspace({
               setResult(null);
               setFile(null);
             }}
-            className="px-3 py-2 border border-[#F6F4EE]/25 text-[#F6F4EE]/80 hover:text-white font-mono text-xs uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer"
+            className="px-2.5 sm:px-3 py-2 border border-[#F6F4EE]/25 text-[#F6F4EE]/80 hover:text-white font-mono text-[10px] sm:text-xs uppercase tracking-wider inline-flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer text-center"
           >
-            <RotateCcw className="h-3.5 w-3.5" /> Audit Dokumen Baru
+            <RotateCcw className="h-3.5 w-3.5 shrink-0" />
+            <span className="hidden sm:inline">Audit Dokumen Baru</span>
+            <span className="sm:hidden">Audit Baru</span>
           </button>
           <button
             type="button"
             onClick={handleDownloadPDF}
-            className="px-4 py-2 bg-[#0D6E49] hover:bg-[#09583A] text-white border border-[#34D399]/40 font-mono text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
+            className="px-3 sm:px-4 py-2 bg-[#0D6E49] hover:bg-[#09583A] text-white border border-[#34D399]/40 font-mono text-[10px] sm:text-xs font-bold uppercase tracking-wider inline-flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer text-center"
           >
-            <Download className="h-3.5 w-3.5" /> Ekspor Laporan PDF
+            <Download className="h-3.5 w-3.5 shrink-0" />
+            <span className="hidden sm:inline">Ekspor Laporan PDF</span>
+            <span className="sm:hidden">Ekspor PDF</span>
           </button>
         </div>
       </div>
@@ -900,16 +909,16 @@ export function AuditWorkspace({
       {view === "cover" && (
         <div className="flex-1 overflow-y-auto">
           {/* Gazette Report Header */}
-          <div className="bg-[#F6F4EE] px-6 md:px-8 py-6 border-b-[1.5px] border-[#091E17]">
+          <div className="bg-[#F6F4EE] px-4 sm:px-6 md:px-8 py-5 sm:py-6 border-b-[1.5px] border-[#091E17]">
             <div className="flex items-start justify-between flex-wrap gap-4">
-              <div className="space-y-1">
-                <div className="font-mono text-[11px] font-bold uppercase tracking-widest text-[#0D6E49]">
+              <div className="space-y-1 min-w-0 flex-1">
+                <div className="font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#0D6E49]">
                   DOKUMEN HASIL ADJUDIKASI KEPATUHAN // OZIKSUSTAIN ENGINE
                 </div>
-                <h2 className="font-editorial text-2xl md:text-3xl font-semibold text-[#091E17]">
+                <h2 className="font-editorial text-xl sm:text-2xl md:text-3xl font-semibold text-[#091E17] break-words">
                   {fileName || result?.projectName || "Laporan Evaluasi Project Design Document"}
                 </h2>
-                <p className="font-mono text-xs text-[#4A5D54]">
+                <p className="font-mono text-[11px] sm:text-xs text-[#4A5D54] break-all">
                   SHA-256 INTEGRITY HASH:{" "}
                   <span className="text-[#091E17] font-semibold">
                     {result?.sha256Hash?.substring(0, 32) ||
@@ -921,9 +930,9 @@ export function AuditWorkspace({
               </div>
 
               {result?.reviewStatus === "APPROVED" && (
-                <div className="flex items-center gap-3 border-[1.5px] border-[#091E17] bg-white p-3 shadow-[3px_3px_0_#091E17]">
+                <div className="flex items-center gap-3 border-[1.5px] border-[#091E17] bg-white p-2.5 sm:p-3 shadow-[2px_2px_0_#091E17] sm:shadow-[3px_3px_0_#091E17] shrink-0">
                   <div>
-                    <div className="font-mono text-[10px] font-bold uppercase text-[#0D6E49] flex items-center gap-1">
+                    <div className="font-mono text-[9px] sm:text-[10px] font-bold uppercase text-[#0D6E49] flex items-center gap-1">
                       <Fingerprint className="h-3.5 w-3.5" /> TERVERIFIKASI SHA-256
                     </div>
                     <div className="font-mono text-xs font-bold text-[#091E17]">
@@ -1045,16 +1054,16 @@ export function AuditWorkspace({
             </div>
 
             {/* Right: 4-Pillar Scoring Radar (5 Cols) */}
-            <div className="md:col-span-5 p-6 md:p-8 flex flex-col items-center justify-center relative bg-[#F6F4EE]/40">
+            <div className="md:col-span-5 p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center relative bg-[#F6F4EE]/40">
               <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-[#091E17] mb-2 text-center">
                 Distribusi Skor 4 Pilar Kepatuhan
               </h3>
-              <ResponsiveContainer width="100%" height={220}>
-                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+              <ResponsiveContainer width="100%" height={200}>
+                <RadarChart cx="50%" cy="50%" outerRadius="65%" data={radarData}>
                   <PolarGrid stroke="#091E17" strokeOpacity={0.2} />
                   <PolarAngleAxis
                     dataKey="subject"
-                    tick={{ fill: "#091E17", fontSize: 10, fontWeight: 700 }}
+                    tick={{ fill: "#091E17", fontSize: 9, fontWeight: 700 }}
                   />
                   <PolarRadiusAxis angle={30} domain={[0, "dataMax"]} tick={false} axisLine={false} />
                   <Radar
@@ -1079,36 +1088,36 @@ export function AuditWorkspace({
               </ResponsiveContainer>
 
               {/* Clause Counts */}
-              <div className="grid grid-cols-3 gap-3 w-full mt-3 font-mono">
-                <div className="bg-[#E6F4EE] border border-[#0D6E49] p-2.5 text-center">
-                  <div className="text-lg font-bold text-[#091E17] tabular-nums">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full mt-3 font-mono">
+                <div className="bg-[#E6F4EE] border border-[#0D6E49] p-2 sm:p-2.5 text-center">
+                  <div className="text-base sm:text-lg font-bold text-[#091E17] tabular-nums">
                     {compliantCount}
                   </div>
-                  <div className="text-[9px] font-bold uppercase text-[#0D6E49]">Patuh</div>
+                  <div className="text-[8px] sm:text-[9px] font-bold uppercase text-[#0D6E49]">Patuh</div>
                 </div>
-                <div className="bg-[#FEF3C7] border border-[#D97706] p-2.5 text-center">
-                  <div className="text-lg font-bold text-[#091E17] tabular-nums">
+                <div className="bg-[#FEF3C7] border border-[#D97706] p-2 sm:p-2.5 text-center">
+                  <div className="text-base sm:text-lg font-bold text-[#091E17] tabular-nums">
                     {mediumCount}
                   </div>
-                  <div className="text-[9px] font-bold uppercase text-[#B45309]">Risiko Sedang</div>
+                  <div className="text-[8px] sm:text-[9px] font-bold uppercase text-[#B45309]">Sedang</div>
                 </div>
-                <div className="bg-[#FEE2E2] border border-[#B91C1C] p-2.5 text-center">
-                  <div className="text-lg font-bold text-[#091E17] tabular-nums">{highCount}</div>
-                  <div className="text-[9px] font-bold uppercase text-[#B91C1C]">Risiko Tinggi</div>
+                <div className="bg-[#FEE2E2] border border-[#B91C1C] p-2 sm:p-2.5 text-center">
+                  <div className="text-base sm:text-lg font-bold text-[#091E17] tabular-nums">{highCount}</div>
+                  <div className="text-[8px] sm:text-[9px] font-bold uppercase text-[#B91C1C]">Tinggi</div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* CTA to Drill-Down Clause Inspector */}
-          <div className="px-6 md:px-8 py-6 bg-[#F6F4EE] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="px-4 sm:px-6 md:px-8 py-5 sm:py-6 bg-[#F6F4EE] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
             <p className="text-xs text-[#4A5D54] max-w-xl leading-relaxed">
               Buka <strong className="text-[#091E17]">Inspeksi Klausul &amp; Pasal</strong> untuk membaca bedah kalimat demi kalimat, melihat kutipan asli regulasi Pasal.id, dan menyalin rekomendasi perbaikan redaksional hukum.
             </p>
             <button
               type="button"
               onClick={() => setView("workspace")}
-              className="px-6 py-3 bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-xs font-bold uppercase tracking-widest border-[1.5px] border-[#091E17] shadow-[4px_4px_0_#D97706] transition-all cursor-pointer shrink-0"
+              className="px-5 sm:px-6 py-3 bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-xs font-bold uppercase tracking-widest border-[1.5px] border-[#091E17] shadow-[3px_3px_0_#D97706] sm:shadow-[4px_4px_0_#D97706] transition-all cursor-pointer shrink-0 text-center"
             >
               Buka Inspeksi Klausul Detail &rarr;
             </button>
@@ -1122,14 +1131,14 @@ export function AuditWorkspace({
           {/* LEFT PANEL: Document Reader (7 Cols) */}
           <div className="md:col-span-7 flex flex-col bg-[#F6F4EE]/50 md:border-r-[1.5px] border-b-[1.5px] md:border-b-0 border-[#091E17]">
             {/* Reader Toolbar */}
-            <div className="px-4 py-2.5 border-b border-[#091E17]/20 bg-white flex items-center justify-between shrink-0 font-mono text-xs">
+            <div className="px-3 sm:px-4 py-2 sm:py-2.5 border-b border-[#091E17]/20 bg-white flex items-center justify-between shrink-0 font-mono text-xs gap-2">
               <div className="flex items-center gap-2 min-w-0">
                 <FileText className="h-4 w-4 text-[#0D6E49] shrink-0" />
-                <span className="font-bold text-[#091E17] truncate max-w-[200px]">
+                <span className="font-bold text-[#091E17] truncate max-w-[110px] xs:max-w-[160px] sm:max-w-[220px]">
                   {fileName || result?.projectName || "Dokumen PDD"}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                 <button
                   type="button"
                   disabled={currentPage <= 1}
@@ -1138,7 +1147,7 @@ export function AuditWorkspace({
                 >
                   <ChevronLeft className="h-3.5 w-3.5" />
                 </button>
-                <span className="text-[11px] font-bold px-2">
+                <span className="text-[10px] sm:text-[11px] font-bold px-1 sm:px-2 whitespace-nowrap">
                   Hal {currentPage}/{totalPages}
                 </span>
                 <button
@@ -1149,22 +1158,24 @@ export function AuditWorkspace({
                 >
                   <ChevronRight className="h-3.5 w-3.5" />
                 </button>
-                <div className="w-px h-4 bg-[#091E17]/20 mx-1" />
-                <button
-                  type="button"
-                  onClick={() => setZoom((z) => Math.max(85, z - 10))}
-                  className="h-7 w-7 border border-[#091E17]/30 flex items-center justify-center cursor-pointer"
-                >
-                  <ZoomOut className="h-3.5 w-3.5" />
-                </button>
-                <span className="text-[10px] w-9 text-center">{zoom}%</span>
-                <button
-                  type="button"
-                  onClick={() => setZoom((z) => Math.min(135, z + 10))}
-                  className="h-7 w-7 border border-[#091E17]/30 flex items-center justify-center cursor-pointer"
-                >
-                  <ZoomIn className="h-3.5 w-3.5" />
-                </button>
+                <div className="hidden xs:block w-px h-4 bg-[#091E17]/20 mx-0.5 sm:mx-1" />
+                <div className="hidden xs:flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setZoom((z) => Math.max(85, z - 10))}
+                    className="h-7 w-7 border border-[#091E17]/30 flex items-center justify-center cursor-pointer"
+                  >
+                    <ZoomOut className="h-3.5 w-3.5" />
+                  </button>
+                  <span className="text-[10px] w-8 text-center">{zoom}%</span>
+                  <button
+                    type="button"
+                    onClick={() => setZoom((z) => Math.min(135, z + 10))}
+                    className="h-7 w-7 border border-[#091E17]/30 flex items-center justify-center cursor-pointer"
+                  >
+                    <ZoomIn className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1261,47 +1272,47 @@ export function AuditWorkspace({
                       className="border-[1.5px] border-[#091E17] bg-white shadow-[4px_4px_0_#091E17]"
                     >
                       <div
-                        className="px-4 py-2.5 flex items-center justify-between font-mono text-[10px] font-bold uppercase text-white"
+                        className="px-3.5 sm:px-4 py-2 sm:py-2.5 flex flex-col xs:flex-row xs:items-center justify-between font-mono text-[9px] sm:text-[10px] font-bold uppercase text-white gap-1"
                         style={{ backgroundColor: getBorder(clause.status) }}
                       >
-                        <span>
+                        <span className="truncate">
                           {isHigh(clause.status)
                             ? "TEMUAN: RISIKO TINGGI (HIGH RISK)"
                             : isMedium(clause.status)
                             ? "TEMUAN: RISIKO SEDANG (MEDIUM RISK)"
                             : "STATUS: KLAUSUL PATUH (COMPLIANT)"}
                         </span>
-                        <span>ID #{clause.id}</span>
+                        <span className="shrink-0">ID #{clause.id}</span>
                       </div>
 
                       {isCompliant(clause.status) ? (
-                        <div className="p-5 space-y-3 bg-[#E6F4EE]/40">
+                        <div className="p-4 sm:p-5 space-y-3 bg-[#E6F4EE]/40">
                           <div className="flex items-center gap-2 text-[#0D6E49] font-mono text-xs font-bold uppercase">
-                            <CheckCircle2 className="h-4 w-4" /> Tidak Ditemukan Indikasi Pelanggaran
+                            <CheckCircle2 className="h-4 w-4 shrink-0" /> Tidak Ditemukan Indikasi Pelanggaran
                           </div>
-                          <p className="font-serif text-xs italic text-[#091E17]/80 border-l-2 border-[#0D6E49] pl-3">
+                          <p className="font-serif text-xs italic text-[#091E17]/80 border-l-2 border-[#0D6E49] pl-3 break-words">
                             "{clause.text || clause.Text}"
                           </p>
-                          <p className="text-xs text-[#4A5D54] leading-relaxed bg-white p-3 border border-[#091E17]/15">
+                          <p className="text-xs text-[#4A5D54] leading-relaxed bg-white p-3 border border-[#091E17]/15 break-words">
                             Substansi klausa ini telah sejalan dengan kaidah perizinan lingkungan, tata ruang, dan keselamatan ketenagalistrikan yang berlaku.
                           </p>
                         </div>
                       ) : (
                         <div className="divide-y divide-[#091E17]/15">
-                          <div className="p-4 bg-[#F6F4EE]/60">
+                          <div className="p-3.5 sm:p-4 bg-[#F6F4EE]/60">
                             <div className="font-mono text-[10px] uppercase text-[#4A5D54] mb-1">
                               KUTIPAN KLAUSUL BERMASALAH
                             </div>
-                            <p className="font-serif text-xs italic text-[#091E17] leading-relaxed">
+                            <p className="font-serif text-xs italic text-[#091E17] leading-relaxed break-words">
                               "{clause.text || clause.Text}"
                             </p>
                           </div>
 
-                          <div className="p-4 space-y-1.5">
+                          <div className="p-3.5 sm:p-4 space-y-1.5">
                             <div className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase text-[#B91C1C]">
-                              <AlertTriangle className="h-3.5 w-3.5" /> Analisis Ketidaksesuaian Hukum
+                              <AlertTriangle className="h-3.5 w-3.5 shrink-0" /> Analisis Ketidaksesuaian Hukum
                             </div>
-                            <p className="text-xs text-[#091E17] leading-relaxed">
+                            <p className="text-xs text-[#091E17] leading-relaxed break-words">
                               {clause.issue?.clauseText ||
                                 clause.issue?.explanation ||
                                 "Klausul ini mengandung potensi ketidaksesuaian terhadap ketentuan perizinan lingkungan nasional."}
@@ -1309,23 +1320,23 @@ export function AuditWorkspace({
                           </div>
 
                           {clause.issue?.matchedLaw && (
-                            <div className="p-4 bg-[#F6F4EE] space-y-2">
-                              <div className="flex items-center justify-between font-mono text-[10px]">
+                            <div className="p-3.5 sm:p-4 bg-[#F6F4EE] space-y-2">
+                              <div className="flex items-center justify-between font-mono text-[10px] gap-2">
                                 <span className="font-bold uppercase text-[#091E17] flex items-center gap-1.5">
-                                  <BookOpen className="h-3.5 w-3.5 text-[#0D6E49]" /> Sitasi Regulasi (Pasal.id)
+                                  <BookOpen className="h-3.5 w-3.5 text-[#0D6E49] shrink-0" /> Sitasi Regulasi (Pasal.id)
                                 </span>
                                 <Link
                                   to="/regulasi"
-                                  className="text-[#0D6E49] font-bold hover:underline inline-flex items-center gap-0.5"
+                                  className="text-[#0D6E49] font-bold hover:underline inline-flex items-center gap-0.5 shrink-0"
                                 >
                                   Buka Direktori <ArrowUpRight className="h-3 w-3" />
                                 </Link>
                               </div>
-                              <div className="inline-block bg-[#091E17] text-[#FBBF24] font-mono text-[11px] font-bold px-2.5 py-1">
+                              <div className="inline-block bg-[#091E17] text-[#FBBF24] font-mono text-[10px] sm:text-[11px] font-bold px-2.5 py-1 break-words max-w-full">
                                 {clause.issue.matchedLaw}
                               </div>
                               {clause.issue?.originalLawText && (
-                                <p className="font-serif text-xs italic text-[#091E17]/85 border-l-2 border-[#091E17]/40 pl-3 leading-relaxed">
+                                <p className="font-serif text-xs italic text-[#091E17]/85 border-l-2 border-[#091E17]/40 pl-3 leading-relaxed break-words">
                                   "{clause.issue.originalLawText}"
                                 </p>
                               )}
@@ -1333,19 +1344,19 @@ export function AuditWorkspace({
                           )}
 
                           {clause.issue?.suggestedRevision && (
-                            <div className="p-4 space-y-3 bg-white">
+                            <div className="p-3.5 sm:p-4 space-y-3 bg-white">
                               <div className="flex items-center justify-between">
                                 <span className="font-mono text-[10px] font-bold uppercase text-[#0D6E49] flex items-center gap-1.5">
-                                  <Wand2 className="h-3.5 w-3.5" /> Rekomendasi Redaksi Perbaikan
+                                  <Wand2 className="h-3.5 w-3.5 text-[#0D6E49] shrink-0" /> Rekomendasi Redaksi Perbaikan
                                 </span>
                               </div>
-                              <div className="p-3.5 bg-[#E6F4EE]/70 border border-[#0D6E49] font-serif text-xs text-[#091E17] leading-relaxed">
+                              <div className="p-3 sm:p-3.5 bg-[#E6F4EE]/70 border border-[#0D6E49] font-serif text-xs text-[#091E17] leading-relaxed break-words">
                                 "{clause.issue.suggestedRevision}"
                               </div>
                               <button
                                 type="button"
                                 onClick={() => handleCopy(clause.issue.suggestedRevision)}
-                                className="w-full py-2.5 px-4 bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                                className="w-full py-2.5 px-4 bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer text-center"
                               >
                                 {copied ? (
                                   <Check className="h-4 w-4 text-[#34D399]" />

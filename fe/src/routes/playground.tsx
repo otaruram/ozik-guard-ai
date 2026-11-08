@@ -123,10 +123,10 @@ function Playground() {
               <Terminal className="h-3.5 w-3.5" />
               SPESIFIKASI REST API // VERSI 1.4 STABLE
             </div>
-            <h1 className="font-editorial text-3xl sm:text-5xl font-semibold tracking-tight text-white">
+            <h1 className="font-editorial text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white break-words">
               Integrasikan Mesin Adjudikasi OzikSustain ke Sistem ERP Anda
             </h1>
-            <p className="text-sm sm:text-base text-[#F6F4EE]/75 max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm md:text-base text-[#F6F4EE]/75 max-w-2xl leading-relaxed">
               Otomatisasi penyaringan dokumen vendor pada portal e-Procurement Anda. Kirim berkas PDF melalui permintaan HTTP multipart dan terima skor kepatuhan 4 pilar, kutipan Pasal.id, serta hash SHA-256 dalam format JSON terstruktur.
             </p>
           </div>
@@ -190,7 +190,7 @@ function Playground() {
                   PARAMETER FORM-DATA
                 </div>
                 <div className="border-[1.5px] border-[#091E17] overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-xs">
+                  <table className="w-full text-left border-collapse text-xs min-w-[500px]">
                     <thead>
                       <tr className="bg-[#F6F4EE] border-b-[1.5px] border-[#091E17] font-mono text-[11px] uppercase">
                         <th className="p-3">Field Key</th>

@@ -303,21 +303,21 @@ function Dashboard() {
 
       {/* MAIN WORKSPACE CONTENT */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-18 bg-white border-b-[1.5px] border-[#091E17] flex items-center px-4 md:px-8 gap-4 shrink-0 justify-between">
-          <div className="flex items-center gap-3">
+        <header className="h-16 sm:h-18 bg-white border-b-[1.5px] border-[#091E17] flex items-center px-3 sm:px-6 md:px-8 gap-2 sm:gap-4 shrink-0 justify-between">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
-              className="lg:hidden p-2 border border-[#091E17] text-[#091E17] hover:bg-[#F6F4EE]"
+              className="lg:hidden p-1.5 sm:p-2 border border-[#091E17] text-[#091E17] hover:bg-[#F6F4EE] shrink-0"
               aria-label="Buka menu"
             >
               <Menu className="h-5 w-5" />
             </button>
-            <div>
-              <div className="font-mono text-[10px] uppercase tracking-widest text-[#4A5D54] hidden sm:block">
+            <div className="min-w-0">
+              <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-[#4A5D54] hidden sm:block">
                 TERMINAL ADJUDIKASI // OZIKSUSTAIN
               </div>
-              <h1 className="font-editorial text-xl font-semibold text-[#091E17]">
+              <h1 className="font-editorial text-base sm:text-xl font-semibold text-[#091E17] truncate max-w-[130px] xs:max-w-[190px] sm:max-w-none">
                 {NAV_ITEMS.find((n) => n.key === active)?.label ||
                   (active === "admin"
                     ? "Admin Control Center"
@@ -330,26 +330,32 @@ function Dashboard() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-3 border-[1.5px] border-[#091E17] p-1.5 bg-[#F6F4EE] shadow-[3px_3px_0_#091E17]">
-              <span className="flex items-center gap-1.5 px-2.5 font-mono text-xs font-bold uppercase text-[#091E17] tabular-nums">
-                <Zap className="h-3.5 w-3.5 text-[#D97706] fill-[#D97706]" />
-                {isAdminEmail
-                  ? "UNLIMITED (ADMIN)"
-                  : `${dbUser?.creditsBalance ?? 0} Kredit Tersedia`}
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-3 border-[1.5px] border-[#091E17] p-1 sm:p-1.5 bg-[#F6F4EE] shadow-[2px_2px_0_#091E17] sm:shadow-[3px_3px_0_#091E17]">
+              <span className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 font-mono text-[10px] sm:text-xs font-bold uppercase text-[#091E17] tabular-nums">
+                <Zap className="h-3.5 w-3.5 text-[#D97706] fill-[#D97706] shrink-0" />
+                <span className="hidden sm:inline">
+                  {isAdminEmail
+                    ? "UNLIMITED (ADMIN)"
+                    : `${dbUser?.creditsBalance ?? 0} Kredit Tersedia`}
+                </span>
+                <span className="sm:hidden font-mono text-[11px]">
+                  {isAdminEmail ? "UNLTD" : `${dbUser?.creditsBalance ?? 0} K`}
+                </span>
               </span>
               <button
                 type="button"
                 onClick={() => navigate({ to: "/dashboard", search: { tab: "billing" } })}
-                className="px-3 py-1.5 bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                className="px-2 sm:px-3 py-1 sm:py-1.5 bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer shrink-0"
               >
-                Tambah Kredit
+                <span className="hidden xs:inline">Tambah Kredit</span>
+                <span className="xs:hidden">+ Topup</span>
               </button>
             </div>
           </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+        <main className="flex-1 p-3 sm:p-5 md:p-8 overflow-y-auto">
           {active === "overview" && (
             <DashboardUtama
               history={historyData}

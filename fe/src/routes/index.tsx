@@ -183,14 +183,14 @@ function HeroSection() {
             </div>
 
             <div className="space-y-5">
-              <h1 className="font-editorial text-4xl sm:text-5xl lg:text-[62px] font-semibold tracking-tight text-[#091E17] leading-[1.05]">
+              <h1 className="font-editorial text-3xl sm:text-4xl md:text-5xl lg:text-[62px] font-semibold tracking-tight text-[#091E17] leading-[1.08] break-words">
                 Audit Kepatuhan Hukum &amp; Spasial Proyek Hijau{" "}
                 <span className="italic font-normal text-[#0D6E49] underline decoration-[#D97706] decoration-2 underline-offset-8">
                   Secara Deterministik.
                 </span>
               </h1>
               <p className="text-base sm:text-lg text-[#4A5D54] leading-relaxed max-w-2xl font-normal">
-                OzikSustain membedah dokumen <strong className="font-semibold text-[#091E17]">Project Design Document (PDD)</strong>, AMDAL, dan UKL-UPL vendor dalam hitungan detik. Memadukan pencarian vektor <strong className="font-semibold text-[#091E17]">IndoBERT</strong> atas ribuan pasal regulasi nasional, verifikasi spasial satelit, tinjauan pakar hukum, hingga segel kriptografi <span className="font-mono text-sm text-[#091E17] bg-[#ECE9DF] px-1.5 py-0.5">HMAC-SHA256</span>.
+                OzikSustain membedah dokumen <strong className="font-semibold text-[#091E17]">Project Design Document (PDD)</strong>, AMDAL, dan UKL-UPL vendor dalam hitungan detik. Memadukan pencarian vektor <strong className="font-semibold text-[#091E17]">IndoBERT</strong> atas ribuan pasal regulasi nasional, verifikasi spasial satelit, tinjauan pakar hukum, hingga segel kriptografi <span className="font-mono text-xs sm:text-sm text-[#091E17] bg-[#ECE9DF] px-1.5 py-0.5 break-all">HMAC-SHA256</span>.
               </p>
             </div>
 
@@ -260,19 +260,19 @@ function HeroSection() {
           </div>
 
           {/* Right Column: Live Interactive Adjudication Terminal (5 Cols) */}
-          <div className="lg:col-span-5 border-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] shadow-[8px_8px_0_#091E17] relative overflow-hidden">
+          <div className="lg:col-span-5 border-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] shadow-[4px_4px_0_#091E17] sm:shadow-[8px_8px_0_#091E17] relative overflow-hidden">
             {/* Scanning Beam Animation */}
             <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#34D399]/10 via-[#34D399]/5 to-transparent animate-scan-beam z-0" />
 
             {/* Terminal Header */}
-            <div className="relative z-10 flex items-center justify-between border-b border-[#F6F4EE]/15 bg-[#0C261E] px-4 py-3">
+            <div className="relative z-10 flex items-center justify-between border-b border-[#F6F4EE]/15 bg-[#0C261E] px-3.5 sm:px-4 py-2.5 sm:py-3">
               <div className="flex items-center gap-2">
                 <Activity className="h-4 w-4 text-[#34D399]" />
-                <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-[#F6F4EE]">
+                <span className="font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#F6F4EE]">
                   SIMULATOR INSPEKSI KLAUSUL PDD
                 </span>
               </div>
-              <span className="font-mono text-[10px] text-[#FBBF24] border border-[#FBBF24]/40 bg-[#FBBF24]/10 px-2 py-0.5">
+              <span className="font-mono text-[9px] sm:text-[10px] text-[#FBBF24] border border-[#FBBF24]/40 bg-[#FBBF24]/10 px-1.5 sm:px-2 py-0.5">
                 LIVE DEMO
               </span>
             </div>
@@ -286,16 +286,16 @@ function HeroSection() {
                     key={item.id}
                     type="button"
                     onClick={() => setActiveClauseIdx(idx)}
-                    className={`px-3 py-2.5 text-left font-mono text-[10px] transition-colors border-r last:border-r-0 border-[#F6F4EE]/15 cursor-pointer ${
+                    className={`px-2 sm:px-3 py-2 sm:py-2.5 text-left font-mono text-[9px] sm:text-[10px] transition-colors border-r last:border-r-0 border-[#F6F4EE]/15 cursor-pointer ${
                       isSelected
                         ? "bg-[#F6F4EE] text-[#091E17] font-bold"
                         : "text-[#F6F4EE]/70 hover:bg-[#0C261E] hover:text-white"
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <span>{item.id}</span>
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="truncate">{item.id}</span>
                       <span
-                        className={`h-2 w-2 rounded-full ${
+                        className={`h-2 w-2 rounded-full shrink-0 ${
                           item.status === "HIGH_RISK"
                             ? "bg-[#EF4444]"
                             : item.status === "MEDIUM_RISK"
@@ -310,11 +310,11 @@ function HeroSection() {
             </div>
 
             {/* Active Clause Inspection Body */}
-            <div className="relative z-10 p-5 space-y-4">
+            <div className="relative z-10 p-4 sm:p-5 space-y-3.5 sm:space-y-4">
               {/* Redaction & Risk Header */}
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider border ${
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-wider border ${
                     activeClause.status === "HIGH_RISK"
                       ? "bg-[#7F1D1D]/60 text-[#FCA5A5] border-[#EF4444]"
                       : activeClause.status === "MEDIUM_RISK"
@@ -324,60 +324,60 @@ function HeroSection() {
                 >
                   {activeClause.riskLabel}
                 </span>
-                <span className="font-mono text-[10px] text-[#34D399]">
+                <span className="font-mono text-[9px] sm:text-[10px] text-[#34D399]">
                   VEC SIMILARITY: {activeClause.similarity}
                 </span>
               </div>
 
               {/* Extracted Clause Box */}
-              <div className="border border-[#F6F4EE]/20 bg-[#091E17]/90 p-3.5 space-y-2">
-                <div className="flex items-center justify-between font-mono text-[10px] text-[#F6F4EE]/60">
+              <div className="border border-[#F6F4EE]/20 bg-[#091E17]/90 p-3 sm:p-3.5 space-y-2">
+                <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 font-mono text-[10px] text-[#F6F4EE]/60">
                   <span>KUTIPAN DOKUMEN PDD</span>
-                  <span className="inline-flex items-center gap-1 text-[#FBBF24]">
-                    <EyeOff className="h-3 w-3" /> {activeClause.maskedEntity}
+                  <span className="inline-flex items-center gap-1 text-[#FBBF24] truncate max-w-[200px] sm:max-w-none">
+                    <EyeOff className="h-3 w-3 shrink-0" /> {activeClause.maskedEntity}
                   </span>
                 </div>
-                <p className="font-serif text-xs sm:text-sm italic leading-relaxed text-[#F6F4EE]/95">
+                <p className="font-serif text-xs sm:text-sm italic leading-relaxed text-[#F6F4EE]/95 break-words">
                   "{activeClause.rawText}"
                 </p>
               </div>
 
               {/* Matched Regulation Citation */}
-              <div className="border-l-2 border-[#FBBF24] bg-[#0C261E] pl-3.5 py-2 pr-3 space-y-1">
+              <div className="border-l-2 border-[#FBBF24] bg-[#0C261E] pl-3 sm:pl-3.5 py-2 pr-2.5 sm:pr-3 space-y-1">
                 <div className="font-mono text-[10px] uppercase tracking-wider text-[#FBBF24]">
                   RUJUKAN HUKUM PASAL.ID
                 </div>
-                <div className="font-mono text-xs font-bold text-white">
+                <div className="font-mono text-xs font-bold text-white break-words">
                   {activeClause.lawRef}
                 </div>
-                <p className="text-xs text-[#F6F4EE]/75 leading-relaxed">
+                <p className="text-xs text-[#F6F4EE]/75 leading-relaxed break-words">
                   {activeClause.analysis}
                 </p>
               </div>
 
               {/* Suggested Revision with Copy Action */}
-              <div className="border border-[#34D399]/30 bg-[#064E3B]/30 p-3.5 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#34D399]">
+              <div className="border border-[#34D399]/30 bg-[#064E3B]/30 p-3 sm:p-3.5 space-y-2 sm:space-y-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#34D399]">
                     REKOMENDASI REDAKSI HUKUM AI
                   </span>
                   <button
                     type="button"
                     onClick={() => copyRevision(activeClause.revision)}
-                    className="inline-flex items-center gap-1 border border-[#34D399]/40 bg-[#071913] px-2 py-1 font-mono text-[10px] text-[#34D399] hover:bg-[#34D399] hover:text-[#071913] transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1 border border-[#34D399]/40 bg-[#071913] px-2 py-1 font-mono text-[9px] sm:text-[10px] text-[#34D399] hover:bg-[#34D399] hover:text-[#071913] transition-colors cursor-pointer shrink-0"
                   >
                     {copiedRev ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                     {copiedRev ? "Tersalin" : "Salin Draf"}
                   </button>
                 </div>
-                <p className="font-serif text-xs leading-relaxed text-[#E6F4EE]">
+                <p className="font-serif text-xs leading-relaxed text-[#E6F4EE] break-words">
                   "{activeClause.revision}"
                 </p>
               </div>
 
               {/* Bottom Terminal Footer */}
-              <div className="pt-2 flex items-center justify-between border-t border-[#F6F4EE]/15 font-mono text-[10px] text-[#F6F4EE]/60">
-                <span>HASH: 8f94e2a0...c41b</span>
+              <div className="pt-2 flex flex-col xs:flex-row xs:items-center justify-between gap-1 border-t border-[#F6F4EE]/15 font-mono text-[10px] text-[#F6F4EE]/60">
+                <span className="break-all">HASH: 8f94e2a0...c41b</span>
                 <Link
                   to="/audit"
                   className="text-[#FBBF24] font-bold hover:underline inline-flex items-center gap-1"
@@ -425,7 +425,7 @@ function LiveBenchmarkBar() {
     <section className="border-b-[1.5px] border-[#091E17] bg-white">
       <div className="mx-auto max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[#091E17]/20">
         {metrics.map((m) => (
-          <div key={m.code} className="p-6 md:p-7 flex flex-col justify-between">
+          <div key={m.code} className="p-5 sm:p-6 md:p-7 flex flex-col justify-between">
             <div className="flex items-center justify-between font-mono text-[10px] text-[#4A5D54] mb-3">
               <span>INDIKATOR // {m.code}</span>
               <span className="h-1.5 w-1.5 bg-[#0D6E49]" />
@@ -451,24 +451,24 @@ function InteractivePipelineSection() {
   const current = PIPELINE_STAGES[activeStage];
 
   return (
-    <section id="arsitektur" className="py-20 md:py-28 border-b-[1.5px] border-[#091E17] bg-[#F6F4EE]">
+    <section id="arsitektur" className="py-14 md:py-24 border-b-[1.5px] border-[#091E17] bg-[#F6F4EE]">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6 border-b-[1.5px] border-[#091E17] pb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-14 gap-6 border-b-[1.5px] border-[#091E17] pb-8">
           <div>
             <div className="font-mono text-xs font-bold uppercase tracking-widest text-[#0D6E49] mb-2">
               ARSITEKTUR PEMROSESAN // 04 TAHAP DETERMINISTIK
             </div>
-            <h2 className="font-editorial text-3xl sm:text-5xl font-semibold tracking-tight text-[#091E17]">
+            <h2 className="font-editorial text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#091E17] break-words">
               Cara Kerja Mesin Drill-Down OzikSustain
             </h2>
           </div>
-          <p className="text-sm text-[#4A5D54] max-w-md leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#4A5D54] max-w-md leading-relaxed">
             Setiap dokumen melewati empat gerbang verifikasi berurutan sebelum diizinkan memperoleh lencana kepatuhan kriptografi. Klik setiap tahapan untuk melihat telemetri pemrosesan.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-8 items-stretch">
+        <div className="grid lg:grid-cols-12 gap-6 md:gap-8 items-stretch">
           {/* Left: Step Selector List (5 Cols) */}
           <div className="lg:col-span-5 flex flex-col justify-between gap-3">
             {PIPELINE_STAGES.map((stage, idx) => {
@@ -478,19 +478,19 @@ function InteractivePipelineSection() {
                   key={stage.step}
                   type="button"
                   onClick={() => setActiveStage(idx)}
-                  className={`w-full text-left p-5 border-[1.5px] border-[#091E17] transition-all cursor-pointer ${
+                  className={`w-full text-left p-4 sm:p-5 border-[1.5px] border-[#091E17] transition-all cursor-pointer ${
                     isSelected
-                      ? "bg-[#091E17] text-[#F6F4EE] shadow-[5px_5px_0_#D97706] -translate-y-0.5"
+                      ? "bg-[#091E17] text-[#F6F4EE] shadow-[3px_3px_0_#D97706] sm:shadow-[5px_5px_0_#D97706] -translate-y-0.5"
                       : "bg-white text-[#091E17] hover:bg-[#ECE9DF]"
                   }`}
                 >
-                  <div className="flex items-center justify-between font-mono text-[10px] mb-1.5">
+                  <div className="flex items-center justify-between font-mono text-[9px] sm:text-[10px] mb-1.5">
                     <span className={isSelected ? "text-[#FBBF24]" : "text-[#0D6E49]"}>
                       TAHAP {stage.step} // {stage.code}
                     </span>
                     <span className="opacity-70">{stage.metricValue}</span>
                   </div>
-                  <h3 className="font-editorial text-lg font-semibold leading-snug">
+                  <h3 className="font-editorial text-base sm:text-lg font-semibold leading-snug break-words">
                     {stage.title}
                   </h3>
                 </button>
@@ -499,33 +499,33 @@ function InteractivePipelineSection() {
           </div>
 
           {/* Right: Interactive Stage Visualizer (7 Cols) */}
-          <div className="lg:col-span-7 border-[1.5px] border-[#091E17] bg-white shadow-[6px_6px_0_#091E17] flex flex-col justify-between overflow-hidden">
-            <div className="border-b-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="font-mono text-xs font-bold text-[#FBBF24] border border-[#FBBF24]/40 px-2 py-0.5">
+          <div className="lg:col-span-7 border-[1.5px] border-[#091E17] bg-white shadow-[4px_4px_0_#091E17] sm:shadow-[6px_6px_0_#091E17] flex flex-col justify-between overflow-hidden">
+            <div className="border-b-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5">
+                <span className="font-mono text-[11px] font-bold text-[#FBBF24] border border-[#FBBF24]/40 px-2 py-0.5">
                   STAGE {current.step}
                 </span>
-                <span className="font-mono text-xs uppercase tracking-wider text-[#F6F4EE]/90">
+                <span className="font-mono text-[11px] uppercase tracking-wider text-[#F6F4EE]/90 truncate">
                   {current.code}
                 </span>
               </div>
-              <span className="font-mono text-[11px] text-[#34D399]">{current.lawTag}</span>
+              <span className="font-mono text-[10px] sm:text-[11px] text-[#34D399]">{current.lawTag}</span>
             </div>
 
             {/* Dynamic Stage Illustration / Diagram */}
-            <div className="p-6 md:p-8 flex-1 flex flex-col justify-between space-y-6 bg-[#F6F4EE]/50">
+            <div className="p-4 sm:p-6 md:p-8 flex-1 flex flex-col justify-between space-y-6 bg-[#F6F4EE]/50">
               {activeStage === 0 && (
-                <div className="border-[1.5px] border-[#091E17] bg-white p-5 space-y-4">
-                  <div className="flex items-center justify-between border-b border-[#091E17]/15 pb-2.5 font-mono text-[11px] text-[#4A5D54]">
+                <div className="border-[1.5px] border-[#091E17] bg-white p-4 sm:p-5 space-y-4">
+                  <div className="flex flex-col xs:flex-row xs:items-center justify-between border-b border-[#091E17]/15 pb-2.5 font-mono text-[10px] sm:text-[11px] text-[#4A5D54] gap-1">
                     <span>PIPELINE PENYENSORAN OTOMATIS (UU PDP)</span>
                     <span className="text-[#0D6E49] font-bold">RAM BUFFER ONLY</span>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4 font-mono text-xs">
-                    <div className="border border-[#B91C1C]/40 bg-[#FEE2E2]/40 p-3.5 space-y-1.5">
+                    <div className="border border-[#B91C1C]/40 bg-[#FEE2E2]/40 p-3 sm:p-3.5 space-y-1.5">
                       <div className="text-[10px] font-bold text-[#B91C1C] uppercase">
                         SEBELUM MASKING (INPUT MENTAH)
                       </div>
-                      <p className="text-[#091E17] leading-relaxed">
+                      <p className="text-[#091E17] leading-relaxed break-all">
                         Pemohon: <span className="bg-[#FCA5A5] px-1 font-bold">Budi Santoso</span>
                         <br />
                         NIK: <span className="bg-[#FCA5A5] px-1 font-bold">3201140908850003</span>
@@ -533,11 +533,11 @@ function InteractivePipelineSection() {
                         NIB: <span className="bg-[#FCA5A5] px-1 font-bold">9120301842910</span>
                       </p>
                     </div>
-                    <div className="border border-[#0D6E49]/40 bg-[#E6F4EE]/60 p-3.5 space-y-1.5">
+                    <div className="border border-[#0D6E49]/40 bg-[#E6F4EE]/60 p-3 sm:p-3.5 space-y-1.5">
                       <div className="text-[10px] font-bold text-[#0D6E49] uppercase">
                         SESUDAH MASKING (DIKIRIM KE AI)
                       </div>
-                      <p className="text-[#091E17] leading-relaxed">
+                      <p className="text-[#091E17] leading-relaxed break-all">
                         Pemohon: <span className="bg-[#091E17] text-[#FBBF24] px-1">[REDACTED_PERSON]</span>
                         <br />
                         NIK: <span className="bg-[#091E17] text-[#FBBF24] px-1">[REDACTED_NIK_PDP]</span>
@@ -550,13 +550,13 @@ function InteractivePipelineSection() {
               )}
 
               {activeStage === 1 && (
-                <div className="border-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] p-5 relative overflow-hidden">
+                <div className="border-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] p-4 sm:p-5 relative overflow-hidden">
                   <div className="grid sm:grid-cols-12 gap-4 items-center">
                     <div className="sm:col-span-5 flex items-center justify-center">
                       <img
                         src="/images/spatial-layers.png"
                         alt="Diagram Lapisan Spasial"
-                        className="h-40 w-full object-contain border border-[#F6F4EE]/20 bg-[#091E17]"
+                        className="h-36 sm:h-40 w-full object-contain border border-[#F6F4EE]/20 bg-[#091E17]"
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
                         }}
@@ -566,20 +566,20 @@ function InteractivePipelineSection() {
                       <div className="text-[#FBBF24] text-[10px] font-bold uppercase">
                         TELEMETRI GEOSPASIAL &amp; OVERLAY KAWASAN
                       </div>
-                      <div className="space-y-1.5 text-[11px]">
-                        <div className="flex justify-between border-b border-[#F6F4EE]/15 pb-1">
+                      <div className="space-y-1.5 text-[10px] sm:text-[11px]">
+                        <div className="flex justify-between border-b border-[#F6F4EE]/15 pb-1 gap-2">
                           <span className="text-[#F6F4EE]/60">Koordinat Poligon:</span>
-                          <span className="text-[#34D399]">-2.5489° S, 112.9483° E</span>
+                          <span className="text-[#34D399] break-all text-right">-2.5489° S, 112.9483° E</span>
                         </div>
-                        <div className="flex justify-between border-b border-[#F6F4EE]/15 pb-1">
-                          <span className="text-[#F6F4EE]/60">Tumpang Tindih Hutan Lindung:</span>
+                        <div className="flex justify-between border-b border-[#F6F4EE]/15 pb-1 gap-2">
+                          <span className="text-[#F6F4EE]/60">Tumpang Tindih Hutan:</span>
                           <span className="text-[#34D399]">0.00% (CLEAR)</span>
                         </div>
-                        <div className="flex justify-between border-b border-[#F6F4EE]/15 pb-1">
-                          <span className="text-[#F6F4EE]/60">Moratorium Gambut Primer:</span>
+                        <div className="flex justify-between border-b border-[#F6F4EE]/15 pb-1 gap-2">
+                          <span className="text-[#F6F4EE]/60">Moratorium Gambut:</span>
                           <span className="text-[#34D399]">Di Luar Area (VALID)</span>
                         </div>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between gap-2">
                           <span className="text-[#F6F4EE]/60">Potensi Surya Tahunan:</span>
                           <span className="text-[#FBBF24]">1.760 kWh/kWp</span>
                         </div>
@@ -617,19 +617,19 @@ function InteractivePipelineSection() {
               )}
 
               {activeStage === 3 && (
-                <div className="border-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] p-5 font-mono text-xs space-y-3">
+                <div className="border-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] p-4 sm:p-5 font-mono text-xs space-y-3">
                   <div className="flex items-center justify-between text-[10px] text-[#34D399]">
                     <span>SEGEL KRIPTOGRAFI &amp; OTORISASI REVIEWER</span>
                     <span>STATUS: VERIFIED</span>
                   </div>
-                  <div className="p-3 bg-[#091E17] border border-[#34D399]/30 text-[11px] break-all text-[#F6F4EE]/90">
+                  <div className="p-3 bg-[#091E17] border border-[#34D399]/30 text-[10px] sm:text-[11px] break-all text-[#F6F4EE]/90">
                     HMAC_SHA256(&quot;OZK-2026-PDD&quot;) ={" "}
                     <span className="text-[#FBBF24]">
                       e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-[11px] text-[#F6F4EE]/70">
-                    <span>Auditor Pakar: Disetujui (HITL Sign-off)</span>
+                  <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 text-[11px] text-[#F6F4EE]/70">
+                    <span>Auditor Pakar: Disetujui (HITL)</span>
                     <Link to="/verify/$id" params={{ id: "sample-verified-hash" }} className="text-[#FBBF24] underline">
                       Lihat Contoh Sertifikat
                     </Link>
@@ -639,22 +639,22 @@ function InteractivePipelineSection() {
 
               {/* Description & Footer */}
               <div className="space-y-4">
-                <h3 className="font-editorial text-2xl font-semibold text-[#091E17]">
+                <h3 className="font-editorial text-xl sm:text-2xl font-semibold text-[#091E17] break-words">
                   {current.title}
                 </h3>
-                <p className="text-sm text-[#4A5D54] leading-relaxed">{current.desc}</p>
-                <div className="pt-4 border-t border-[#091E17]/15 flex flex-wrap items-center justify-between gap-4">
+                <p className="text-xs sm:text-sm text-[#4A5D54] leading-relaxed">{current.desc}</p>
+                <div className="pt-4 border-t border-[#091E17]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
                     <span className="font-mono text-[10px] uppercase text-[#4A5D54] block">
                       TOLOK UKUR TEKNIS
                     </span>
-                    <span className="font-mono text-lg font-bold text-[#091E17]">
+                    <span className="font-mono text-base sm:text-lg font-bold text-[#091E17]">
                       {current.metricLabel}: {current.metricValue}
                     </span>
                   </div>
                   <Link
                     to="/audit"
-                    className="inline-flex items-center gap-2 border-[1.5px] border-[#091E17] bg-[#091E17] px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-[#F6F4EE] hover:bg-[#0D6E49] transition-colors"
+                    className="inline-flex items-center justify-center gap-2 border-[1.5px] border-[#091E17] bg-[#091E17] px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-[#F6F4EE] hover:bg-[#0D6E49] transition-colors w-full sm:w-auto text-center"
                   >
                     Coba Mesin Ini Sekarang <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
@@ -687,27 +687,27 @@ function CapabilitiesMatrixSection() {
         {/* Asymmetric Editorial Grid (8/4 then 4/8) */}
         <div className="grid lg:grid-cols-12 gap-6">
           {/* Module 1: 7 cols */}
-          <div className="lg:col-span-7 instrument-card p-7 md:p-9 flex flex-col justify-between">
+          <div className="lg:col-span-7 instrument-card p-5 sm:p-7 md:p-9 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between font-mono text-xs text-[#4A5D54] mb-6 border-b border-[#091E17]/15 pb-3">
+              <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 font-mono text-xs text-[#4A5D54] mb-5 border-b border-[#091E17]/15 pb-3">
                 <span>MODUL 01 // RAG REGULASI DETERMINISTIK</span>
                 <span className="font-bold text-[#0D6E49]">PASAL.ID INTEGRATED</span>
               </div>
-              <h3 className="font-editorial text-2xl md:text-3xl font-semibold text-[#091E17] mb-3">
+              <h3 className="font-editorial text-2xl md:text-3xl font-semibold text-[#091E17] mb-3 break-words">
                 Sitasi Hukum Presisi Tanpa Halusinasi Pasal
               </h3>
-              <p className="text-sm text-[#4A5D54] leading-relaxed mb-6">
+              <p className="text-xs sm:text-sm text-[#4A5D54] leading-relaxed mb-6">
                 Model bahasa umum sering mengarang nomor ayat atau mencampuradukkan regulasi yang sudah dicabut. OzikSustain mengunci ruang pencarian menggunakan vektor IndoBERT pada pasal aktif (UU No. 32/2009, PP No. 22/2021, Perpres No. 98/2021, dan Permen ESDM) serta langsung menyusun draf kalimat perbaikan yang sah secara hukum.
               </p>
             </div>
-            <div className="bg-[#F6F4EE] border border-[#091E17] p-4 flex flex-wrap items-center justify-between gap-4">
+            <div className="bg-[#F6F4EE] border border-[#091E17] p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="font-mono text-xs text-[#091E17]">
                 <span className="text-[#4A5D54] block text-[10px]">CAKUPAN KORPUS HUKUM</span>
                 <strong>4 Pilar Skor: Legal (40) • Teknis (30) • Sosial (15) • Transparansi (15)</strong>
               </div>
               <Link
                 to="/regulasi"
-                className="font-mono text-xs font-bold uppercase tracking-wider text-[#0D6E49] hover:underline inline-flex items-center gap-1"
+                className="font-mono text-xs font-bold uppercase tracking-wider text-[#0D6E49] hover:underline inline-flex items-center gap-1 shrink-0"
               >
                 Buka Direktori Regulasi <ArrowUpRight className="h-3.5 w-3.5" />
               </Link>
@@ -715,17 +715,17 @@ function CapabilitiesMatrixSection() {
           </div>
 
           {/* Module 2: 5 cols */}
-          <div className="lg:col-span-5 border-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] p-7 md:p-9 shadow-[4px_4px_0_#091E17] flex flex-col justify-between">
+          <div className="lg:col-span-5 border-[1.5px] border-[#091E17] bg-[#071913] text-[#F6F4EE] p-5 sm:p-7 md:p-9 shadow-[4px_4px_0_#091E17] flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between font-mono text-xs text-[#F6F4EE]/60 mb-6 border-b border-[#F6F4EE]/15 pb-3">
+              <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 font-mono text-xs text-[#F6F4EE]/60 mb-5 border-b border-[#F6F4EE]/15 pb-3">
                 <span>MODUL 02 // GEOSPASIAL</span>
                 <span className="text-[#FBBF24] font-bold">ANTI-GREENWASHING</span>
               </div>
-              <Compass className="h-9 w-9 text-[#34D399] mb-4" />
-              <h3 className="font-editorial text-2xl font-semibold text-white mb-3">
+              <Compass className="h-8 w-8 sm:h-9 sm:w-9 text-[#34D399] mb-4" />
+              <h3 className="font-editorial text-2xl font-semibold text-white mb-3 break-words">
                 Deteksi Konflik Tata Ruang &amp; Deforestasi
               </h3>
-              <p className="text-sm text-[#F6F4EE]/75 leading-relaxed mb-6">
+              <p className="text-xs sm:text-sm text-[#F6F4EE]/75 leading-relaxed mb-6">
                 Memvalidasi klaim lokasi proyek energi terbarukan dan kehutanan terhadap batas kawasan lindung, wilayah konsesi, serta kelayakan teknis iradiasi surya di lokasi terkait.
               </p>
             </div>
@@ -736,17 +736,17 @@ function CapabilitiesMatrixSection() {
           </div>
 
           {/* Module 3: 5 cols */}
-          <div className="lg:col-span-5 instrument-card p-7 md:p-9 flex flex-col justify-between">
+          <div className="lg:col-span-5 instrument-card p-5 sm:p-7 md:p-9 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between font-mono text-xs text-[#4A5D54] mb-6 border-b border-[#091E17]/15 pb-3">
+              <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 font-mono text-xs text-[#4A5D54] mb-5 border-b border-[#091E17]/15 pb-3">
                 <span>MODUL 03 // HUMAN-IN-THE-LOOP</span>
                 <span className="font-bold text-[#D97706]">EXPERT SIGN-OFF</span>
               </div>
-              <ShieldCheck className="h-9 w-9 text-[#091E17] mb-4" />
-              <h3 className="font-editorial text-2xl font-semibold text-[#091E17] mb-3">
+              <ShieldCheck className="h-8 w-8 sm:h-9 sm:w-9 text-[#091E17] mb-4" />
+              <h3 className="font-editorial text-2xl font-semibold text-[#091E17] mb-3 break-words">
                 Kalibrasi Auditor Pakar Sebelum Penerbitan Sertifikat
               </h3>
-              <p className="text-sm text-[#4A5D54] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#4A5D54] leading-relaxed">
                 Menghindari risiko keputusan mesin buta (garbage-in, garbage-out). Tim reviewer hukum meninjau ringkasan temuan AI melalui antarmuka khusus sebelum memberikan persetujuan akhir, meminta revisi, atau menolak dokumen.
               </p>
             </div>
@@ -757,32 +757,32 @@ function CapabilitiesMatrixSection() {
           </div>
 
           {/* Module 4: 7 cols */}
-          <div className="lg:col-span-7 instrument-card p-7 md:p-9 flex flex-col justify-between bg-[#F6F4EE]">
+          <div className="lg:col-span-7 instrument-card p-5 sm:p-7 md:p-9 flex flex-col justify-between bg-[#F6F4EE]">
             <div>
-              <div className="flex items-center justify-between font-mono text-xs text-[#4A5D54] mb-6 border-b border-[#091E17]/15 pb-3">
+              <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 font-mono text-xs text-[#4A5D54] mb-5 border-b border-[#091E17]/15 pb-3">
                 <span>MODUL 04 // OPEN API &amp; PUBLIC BADGE</span>
                 <span className="font-bold text-[#0D6E49]">ERP / E-PROCUREMENT READY</span>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                <h3 className="font-editorial text-2xl md:text-3xl font-semibold text-[#091E17]">
+                <h3 className="font-editorial text-2xl md:text-3xl font-semibold text-[#091E17] break-words">
                   Integrasi REST API &amp; Lencana QR Anti-Manipulasi
                 </h3>
-                <QrCode className="h-10 w-10 text-[#091E17] shrink-0" />
+                <QrCode className="h-9 w-9 sm:h-10 sm:w-10 text-[#091E17] shrink-0" />
               </div>
-              <p className="text-sm text-[#4A5D54] leading-relaxed mb-6">
+              <p className="text-xs sm:text-sm text-[#4A5D54] leading-relaxed mb-6">
                 Sematkan lencana verifikasi langsung pada dokumen tender atau situs perusahaan Anda. Bagi instansi pemerintah dan korporasi, hubungkan endpoint REST API kami ke sistem ERP untuk memindai ratusan dokumen vendor secara konkuren.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <Link
                 to="/playground"
-                className="inline-flex items-center gap-2 border-[1.5px] border-[#091E17] bg-[#091E17] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-[#F6F4EE] hover:bg-[#0D6E49] transition-colors"
+                className="inline-flex items-center justify-center gap-2 border-[1.5px] border-[#091E17] bg-[#091E17] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-[#F6F4EE] hover:bg-[#0D6E49] transition-colors text-center"
               >
                 <Code2 className="h-4 w-4 text-[#FBBF24]" /> Dokumentasi &amp; Sandbox API
               </Link>
               <a
                 href="#verify"
-                className="inline-flex items-center gap-2 border-[1.5px] border-[#091E17] bg-white px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-[#091E17] hover:bg-[#ECE9DF] transition-colors"
+                className="inline-flex items-center justify-center gap-2 border-[1.5px] border-[#091E17] bg-white px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-[#091E17] hover:bg-[#ECE9DF] transition-colors text-center"
               >
                 <Fingerprint className="h-4 w-4 text-[#0D6E49]" /> Uji Verifikasi Hash
               </a>
@@ -805,19 +805,19 @@ function VerificationLedgerSection() {
   };
 
   return (
-    <section id="verify" className="py-20 md:py-24 border-b-[1.5px] border-[#091E17] bg-[#071913] bg-canopy-grid text-[#F6F4EE]">
+    <section id="verify" className="py-14 md:py-24 border-b-[1.5px] border-[#091E17] bg-[#071913] bg-canopy-grid text-[#F6F4EE]">
       <div className="mx-auto max-w-5xl px-4 md:px-6">
-        <div className="border-[1.5px] border-[#F6F4EE]/30 bg-[#091E17] p-8 md:p-12 shadow-[8px_8px_0_#D97706]">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#F6F4EE]/15 pb-6 mb-8">
+        <div className="border-[1.5px] border-[#F6F4EE]/30 bg-[#091E17] p-5 sm:p-8 md:p-12 shadow-[4px_4px_0_#D97706] sm:shadow-[8px_8px_0_#D97706]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F6F4EE]/15 pb-6 mb-6 sm:mb-8">
             <div className="flex items-center gap-3">
-              <div className="grid h-12 w-12 place-items-center border border-[#34D399] bg-[#064E3B]/50 text-[#34D399]">
-                <Fingerprint className="h-6 w-6" />
+              <div className="grid h-10 w-10 sm:h-12 sm:w-12 place-items-center border border-[#34D399] bg-[#064E3B]/50 text-[#34D399] shrink-0">
+                <Fingerprint className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
               <div>
-                <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#34D399]">
+                <div className="font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-[#34D399]">
                   BUKU BESAR VERIFIKASI PUBLIK // SHA-256
                 </div>
-                <h2 className="font-editorial text-2xl sm:text-3xl font-semibold text-white">
+                <h2 className="font-editorial text-xl sm:text-2xl md:text-3xl font-semibold text-white break-words">
                   Periksa Keaslian Sertifikat Hijau Vendor
                 </h2>
               </div>
@@ -825,40 +825,38 @@ function VerificationLedgerSection() {
             <button
               type="button"
               onClick={() => setAuditId("OZK-2026-SAMPLE-VERIFIED")}
-              className="border border-[#FBBF24] bg-[#FBBF24]/10 px-3.5 py-2 font-mono text-xs font-bold text-[#FBBF24] hover:bg-[#FBBF24] hover:text-[#091E17] transition-colors cursor-pointer"
+              className="border border-[#FBBF24] bg-[#FBBF24]/10 px-3 py-1.5 sm:px-3.5 sm:py-2 font-mono text-[11px] sm:text-xs font-bold text-[#FBBF24] hover:bg-[#FBBF24] hover:text-[#091E17] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
             >
               Isi Sampel ID Terverifikasi
             </button>
           </div>
 
-          <p className="text-sm sm:text-base text-[#F6F4EE]/80 leading-relaxed mb-8 max-w-3xl">
+          <p className="text-xs sm:text-sm md:text-base text-[#F6F4EE]/80 leading-relaxed mb-6 sm:mb-8 max-w-3xl">
             Masukkan <strong className="text-white">ID Audit</strong> atau kode hash <strong className="text-white">HMAC-SHA256</strong> yang tertera pada lencana QR dokumen vendor untuk memeriksa integritas skor kepatuhan dan memastikan laporan tidak dimanipulasi.
           </p>
 
           <form onSubmit={handleVerify} className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="
-                absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#F6F4EE]/50
-              " />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#F6F4EE]/50" />
               <input
                 type="text"
                 value={auditId}
                 onChange={(e) => setAuditId(e.target.value)}
-                placeholder="Masukkan Audit ID atau SHA-256 Hash (mis. OZK-2026-SAMPLE-VERIFIED)"
-                className="w-full h-14 pl-12 pr-4 bg-[#071913] border-[1.5px] border-[#F6F4EE]/40 font-mono text-sm text-white placeholder:text-[#F6F4EE]/40 focus:outline-none focus:border-[#FBBF24]"
+                placeholder="Masukkan Audit ID atau SHA-256 Hash"
+                className="w-full h-12 sm:h-14 pl-12 pr-4 bg-[#071913] border-[1.5px] border-[#F6F4EE]/40 font-mono text-xs sm:text-sm text-white placeholder:text-[#F6F4EE]/40 focus:outline-none focus:border-[#FBBF24]"
               />
             </div>
             <button
               type="submit"
-              className="h-14 px-8 bg-[#FBBF24] hover:bg-[#F59E0B] text-[#091E17] font-mono text-xs font-bold uppercase tracking-widest border-[1.5px] border-[#091E17] transition-transform hover:-translate-y-0.5 cursor-pointer shrink-0"
+              className="h-12 sm:h-14 px-6 sm:px-8 bg-[#FBBF24] hover:bg-[#F59E0B] text-[#091E17] font-mono text-xs font-bold uppercase tracking-widest border-[1.5px] border-[#091E17] transition-transform hover:-translate-y-0.5 cursor-pointer shrink-0 w-full sm:w-auto text-center"
             >
               Verifikasi Sertifikat
             </button>
           </form>
 
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 font-mono text-[11px] text-[#F6F4EE]/60">
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-[10px] sm:text-[11px] text-[#F6F4EE]/60">
             <span>PROTOKOL: HMAC-SHA256 LEDGER VERIFICATION</span>
-            <span> PERLINDUNGAN IDENTITAS: TERENKRIPSI UU PDP</span>
+            <span>PERLINDUNGAN IDENTITAS: TERENKRIPSI UU PDP</span>
           </div>
         </div>
       </div>
@@ -943,10 +941,10 @@ function PricingLedgerSection() {
           {tiers.map((t) => (
             <div
               key={t.name}
-              className={`border-[1.5px] border-[#091E17] p-7 md:p-8 flex flex-col justify-between transition-transform ${
+              className={`border-[1.5px] border-[#091E17] p-5 sm:p-7 md:p-8 flex flex-col justify-between transition-transform ${
                 t.highlighted
-                  ? "bg-[#091E17] text-[#F6F4EE] shadow-[8px_8px_0_#D97706] lg:-translate-y-2"
-                  : "bg-white text-[#091E17] shadow-[5px_5px_0_#091E17]"
+                  ? "bg-[#091E17] text-[#F6F4EE] shadow-[4px_4px_0_#D97706] sm:shadow-[8px_8px_0_#D97706] lg:-translate-y-2"
+                  : "bg-white text-[#091E17] shadow-[3px_3px_0_#091E17] sm:shadow-[5px_5px_0_#091E17]"
               }`}
             >
               <div>

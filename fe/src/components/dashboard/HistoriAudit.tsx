@@ -151,7 +151,7 @@ export function HistoriAudit({ history, loading, refreshHistory }: HistoriAuditP
     <>
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Search & Filter Controls */}
-        <div className="flex flex-col sm:flex-row justify-between gap-4">
+        <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
           <div className="relative max-w-md w-full">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#4A5D54]" />
             <Input
@@ -161,15 +161,15 @@ export function HistoriAudit({ history, loading, refreshHistory }: HistoriAuditP
                 setCurrentPage(1);
               }}
               placeholder="Cari nama berkas PDD atau kode registri..."
-              className="pl-10 h-11 border-[1.5px] border-[#091E17] rounded-none font-medium text-[#091E17] bg-white focus-visible:ring-0 shadow-[3px_3px_0_#091E17]"
+              className="pl-10 h-11 border-[1.5px] border-[#091E17] rounded-none font-medium text-[#091E17] bg-white focus-visible:ring-0 shadow-[2.5px_2.5px_0_#091E17] sm:shadow-[3px_3px_0_#091E17]"
             />
           </div>
 
-          <div className="flex gap-2">
+          <div className="grid grid-cols-3 sm:flex gap-1.5 sm:gap-2">
             {[
-              { key: "ALL", label: "Semua Rekaman" },
-              { key: "HIGH_SCORE", label: "Skor Tinggi / Lulus" },
-              { key: "REVISION", label: "Perlu Revisi" },
+              { key: "ALL", label: "Semua", fullLabel: "Semua Rekaman" },
+              { key: "HIGH_SCORE", label: "Lulus", fullLabel: "Skor Tinggi / Lulus" },
+              { key: "REVISION", label: "Revisi", fullLabel: "Perlu Revisi" },
             ].map((f) => (
               <button
                 key={f.key}
@@ -179,22 +179,26 @@ export function HistoriAudit({ history, loading, refreshHistory }: HistoriAuditP
                   setCurrentPage(1);
                 }}
                 className={cn(
-                  "h-11 px-4 border-[1.5px] border-[#091E17] font-mono text-xs font-bold uppercase tracking-wider transition-all cursor-pointer",
+                  "h-11 px-2.5 sm:px-4 border-[1.5px] border-[#091E17] font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all cursor-pointer text-center",
                   filterMode === f.key
-                    ? "bg-[#091E17] text-[#F6F4EE] shadow-[3px_3px_0_#D97706]"
+                    ? "bg-[#091E17] text-[#F6F4EE] shadow-[2.5px_2.5px_0_#D97706] sm:shadow-[3px_3px_0_#D97706]"
                     : "bg-white text-[#091E17] hover:bg-[#ECE9DF]"
                 )}
               >
-                {f.label}
+                <span className="hidden sm:inline">{f.fullLabel}</span>
+                <span className="sm:hidden">{f.label}</span>
               </button>
             ))}
           </div>
         </div>
 
         {/* History Ledger Table */}
-        <div className="border-[1.5px] border-[#091E17] bg-white shadow-[6px_6px_0_#091E17]">
+        <div className="border-[1.5px] border-[#091E17] bg-white shadow-[4px_4px_0_#091E17] sm:shadow-[6px_6px_0_#091E17]">
+          <div className="sm:hidden px-3.5 py-1.5 bg-[#F6F4EE] border-b border-[#091E17]/15 font-mono text-[10px] text-[#4A5D54]">
+            Geser tabel ke kanan untuk melihat status &amp; tindakan &rarr;
+          </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse min-w-[620px]">
               <thead>
                 <tr className="bg-[#071913] text-[#F6F4EE] border-b-[1.5px] border-[#091E17] font-mono text-xs uppercase">
                   <th className="p-4">Kode</th>
@@ -316,20 +320,20 @@ export function HistoriAudit({ history, loading, refreshHistory }: HistoriAuditP
 
       {/* QR Badge Dialog */}
       <Dialog open={badgeOpen} onOpenChange={setBadgeOpen}>
-        <DialogContent className="border-[1.5px] border-[#091E17] rounded-none shadow-[8px_8px_0_#091E17] p-0 max-w-[95vw] md:max-w-3xl bg-white overflow-hidden">
-          <div className="bg-[#071913] text-[#F6F4EE] p-6 border-b-[1.5px] border-[#091E17] flex items-center justify-between gap-4">
+        <DialogContent className="border-[1.5px] border-[#091E17] rounded-none shadow-[4px_4px_0_#091E17] sm:shadow-[8px_8px_0_#091E17] p-0 max-w-[95vw] md:max-w-3xl bg-white overflow-hidden max-h-[90vh] overflow-y-auto">
+          <div className="bg-[#071913] text-[#F6F4EE] p-5 sm:p-6 border-b-[1.5px] border-[#091E17] flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             <div>
-              <DialogTitle className="font-editorial text-2xl font-semibold text-white">
+              <DialogTitle className="font-editorial text-xl sm:text-2xl font-semibold text-white break-words">
                 Lencana Kriptografi Proyek Hijau
               </DialogTitle>
-              <DialogDescription className="font-mono text-xs text-[#34D399] mt-1">
+              <DialogDescription className="font-mono text-[11px] sm:text-xs text-[#34D399] mt-1 break-words">
                 TERVERIFIKASI HMAC-SHA256 // {selectedProject?.name}
               </DialogDescription>
             </div>
             <Link
               to="/verify/$id"
               params={{ id: selectedProject?.id || "OZK-2026-SAMPLE-VERIFIED" }}
-              className="px-3 py-1.5 bg-[#FBBF24] text-[#091E17] font-mono text-[10px] font-bold uppercase inline-flex items-center gap-1"
+              className="px-3 py-1.5 bg-[#FBBF24] text-[#091E17] font-mono text-[10px] font-bold uppercase inline-flex items-center gap-1 self-start sm:self-auto shrink-0"
             >
               Buka Buku Besar <ExternalLink className="h-3 w-3" />
             </Link>
