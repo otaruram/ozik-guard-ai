@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Sovereign Shield Base -->
+  <path
+    d="M256 28L448 96V248C448 364 366 446 256 484C146 446 64 364 64 248V96L256 28Z"
+    fill="#091E17"
+  />
+  <!-- Inner Emerald Field -->
+  <path
+    d="M256 58L418 116V246C418 345 348 416 256 451C164 416 94 345 94 246V116L256 58Z"
+    fill="#0D6E49"
+  />
+  <!-- Precision Geometric Leaf -->
+  <path
+    d="M256 116C334 116 376 168 376 244C376 312 324 366 256 366C188 366 136 312 136 244C136 178 184 116 256 116Z"
+    fill="#091E17"
+    fill-opacity="0.24"
+  />
+  <path
+    d="M342 152C264 152 178 192 178 286C178 320 202 346 242 346C312 346 350 286 350 208C350 186 347 167 342 152Z"
+    fill="#F6F4EE"
+  />
+  <!-- Cryptographic Verification Check / Leaf Vein -->
+  <path
+    d="M206 256L242 292L314 206"
+    stroke="#091E17"
+    stroke-width="26"
+    stroke-linecap="square"
+    stroke-linejoin="miter"
+  />
+  <!-- Amber Seal Accent Node -->
+  <rect x="238" y="88" width="36" height="14" fill="#FBBF24" />
+</svg>
+

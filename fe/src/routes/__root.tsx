@@ -113,15 +113,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Audit dokumen PDD dan izin lingkungan terhadap UU LHK, Permen ESDM, dan Perpres Nilai Ekonomi Karbon dalam hitungan detik dengan rujukan Pasal.id.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "/logo.png" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "OzikSustain : Mesin Audit Kepatuhan Hukum & Spasial Proyek Hijau" },
+      { name: "twitter:image", content: "/logo.png" },
+      { name: "theme-color", content: "#091E17" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
