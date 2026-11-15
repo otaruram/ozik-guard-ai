@@ -325,6 +325,10 @@ export function AuditWorkspace({
     setStatus("configure");
   };
 
+  const isAdminAccount = ["okitr52@gmail.com", "okitarunaramadhan@gmail.com"].includes(
+    session?.user?.email || userEmail || ""
+  );
+
   const runDemoSampleAudit = async () => {
     setFileName(DEMO_SAMPLE_RESULT.projectName);
     setFileSize(1845200);
@@ -335,6 +339,40 @@ export function AuditWorkspace({
       "spatial",
       "law",
     ];
+
+    if (!effectiveFreemium) {
+      try {
+        setStatus("parsing");
+        const sampleText = DEMO_SAMPLE_RESULT.clauses.map((c) => c.text).join("\n\n");
+        const sampleBlob = new Blob([sampleText], { type: "text/plain" });
+        const sampleFile = new File([sampleBlob], "PDD_PLTS_Terapung_Cirata_145MW.txt", {
+          type: "text/plain",
+        });
+        const formData = new FormData();
+        formData.append("document", sampleFile);
+        formData.append("projectName", DEMO_SAMPLE_RESULT.projectName);
+        formData.append("page_mode", "all");
+
+        for (const s of steps) {
+          setStatus(s);
+          await new Promise((r) => setTimeout(r, 450));
+        }
+
+        const res = await api.processFullAudit(formData);
+        setIsAuditing(false);
+        onAuditComplete?.();
+        if (res.auditId) {
+          toast.success("Audit Sampel Selesai & Masuk Antrean HITL", {
+            description: "Mengalihkan ke Workspace Laporan...",
+          });
+          navigate({ to: `/workspace/${res.auditId}` });
+          return;
+        }
+      } catch (err) {
+        console.warn("Sample backend save fallback to local preview:", err);
+      }
+    }
+
     for (const s of steps) {
       setStatus(s);
       await new Promise((r) => setTimeout(r, 650));
@@ -352,7 +390,7 @@ export function AuditWorkspace({
   const startAudit = async () => {
     if (!file) return;
 
-    if (!effectiveFreemium && creditsBalance !== null && creditsBalance <= 0) {
+    if (!effectiveFreemium && !isAdminAccount && creditsBalance !== null && creditsBalance <= 0) {
       toast.error("Saldo Kredit Habis", {
         description: "Anda tidak memiliki kredit yang cukup untuk melakukan audit penuh.",
       });

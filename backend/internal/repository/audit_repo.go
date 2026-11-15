@@ -51,6 +51,7 @@ func (r *auditRepository) CreateAudit(ctx context.Context, audit *domain.Project
 		db.ProjectAudit.ParsedDocumentJSON.Set([]byte(audit.ParsedDocumentJson)),
 		db.ProjectAudit.ID.Set(audit.ID),
 		db.ProjectAudit.Status.Set(db.BadgeStatus(audit.Status)),
+		db.ProjectAudit.ReviewStatus.Set(db.ReviewStatusPendingReview),
 	).Exec(ctx)
 
 	if err != nil {
@@ -306,7 +307,7 @@ func (r *auditRepository) GetPendingAudits(ctx context.Context) ([]domain.Projec
 	).With(
 		db.ProjectAudit.User.Fetch(),
 	).OrderBy(
-		db.ProjectAudit.CreatedAt.Order(db.SortOrderAsc),
+		db.ProjectAudit.CreatedAt.Order(db.SortOrderDesc),
 	).Exec(ctx)
 	if err != nil {
 		return nil, err

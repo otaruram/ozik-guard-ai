@@ -118,12 +118,28 @@ function WorkspacePage() {
               <p className="text-sm text-[#4A5D54] leading-relaxed mb-8">
                 Dokumen Anda telah selesai dipindai oleh mesin vektor IndoBERT dan saat ini sedang berada dalam tahap verifikasi akhir oleh <strong>Auditor Pakar OzikSustain (Human-in-the-Loop)</strong> untuk memastikan akurasi sitasi sebelum segel HMAC-SHA256 diterbitkan.
               </p>
-              <Link
-                to="/dashboard"
-                className="inline-block bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-xs font-bold tracking-widest uppercase px-7 py-3.5"
-              >
-                Kembali ke Workspace
-              </Link>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  to="/review/$id"
+                  params={{ id }}
+                  className="inline-block bg-[#FBBF24] hover:bg-[#F59E0B] text-[#091E17] border-[1.5px] border-[#091E17] font-mono text-xs font-bold tracking-widest uppercase px-6 py-3.5"
+                >
+                  Inspeksi &amp; Putuskan (HITL)
+                </Link>
+                <Link
+                  to="/dashboard"
+                  search={{ tab: "reviewer" }}
+                  className="inline-block bg-white hover:bg-[#F6F4EE] text-[#091E17] border-[1.5px] border-[#091E17] font-mono text-xs font-bold tracking-widest uppercase px-6 py-3.5"
+                >
+                  Lihat Antrean HITL
+                </Link>
+                <Link
+                  to="/dashboard"
+                  className="inline-block bg-[#091E17] hover:bg-[#0D6E49] text-[#F6F4EE] font-mono text-xs font-bold tracking-widest uppercase px-6 py-3.5"
+                >
+                  Kembali ke Workspace
+                </Link>
+              </div>
             </div>
           ) : (
             <AuditWorkspace

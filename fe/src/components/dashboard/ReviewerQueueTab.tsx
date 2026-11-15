@@ -27,11 +27,14 @@ export function ReviewerQueueTab() {
     fetchQueue();
   }, []);
 
-  const filtered = queue.filter(
-    (q) =>
-      q.projectName?.toLowerCase().includes(search.toLowerCase()) ||
-      q.authorName?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = [...queue]
+    .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
+    .filter(
+      (q) =>
+        q.projectName?.toLowerCase().includes(search.toLowerCase()) ||
+        q.authorName?.toLowerCase().includes(search.toLowerCase())
+    );
+  const totalPages = Math.max(1, Math.ceil(filtered.length / 10));
   const paginated = filtered.slice((currentPage - 1) * 10, currentPage * 10);
 
   return (
@@ -129,6 +132,32 @@ export function ReviewerQueueTab() {
             </tbody>
           </table>
         </div>
+
+        {totalPages > 1 && (
+          <div className="p-4 border-t-[1.5px] border-[#091E17] flex items-center justify-between bg-[#F6F4EE] font-mono text-xs">
+            <span className="text-[#4A5D54]">
+              Halaman {currentPage} dari {totalPages} ({filtered.length} antrean)
+            </span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                className="px-3 py-1.5 border border-[#091E17] bg-white font-bold uppercase disabled:opacity-40 cursor-pointer"
+              >
+                Sebelumnya
+              </button>
+              <button
+                type="button"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                className="px-3 py-1.5 border border-[#091E17] bg-white font-bold uppercase disabled:opacity-40 cursor-pointer"
+              >
+                Berikutnya
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
