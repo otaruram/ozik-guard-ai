@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"os"
 )
 
 type ScoringEngineService interface {
@@ -17,8 +18,12 @@ type scoringEngineService struct {
 }
 
 func NewScoringEngineService() ScoringEngineService {
+	secret := os.Getenv("HMAC_SECRET")
+	if secret == "" {
+		secret = "oziksustain_super_secret_salt"
+	}
 	return &scoringEngineService{
-		hmacSecret: "oziksustain_super_secret_salt",
+		hmacSecret: secret,
 	}
 }
 

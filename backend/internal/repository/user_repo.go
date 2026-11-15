@@ -155,8 +155,10 @@ func (r *userRepository) UpdateProfile(ctx context.Context, id string, req *doma
 }
 
 func (r *userRepository) DeductCredit(ctx context.Context, id string) error {
-	_, err := r.client.User.FindUnique(
+	_, err := r.client.User.FindMany(
 		db.User.ID.Equals(id),
+		db.User.CreditsBalance.Gt(0),
+		db.User.Not(db.User.Role.Equals("ADMIN")),
 	).Update(
 		db.User.CreditsBalance.Decrement(1),
 	).Exec(ctx)

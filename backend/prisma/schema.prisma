@@ -53,6 +53,7 @@ model User {
   audits           ProjectAudit[]
   reviewedAudits   ProjectAudit[] @relation("Reviewer")
 
+  @@index([kycStatus, role])
   @@map("users")
 }
 
@@ -89,6 +90,8 @@ model ProjectAudit {
   issues            AuditIssue[]
   badgeVerification BadgeVerification?
 
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([reviewStatus, createdAt(sort: Desc)])
   @@map("project_audits")
 }
 
@@ -108,6 +111,7 @@ model AuditIssue {
   suggestedRevision String        @db.Text
   createdAt         DateTime      @default(now())
 
+  @@index([auditId])
   @@map("audit_issues")
 }
 

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"os"
 	"ozikcarbon-backend/domain"
 	"ozikcarbon-backend/internal/repository"
 	"ozikcarbon-backend/internal/service"
@@ -62,10 +63,23 @@ func (h *AuditHandler) ProcessAudit(c *fiber.Ctx) error {
 	var text string
 	var targetPages []int
 	if strings.HasSuffix(strings.ToLower(fileHeader.Filename), ".pdf") {
-		// Save temporarily
-		c.SaveFile(fileHeader, "./temp.pdf")
+		tmpFile, err := os.CreateTemp("", "ozik-pdd-*.pdf")
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(domain.ErrorResponse{
+				Error: "TEMP_FILE_CREATE_ERROR",
+			})
+		}
+		tmpPath := tmpFile.Name()
+		_ = tmpFile.Close()
+		defer os.Remove(tmpPath)
 
-		extractedText, parsedPages, err := h.documentParser.ExtractTargetPages("./temp.pdf", pageMode, customRange)
+		if err := c.SaveFile(fileHeader, tmpPath); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(domain.ErrorResponse{
+				Error: "FILE_SAVE_ERROR",
+			})
+		}
+
+		extractedText, parsedPages, err := h.documentParser.ExtractTargetPages(tmpPath, pageMode, customRange)
 		if err == nil {
 			text = extractedText
 			targetPages = parsedPages
@@ -103,12 +117,7 @@ func (h *AuditHandler) ProcessAudit(c *fiber.Ctx) error {
 
 	if userID != nil {
 		uid := userID.(string)
-		err = h.userRepo.DeductCredit(c.Context(), uid)
-		if err != nil {
-			// Even if deduction fails, we might still want to return the result, but log it
-			// Or fail it. We will just proceed since generation succeeded.
-		}
-
+		// Note: Credit deduction is already handled inside auditService.ProcessAudit.
 		// Trigger Email if preferences allow
 		user, errUser := h.userRepo.GetByID(c.Context(), uid)
 		if errUser == nil && user.NotifyReportDone && h.emailService != nil {
@@ -157,6 +166,20 @@ func (h *AuditHandler) GetAuditDetail(c *fiber.Ctx) error {
 			Error:   "AUDIT_NOT_FOUND",
 			Message: "Data audit tidak ditemukan.",
 		})
+	}
+
+	callerID, _ := c.Locals("userId").(string)
+	callerEmail, _ := c.Locals("userEmail").(string)
+	isSuperAdmin := callerEmail == "okitr52@gmail.com" || callerEmail == "okitarunaramadhan@gmail.com"
+
+	if audit.UserID != callerID && !isSuperAdmin {
+		caller, errCaller := h.userRepo.GetByID(c.Context(), callerID)
+		if errCaller != nil || (caller.Role != "ADMIN" && caller.Role != "REVIEWER") {
+			return c.Status(fiber.StatusForbidden).JSON(domain.ErrorResponse{
+				Error:   "FORBIDDEN",
+				Message: "Anda tidak memiliki akses ke dokumen audit ini.",
+			})
+		}
 	}
 
 	return c.Status(fiber.StatusOK).JSON(audit)
