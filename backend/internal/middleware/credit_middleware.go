@@ -27,13 +27,25 @@ func CreditMiddleware(userRepo repository.UserRepository, cfg *config.Config) fi
 			})
 		}
 
-		// Check Admin Bypass
+		// Check Admin Bypass via config email list
 		if userEmail := c.Locals("userEmail"); userEmail != nil {
 			emailStr := userEmail.(string)
 			for _, admin := range cfg.AdminEmails {
 				if admin != "" && emailStr == admin {
 					return c.Next() // Admin unlimited credits
 				}
+			}
+		}
+
+		// Allow Green Design Document (PDD) Auto-Fill template runs for all authenticated users
+		if c.FormValue("is_autofill") == "true" {
+			return c.Next()
+		}
+
+		// Check user role in DB (ADMIN / REVIEWER get unlimited credits)
+		if user, errUser := userRepo.GetByID(c.Context(), uid); errUser == nil && user != nil {
+			if user.Role == "ADMIN" || user.Role == "REVIEWER" {
+				return c.Next()
 			}
 		}
 

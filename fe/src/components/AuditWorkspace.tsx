@@ -57,6 +57,96 @@ interface AuditWorkspaceProps {
   initialStatus?: "idle" | "configure" | "parsing" | "masking" | "spatial" | "law" | "result";
 }
 
+const GREEN_DESIGN_TEMPLATES = [
+  {
+    id: "alkes-b2g",
+    badge: "STANDAR B2G MEDIS",
+    title: "PDD Rantai Pasok Alkes Hijau & Limbah Medis B2G",
+    subtitle: "Distribusi Alat Kesehatan, Cold-Chain Rendah Emisi & Pengelolaan B3",
+    fileName: "PDD_Desain_Hijau_Rantai_Pasok_Alkes_B2G_2026.txt",
+    highlights: [
+      "UU No. 32/2009 (UKL-UPL & B3)",
+      "UU No. 41/1999 (Spasial Hutan)",
+      "UU PDP No. 27/2022 (Auto-Masking PII)",
+    ],
+    content: `BAB I - IDENTITAS PROYEK DESAIN HIJAU & LOKASI FASILITAS
+Dokumen Desain Hijau (Project Design Document) ini diajukan untuk modernisasi Pusat Distribusi Alat Kesehatan Hijau dan Instalasi Cold-Chain Rendah Karbon yang berlokasi pada titik koordinat -6.2088 LS dan 106.8456 BT. Penanggung jawab operasional adalah Direktur Kepatuhan dengan identitas NIK 3174051808850002, NPWP 01.345.678.9-012.000, serta kontak resmi direktur.kepatuhan@jayatamedika.co.id dan nomor telepon +628119876543.
+
+BAB II - PERIZINAN LINGKUNGAN & INSTALASI PENGOLAHAN LIMBAH MEDIS
+Pembangunan fasilitas penyimpanan reagen diagnostik dan sterilisasi limbah medis B3 akan langsung dimulai pada Kuartal II tahun berjalan sementara proses verifikasi substansi izin dampak lingkungan UKL-UPL masih menunggu persetujuan akhir dari Dinas Lingkungan Hidup Provinsi.
+
+BAB III - TATA GUNA LAHAN & ZONASI SPASIAL EKSPANSI GUDANG
+Area perluasan gudang logistik regional seluas 1,8 hektare pada sektor timur tercatat bersinggungan dengan zona penyangga kawasan hutan produksi terbatas berdasarkan peta tumpang susun spasial, dan saat ini dokumen permohonan penggunaan kawasan hutan masih dalam tahap penyiapan internal.
+
+BAB IV - EFISIENSI ENERGI SURYA ATAP & DEKARBONISASI ARMADA
+Fasilitas distribusi dilengkapi sistem Pembangkit Listrik Tenaga Surya (PLTS) Atap berkapasitas 450 kWp dengan inverter sinkronisasi jaringan PLN sesuai Permen ESDM No. 2 Tahun 2024, serta armada kendaraan listrik pengantar alkes yang menurunkan emisi gas rumah kaca sebesar 1.250 tCO2e per tahun.
+
+BAB V - MEKANISME PENCATATAN NILAI EKONOMI KARBON (SRN PPI)
+Seluruh klaim penurunan emisi karbon dari efisiensi rantai dingin (cold-chain) dan elektrifikasi armada logistik medis diukur menggunakan metodologi terverifikasi dan didaftarkan secara resmi pada Sistem Registri Nasional Pengendalian Perubahan Iklim (SRN PPI) sesuai Perpres No. 98 Tahun 2021.
+
+BAB VI - KESEHATAN KESELAMATAN KERJA (K3) & PARTISIPASI MASYARAKAT
+Pengelola proyek telah melaksanakan sosialisasi dan konsultasi publik bersama warga sekitar kawasan pergudangan medis, menerapkan standar K3 rumah sakit dan distribusi alkes, serta melindungi kerahasiaan data mitra pemasok sesuai UU Perlindungan Data Pribadi No. 27 Tahun 2022.`,
+  },
+  {
+    id: "plts-cirata",
+    badge: "ENERGI TERBARUKAN",
+    title: "PDD PLTS Terapung Cirata 145 MWp & Kredit Karbon",
+    subtitle: "Pembangkit Listrik Tenaga Surya Terapung & Perdagangan Karbon SRN PPI",
+    fileName: "PDD_Desain_Hijau_PLTS_Terapung_Cirata_145MWp.txt",
+    highlights: [
+      "Perpres No. 98/2021 (SRN PPI)",
+      "UU No. 32/2009 Pasal 36",
+      "Permen ESDM No. 2/2024",
+    ],
+    content: `BAB I - IDENTITAS & POLIGON GEOSPASIAL PLTS TERAPUNG
+Proyek Pembangkit Listrik Tenaga Surya (PLTS) Terapung ini berlokasi pada koordinat -6.6983 LS dan 107.3611 BT di perairan Waduk Cirata. Data pemohon izin atas nama Koordinator Proyek dengan NIK 3204011205790004 dan kontak +6281234567890 serta email perizinan@nusantarasolar.co.id telah tercatat dalam sistem NIB terintegrasi.
+
+BAB II - JADWAL KONSTRUKSI GARDU HUBUNG & PERSETUJUAN LINGKUNGAN
+Pekerjaan konstruksi fisik fondasi tambatan apung dan gardu hubung 20 kV dijadwalkan berlangsung pada bulan depan sementara dokumen revisi izin dampak lingkungan UKL-UPL masih menunggu pengesahan resmi dari instansi lingkungan hidup terkait.
+
+BAB III - JALUR TRANSMISI & KAWASAN HUTAN PENYANGGA
+Jalur penarikan kabel transmisi tegangan menengah sepanjang 3,4 kilometer melintasi sebagian area kawasan hutan produksi dan sabuk hijau penyangga waduk tanpa lampiran Persetujuan Penggunaan Kawasan Hutan (PPKH) yang telah berlaku efektif.
+
+BAB IV - KLAIM REDUKSI EMISI & PERDAGANGAN KARBON
+Estimasi penurunan emisi gas rumah kaca sebesar 21.400 tCO2e per tahun dari pengoperasian modul bifacial PLTS Terapung telah melalui perhitungan baseline ketenagalistrikan nasional dan disiapkan untuk pencatatan pada Sistem Registri Nasional (SRN PPI) sesuai Perpres No. 98 Tahun 2021.
+
+BAB V - KEANDALAN INTERKONEKSI JARINGAN DISTRIBUSI PLN
+Inverter sentral yang digunakan memiliki fitur proteksi anti-islanding otomatis, batas distorsi harmonisa total (THD) di bawah 3 persen, serta sinkronisasi frekuensi 50 Hz sesuai standar teknis interkoneksi jaringan distribusi PLN.
+
+BAB VI - KONSULTASI PUBLIK & PEMBERDAYAAN MASYARAKAT WADUK
+Pengembang telah menyelenggarakan konsultasi publik berbasis Free, Prior, and Informed Consent (FPIC) bersama kelompok pembudidaya ikan jaring apung dan pemerintah desa setempat dengan berita acara yang terdokumentasi secara sah.`,
+  },
+  {
+    id: "manufaktur-ikm",
+    badge: "GREEN SUPPLY CHAIN IKM",
+    title: "PDD Dekarbonisasi Manufaktur & Kemasan Hijau IKM",
+    subtitle: "Substitusi Bioplastik, Boiler Biomassa & Inventarisasi GRK ISO 14064-1",
+    fileName: "PDD_Desain_Hijau_Manufaktur_Kemasan_IKM_2026.txt",
+    highlights: [
+      "ISO 14064-1 Scope 1 & 2",
+      "UU No. 41/1999 Pasal 38",
+      "UU No. 32/2009 (Baku Mutu Emisi)",
+    ],
+    content: `BAB I - PROFIL FASILITAS MANUFAKTUR DESAIN HIJAU
+Dokumen Desain Hijau ini mencakup program transformasi pabrik kemasan ramah lingkungan di Kawasan Industri Cikarang pada koordinat -6.2845 LS dan 107.1705 BT. Penanggung jawab teknis terdaftar dengan NIK 3216082409880009, NPWP 02.889.112.4-412.000, dan alamat surat elektronik kepatuhan@greenpack-industri.id.
+
+BAB II - SUBSTITUSI MATERIAL BIOPLASTIK & EKOLABEL NASIONAL
+Lini produksi utama menggantikan 85 persen resin plastik konvensional berbasis fosil dengan polimer nabati terurai secara hayati (biodegradable) yang memenuhi standar Ekolabel Swadeklarasi SNI serta menekan timbulan limbah padat industri.
+
+BAB III - PENYEDIAAN BAHAN BAKU BIOMASSA & KAWASAN HUTAN
+Pasokan serpih kayu untuk bahan bakar boiler biomassa diperoleh dari pembukaan lahan pemasok yang beririsan dengan kawasan hutan produksi di wilayah hulu tanpa verifikasi legalitas izin pemanfaatan hutan yang lengkap.
+
+BAB IV - OPERASIONAL BOILER & PERIZINAN BAKU MUTU EMISI
+Pengoperasian penuh unit boiler biomassa berkapasitas 12 ton uap per jam telah dijalankan untuk mengejar target produksi kuartalan meskipun izin teknis pembuangan emisi udara cerobong masih menunggu hasil uji laboratorium dan pengesahan dinas lingkungan.
+
+BAB V - INVENTARISASI GAS RUMAH KACA (SCOPE 1 DAN SCOPE 2)
+Perusahaan melakukan penghitungan jejak karbon tahunan cakupan Scope 1 dan Scope 2 sesuai pedoman ISO 14064-1 dengan target penurunan intensitas emisi sebesar 32 persen pada tahun 2026 melalui pemulihan panas buang (waste heat recovery).
+
+BAB VI - TRANSPARANSI RANTAI PASOK & PERLINDUNGAN DATA MITRA
+Seluruh data audit pemasok bahan baku hijau dan dokumen identitas pekerja dikelola menggunakan enkripsi standar industri dan penyensoran data pribadi otomatis sesuai ketentuan UU No. 27 Tahun 2022 tentang Perlindungan Data Pribadi.`,
+  },
+];
+
 const DEMO_SAMPLE_RESULT = {
   auditId: "OZK-2026-SAMPLE-VERIFIED",
   projectName: "PDD_PLTS_Terapung_Cirata_Ekspansi_15MWp.pdf",
@@ -159,6 +249,26 @@ export function AuditWorkspace({
   const { session } = useAuth();
   const [creditsBalance, setCreditsBalance] = useState<number | null>(null);
   const [isAuditing, setIsAuditing] = useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>(
+    GREEN_DESIGN_TEMPLATES[0].id
+  );
+  const [customTemplateText, setCustomTemplateText] = useState<string>(
+    GREEN_DESIGN_TEMPLATES[0].content
+  );
+  const [showTemplateEditor, setShowTemplateEditor] = useState<boolean>(false);
+  const [isAutoFillFile, setIsAutoFillFile] = useState<boolean>(false);
+
+  const activeTemplate =
+    GREEN_DESIGN_TEMPLATES.find((t) => t.id === selectedTemplateId) ||
+    GREEN_DESIGN_TEMPLATES[0];
+
+  const handleSelectTemplate = (id: string) => {
+    setSelectedTemplateId(id);
+    const found = GREEN_DESIGN_TEMPLATES.find((t) => t.id === id);
+    if (found) {
+      setCustomTemplateText(found.content);
+    }
+  };
 
   useEffect(() => {
     if (session?.user) {
@@ -322,6 +432,7 @@ export function AuditWorkspace({
     setFile(selectedFile);
     setFileName(selectedFile.name);
     setFileSize(selectedFile.size);
+    setIsAutoFillFile(false);
     setStatus("configure");
   };
 
@@ -329,10 +440,44 @@ export function AuditWorkspace({
     session?.user?.email || userEmail || ""
   );
 
-  const runDemoSampleAudit = async () => {
-    setFileName(DEMO_SAMPLE_RESULT.projectName);
-    setFileSize(1845200);
+  const buildGreenDesignFile = (templateId?: string) => {
+    const tpl =
+      GREEN_DESIGN_TEMPLATES.find((t) => t.id === (templateId || selectedTemplateId)) ||
+      activeTemplate;
+    const textContent =
+      templateId && templateId !== selectedTemplateId
+        ? tpl.content
+        : customTemplateText?.trim() || tpl.content;
+    const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
+    return {
+      tpl,
+      generatedFile: new File([blob], tpl.fileName, { type: "text/plain" }),
+    };
+  };
+
+  const handleAutoFillToConfigure = (templateId?: string) => {
+    if (templateId) handleSelectTemplate(templateId);
+    const { tpl, generatedFile } = buildGreenDesignFile(templateId);
+    setFile(generatedFile);
+    setFileName(generatedFile.name);
+    setFileSize(generatedFile.size);
+    setIsAutoFillFile(true);
+    setPageScope(effectiveFreemium ? "teaser" : "full");
+    setStatus("configure");
+    toast.success("Auto-Fill Dokumen Desain Hijau Berhasil", {
+      description: `${tpl.title} siap dikonfigurasi & disimpan ke database.`,
+    });
+  };
+
+  const handleAutoFillAndSaveToDB = async (templateId?: string) => {
+    if (templateId) handleSelectTemplate(templateId);
+    const { tpl, generatedFile } = buildGreenDesignFile(templateId);
+    setFile(generatedFile);
+    setFileName(generatedFile.name);
+    setFileSize(generatedFile.size);
+    setIsAutoFillFile(true);
     setIsAuditing(true);
+
     const steps: Array<"parsing" | "masking" | "spatial" | "law"> = [
       "parsing",
       "masking",
@@ -343,54 +488,65 @@ export function AuditWorkspace({
     if (!effectiveFreemium) {
       try {
         setStatus("parsing");
-        const sampleText = DEMO_SAMPLE_RESULT.clauses.map((c) => c.text).join("\n\n");
-        const sampleBlob = new Blob([sampleText], { type: "text/plain" });
-        const sampleFile = new File([sampleBlob], "PDD_PLTS_Terapung_Cirata_145MW.txt", {
-          type: "text/plain",
-        });
         const formData = new FormData();
-        formData.append("document", sampleFile);
-        formData.append("projectName", DEMO_SAMPLE_RESULT.projectName);
-        formData.append("page_mode", "all");
+        formData.append("document", generatedFile);
+        formData.append("projectName", tpl.fileName);
+        formData.append("page_mode", "full");
+        formData.append("is_autofill", "true");
 
         for (const s of steps) {
           setStatus(s);
-          await new Promise((r) => setTimeout(r, 450));
+          await new Promise((r) => setTimeout(r, 400));
         }
 
         const res = await api.processFullAudit(formData);
         setIsAuditing(false);
         onAuditComplete?.();
         if (res.auditId) {
-          toast.success("Audit Sampel Selesai & Masuk Antrean HITL", {
-            description: "Mengalihkan ke Workspace Laporan...",
+          toast.success("Dokumen Desain Hijau Tersimpan di Database (RLS Aktif)", {
+            description: `Audit ID ${res.auditId.substring(0, 8)}... terikat ke akun Anda & masuk antrean HITL.`,
           });
           navigate({ to: `/workspace/${res.auditId}` });
           return;
         }
       } catch (err) {
-        console.warn("Sample backend save fallback to local preview:", err);
+        console.warn("Auto-fill backend save error, falling back:", err);
       }
     }
 
     for (const s of steps) {
       setStatus(s);
-      await new Promise((r) => setTimeout(r, 650));
+      await new Promise((r) => setTimeout(r, 550));
     }
     setIsAuditing(false);
-    setResult(DEMO_SAMPLE_RESULT);
+    setResult({
+      ...DEMO_SAMPLE_RESULT,
+      projectName: tpl.fileName,
+    });
     setStatus("result");
     setCurrentPage(1);
     setActiveClauseId(102);
-    toast.success("Simulasi Audit Selesai", {
-      description: "Menampilkan hasil pemindaian dokumen sampel PLTS Terapung Cirata.",
+    toast.success("Simulasi Auto-Fill Dokumen Desain Hijau Selesai", {
+      description: effectiveFreemium
+        ? "Masuk akun untuk menyimpan hasil auto-fill permanen ke database PostgreSQL Anda."
+        : `Menampilkan hasil analisis ${tpl.title}.`,
     });
+  };
+
+  const runDemoSampleAudit = async () => {
+    await handleAutoFillAndSaveToDB("plts-cirata");
   };
 
   const startAudit = async () => {
     if (!file) return;
 
-    if (!effectiveFreemium && !isAdminAccount && creditsBalance !== null && creditsBalance <= 0) {
+    if (
+      !effectiveFreemium &&
+      !isAdminAccount &&
+      !isAutoFillFile &&
+      creditsBalance !== null &&
+      creditsBalance <= 0
+    ) {
       toast.error("Saldo Kredit Habis", {
         description: "Anda tidak memiliki kredit yang cukup untuk melakukan audit penuh.",
       });
@@ -400,6 +556,7 @@ export function AuditWorkspace({
     const formData = new FormData();
     formData.append("document", file);
     if (!effectiveFreemium) formData.append("projectName", file.name);
+    if (isAutoFillFile) formData.append("is_autofill", "true");
 
     formData.append("page_mode", pageScope);
     if (pageScope === "custom") {
@@ -539,9 +696,9 @@ export function AuditWorkspace({
           </span>
         </div>
 
-        <div className="p-4 sm:p-6 md:p-10 lg:p-12 grid lg:grid-cols-12 gap-6 lg:gap-8 items-center bg-[#F6F4EE]/40">
+        <div className="p-4 sm:p-6 md:p-10 lg:p-12 grid lg:grid-cols-12 gap-6 lg:gap-8 items-start bg-[#F6F4EE]/40">
           {/* Upload Dropzone */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-6 flex flex-col gap-4">
             <input
               type="file"
               ref={fileInputRef}
@@ -566,40 +723,148 @@ export function AuditWorkspace({
                 Telusuri Berkas Lokal
               </span>
             </div>
+
+            {/* Database RLS & User Isolation Guarantee Banner */}
+            <div className="border-[1.5px] border-[#091E17] bg-[#E6F4EE] p-3.5 sm:p-4 flex items-start gap-3">
+              <ShieldCheck className="h-4 w-4 text-[#0D6E49] shrink-0 mt-0.5" />
+              <div className="text-xs text-[#091E17] leading-relaxed">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#0D6E49] block mb-0.5">
+                  ROW-LEVEL SECURITY (RLS) POSTGRESQL AKTIF PER-PENGGUNA
+                </span>
+                Setiap dokumen desain hijau yang dipindai atau di-auto-fill otomatis terikat ke ID pengguna Anda (<code className="font-mono text-[10px] bg-white/80 px-1 py-0.5 border border-[#091E17]/20">project_audits.userId</code>) dan terisolasi penuh melalui kebijakan RLS database.
+              </div>
+            </div>
           </div>
 
-          {/* Instant Demo Simulation Option */}
-          <div className="lg:col-span-5 border-[1.5px] border-[#091E17] bg-white p-5 sm:p-6 md:p-7 space-y-4 sm:space-y-5 shadow-[3px_3px_0_#091E17] sm:shadow-[4px_4px_0_#091E17]">
-            <div className="flex items-center justify-between border-b border-[#091E17]/15 pb-2.5 sm:pb-3 font-mono text-[10px] text-[#4A5D54]">
-              <span>BELUM MEMILIKI BERKAS PDD?</span>
-              <span className="text-[#0D6E49] font-bold">SIMULASI INSTAN</span>
+          {/* Green Design Document (PDD) Auto-Fill Generator */}
+          <div className="lg:col-span-6 border-[1.5px] border-[#091E17] bg-white p-5 sm:p-6 md:p-7 space-y-4 shadow-[3px_3px_0_#091E17] sm:shadow-[4px_4px_0_#091E17]">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#091E17]/15 pb-2.5 sm:pb-3 font-mono text-[10px] text-[#4A5D54]">
+              <span className="flex items-center gap-1.5 font-bold text-[#091E17]">
+                <Wand2 className="h-3.5 w-3.5 text-[#0D6E49]" />
+                AUTO-FILL DOKUMEN DESAIN HIJAU (PDD)
+              </span>
+              <span className="bg-[#0D6E49]/10 text-[#0D6E49] border border-[#0D6E49]/30 px-2 py-0.5 font-bold">
+                TERSIMPAN DI DB • RLS WAJIB
+              </span>
             </div>
+
             <div>
               <h4 className="font-editorial text-lg sm:text-xl font-semibold text-[#091E17] break-words">
-                Uji Menggunakan Dokumen Sampel PLTS Terapung 15 MWp
+                Generator Otomatis Dokumen Desain Hijau Terstandar
               </h4>
-              <p className="mt-2 text-xs text-[#4A5D54] leading-relaxed">
-                Muat dokumen sampel yang berisi skenario pelanggaran izin UKL-UPL (Pasal 36 UU LHK), klaim perdagangan karbon lintas batas (Perpres 98/2021), dan standar teknis interkoneksi PLN.
+              <p className="mt-1.5 text-xs text-[#4A5D54] leading-relaxed">
+                Pilih templat Dokumen Desain Hijau (PDD) siap pakai. Sistem akan mengisi klausul teknis, koordinat geospasial, serta data uji UU PDP secara otomatis dan menyimpannya langsung ke database akun Anda.
               </p>
             </div>
-            <div className="bg-[#F6F4EE] border border-[#091E17]/20 p-3 font-mono text-[11px] space-y-1 text-[#091E17]">
-              <div className="flex justify-between gap-2">
-                <span className="text-[#4A5D54]">Berkas:</span>
-                <span className="font-bold truncate ml-2">PDD_PLTS_Cirata_15MWp.pdf</span>
-              </div>
-              <div className="flex justify-between gap-2">
-                <span className="text-[#4A5D54]">Cakupan:</span>
-                <span>5 Klausul Kunci • 4 Pilar Skor</span>
+
+            {/* Template Selector Pills */}
+            <div className="space-y-2">
+              <label className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#4A5D54] block">
+                PILIH TEMPLAT DOKUMEN DESAIN HIJAU ({GREEN_DESIGN_TEMPLATES.length} PRESET TERSEDIA):
+              </label>
+              <div className="grid grid-cols-1 gap-2">
+                {GREEN_DESIGN_TEMPLATES.map((tpl) => {
+                  const isSelected = tpl.id === selectedTemplateId;
+                  return (
+                    <button
+                      key={tpl.id}
+                      type="button"
+                      onClick={() => handleSelectTemplate(tpl.id)}
+                      className={`w-full text-left p-3 border-[1.5px] transition-all cursor-pointer flex items-start justify-between gap-3 ${
+                        isSelected
+                          ? "border-[#091E17] bg-[#E6F4EE]/80 shadow-[2.5px_2.5px_0_#091E17]"
+                          : "border-[#091E17]/20 bg-[#F6F4EE]/40 hover:border-[#091E17]"
+                      }`}
+                    >
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                          <span className="font-mono text-[9px] font-bold uppercase px-1.5 py-0.5 bg-[#091E17] text-[#FBBF24]">
+                            {tpl.badge}
+                          </span>
+                          <span className="font-mono text-[10px] text-[#4A5D54] truncate">
+                            {tpl.fileName}
+                          </span>
+                        </div>
+                        <div className="font-bold text-xs sm:text-sm text-[#091E17] break-words">
+                          {tpl.title}
+                        </div>
+                        <div className="text-[11px] text-[#4A5D54] mt-0.5 line-clamp-1">
+                          {tpl.subtitle}
+                        </div>
+                      </div>
+                      <div
+                        className={`h-5 w-5 shrink-0 border-[1.5px] border-[#091E17] flex items-center justify-center mt-0.5 ${
+                          isSelected ? "bg-[#0D6E49] text-white" : "bg-white"
+                        }`}
+                      >
+                        {isSelected && <Check className="h-3 w-3" />}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
-            <button
-              type="button"
-              onClick={runDemoSampleAudit}
-              className="w-full py-3 sm:py-3.5 px-4 sm:px-5 bg-[#0D6E49] hover:bg-[#091E17] text-white font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest border-[1.5px] border-[#091E17] shadow-[2.5px_2.5px_0_#091E17] sm:shadow-[3px_3px_0_#091E17] transition-all hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2"
-            >
-              <Zap className="h-4 w-4 text-[#FBBF24]" />
-              Jalankan Simulasi Sampel PDD
-            </button>
+
+            {/* Highlights & Editable Preview Toggle */}
+            <div className="bg-[#F6F4EE] border border-[#091E17]/20 p-3 font-mono text-[11px] space-y-2 text-[#091E17]">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="text-[#4A5D54] text-[10px] uppercase font-bold">
+                  Cakupan Regulasi:
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowTemplateEditor((prev) => !prev)}
+                  className="text-[10px] font-bold text-[#0D6E49] hover:underline cursor-pointer uppercase"
+                >
+                  {showTemplateEditor ? "Tutup Editor Teks" : "Lihat / Edit Klausul Otomatis"}
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {activeTemplate.highlights.map((h) => (
+                  <span
+                    key={h}
+                    className="text-[10px] bg-white border border-[#091E17]/20 px-2 py-0.5 font-semibold"
+                  >
+                    {h}
+                  </span>
+                ))}
+              </div>
+
+              {showTemplateEditor && (
+                <div className="pt-2">
+                  <textarea
+                    value={customTemplateText}
+                    onChange={(e) => setCustomTemplateText(e.target.value)}
+                    rows={6}
+                    className="w-full border border-[#091E17] bg-white p-2.5 font-mono text-[11px] text-[#091E17] leading-relaxed focus:outline-none"
+                    placeholder="Teks Dokumen Desain Hijau (PDD)..."
+                  />
+                  <p className="text-[10px] text-[#4A5D54] mt-1">
+                    Anda dapat memodifikasi klausul di atas sebelum dikirim ke mesin AI & disimpan ke database.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Dual Action Buttons: Direct Save to DB OR Auto-Fill into Form */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+              <button
+                type="button"
+                onClick={() => handleAutoFillAndSaveToDB()}
+                className="w-full py-3 sm:py-3.5 px-4 bg-[#0D6E49] hover:bg-[#091E17] text-white font-mono text-[11px] font-bold uppercase tracking-wider border-[1.5px] border-[#091E17] shadow-[2.5px_2.5px_0_#091E17] transition-all hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Zap className="h-4 w-4 text-[#FBBF24] shrink-0" />
+                <span>Auto-Fill & Simpan ke DB</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAutoFillToConfigure()}
+                className="w-full py-3 sm:py-3.5 px-4 bg-[#F6F4EE] hover:bg-[#FBBF24] text-[#091E17] font-mono text-[11px] font-bold uppercase tracking-wider border-[1.5px] border-[#091E17] shadow-[2.5px_2.5px_0_#091E17] transition-all hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Wand2 className="h-4 w-4 text-[#091E17] shrink-0" />
+                <span>Auto-Fill ke Konfigurasi</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -625,20 +890,55 @@ export function AuditWorkspace({
         </div>
 
         <div className="p-4 sm:p-6 md:p-10 max-w-3xl mx-auto w-full space-y-5 sm:space-y-6">
-          <div className="bg-[#F6F4EE] border-[1.5px] border-[#091E17] p-3.5 sm:p-4 flex justify-between items-center gap-3">
+          <div className="bg-[#F6F4EE] border-[1.5px] border-[#091E17] p-3.5 sm:p-4 flex flex-wrap justify-between items-center gap-3">
             <div className="min-w-0">
-              <p className="font-mono text-[10px] font-bold uppercase text-[#4A5D54] mb-1">
-                BERKAS DOKUMEN TERPILIH
-              </p>
-              <p className="font-mono text-xs sm:text-sm font-bold text-[#091E17] truncate max-w-xs sm:max-w-sm">
+              <div className="flex items-center gap-2 mb-1">
+                <p className="font-mono text-[10px] font-bold uppercase text-[#4A5D54]">
+                  BERKAS DOKUMEN TERPILIH
+                </p>
+                {isAutoFillFile && (
+                  <span className="font-mono text-[9px] font-bold uppercase px-1.5 py-0.5 bg-[#0D6E49] text-white">
+                    AUTO-FILL DESAIN HIJAU • RLS DB READY
+                  </span>
+                )}
+              </div>
+              <p className="font-mono text-xs sm:text-sm font-bold text-[#091E17] truncate max-w-xs sm:max-w-md">
                 {fileName}
               </p>
             </div>
             <div className="text-right font-mono shrink-0">
               <p className="text-[10px] font-bold uppercase text-[#4A5D54] mb-1">UKURAN</p>
               <p className="text-xs sm:text-sm font-bold text-[#091E17]">
-                {(fileSize / 1024 / 1024).toFixed(2)} MB
+                {fileSize >= 1024 * 1024
+                  ? `${(fileSize / 1024 / 1024).toFixed(2)} MB`
+                  : `${Math.max(1, Math.round(fileSize / 1024))} KB`}
               </p>
+            </div>
+          </div>
+
+          {/* Quick Switcher for Green Design Auto-Fill Templates inside Configure View */}
+          <div className="border-[1.5px] border-[#091E17]/25 bg-[#E6F4EE]/40 p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="text-xs text-[#091E17]">
+              <span className="font-mono text-[10px] font-bold uppercase text-[#0D6E49] block">
+                GANTI CEPAT TEMPLAT DOKUMEN DESAIN HIJAU:
+              </span>
+              Pilih preset PDD lain untuk diisi otomatis dan disimpan ke database PostgreSQL Anda.
+            </div>
+            <div className="flex flex-wrap gap-1.5 shrink-0">
+              {GREEN_DESIGN_TEMPLATES.map((tpl) => (
+                <button
+                  key={tpl.id}
+                  type="button"
+                  onClick={() => handleAutoFillToConfigure(tpl.id)}
+                  className={`px-2.5 py-1.5 font-mono text-[10px] font-bold uppercase border border-[#091E17] cursor-pointer transition-colors ${
+                    isAutoFillFile && selectedTemplateId === tpl.id
+                      ? "bg-[#091E17] text-[#FBBF24]"
+                      : "bg-white text-[#091E17] hover:bg-[#FBBF24]"
+                  }`}
+                >
+                  {tpl.badge}
+                </button>
+              ))}
             </div>
           </div>
 
